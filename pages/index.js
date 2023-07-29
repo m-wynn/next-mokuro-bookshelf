@@ -1,115 +1,126 @@
+import { useEffect, useState } from 'react';
 import Head from 'next/head';
-import styles from '../styles/Home.module.css';
 
-export default function Home() {
+const ProgressBar = ({ progress, remaining }) => {
   return (
-    <div className={styles.container}>
+    <div className="w-full h-4 bg-gray-300 rounded-full overflow-hidden">
+      <div className="h-full bg-green-500" style={{width: `${progress}%`}}>
+        <span className="text-white text-sm">{progress}% ({remaining}p)</span>
+      </div>
+    </div>
+  );
+};
+
+const Bookshelf = () => {
+  const [sortAscending, setSortAscending] = useState(true);
+  const [books, setBooks] = useState([]);
+  const [sortBy, setSortBy] = useState('title');
+
+  const determineProgressStatus = (currentPage, totalPages) => {
+    if (1 === currentPage) {
+      return 'future';
+    } else if (currentPage === totalPages) {
+      return 'finished';
+    } else {
+      return 'reading';
+    }
+  };
+
+  useEffect(() => {
+    const keys = Object.keys(localStorage);
+    const storagePrefix = "mokuro_";
+
+    const books = keys.filter(key => key.startsWith(storagePrefix)).map(key => {
+      const path = decodeURI(key.substring(storagePrefix.length));
+      const fileName = path.split('/').pop().replace('.html', '');
+      const mokuro = JSON.parse(localStorage.getItem(key));
+
+      return {
+        key,
+        path,
+        fileName,
+        mokuro,
+        coverPage: `${path.replace('.html', '')}/${mokuro.cover_page}`,
+        progressStatus: determineProgressStatus(mokuro.page_idx + 1, mokuro.last_page_idx),
+        percentComplete: parseInt((mokuro.page_idx + 1)/mokuro.last_page_idx*100),
+        remainingPages: mokuro.last_page_idx - (mokuro.page_idx + 1)
+      }
+    });
+
+    setBooks(books);
+  }, []);
+
+  const changeReadingSort = (newSortBy) => {
+    setSortBy(newSortBy);
+    setBooks(prevBooks => [...prevBooks].sort((a, b) => a[newSortBy].localeCompare(b[newSortBy])));
+  };
+
+  const changeSortDirection = () => {
+    setSortAscending(prevSortAscending => !prevSortAscending);
+    setBooks(prevBooks => [...prevBooks].reverse());
+  };
+
+  const deleteFromMokuro = (key) => {
+    localStorage.removeItem(key);
+    setBooks(prevBooks => prevBooks.filter(book => book.key !== key));
+  };
+
+  return (
+    <div className="bg-white text-black p-5">
       <Head>
-        <title>Create Next App</title>
-        <link rel="icon" href="/favicon.ico" />
+        <title>Bookshelf</title>
+        <meta charSet="utf-8"/>
       </Head>
 
-      <main>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
+      <h2 className="text-2xl font-bold mb-4">Reading</h2>
 
-        <p className={styles.description}>
-          Get started by editing <code>pages/index.js</code>
-        </p>
+      <div className="mb-3 flex items-center">
+        <span className="mr-2">Sort by:</span>
+        <button onClick={() => changeReadingSort('remainingPages')} className="px-2 py-1 bg-blue-500 text-white rounded">Pages Remaining</button>
+        <span onClick={changeSortDirection} className="ml-2 cursor-pointer">⇅</span>
+      </div>
 
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h3>Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
+      <div id="reading" className="section mb-6">
+        {books.map(book => book.progressStatus === 'reading' &&
+          <div key={book.key} className="mb-4">
+            <a href={book.path}>
+              <img src={book.coverPage} alt={book.fileName} className="w-32"/>
+            </a>
+            <ProgressBar progress={book.percentComplete} remaining={book.remainingPages}/>
+            <button onClick={() => deleteFromMokuro(book.key)} className="mt-2 px-2 py-1 bg-red-500 text-white rounded">Delete</button>
+          </div>
+        )}
+      </div>
 
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h3>Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
+      <h2 className="text-2xl font-bold mb-4">Future</h2>
 
-          <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
-            className={styles.card}
-          >
-            <h3>Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
+      <div id="future" className="section mb-6">
+        {books.map(book => book.progressStatus === 'future' &&
+          <div key={book.key} className="mb-4">
+            <a href={book.path}>
+              <img src={book.coverPage} alt={book.fileName} className="w-32"/>
+            </a>
+            <ProgressBar progress={book.percentComplete} remaining={book.remainingPages}/>
+            <button onClick={() => deleteFromMokuro(book.key)} className="mt-2 px-2 py-1 bg-red-500 text-white rounded">Delete</button>
+          </div>
+        )}
+      </div>
 
-          <a
-            href="https://vercel.com/import?filter=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h3>Deploy &rarr;</h3>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
-        </div>
-      </main>
+      <h2 className="text-2xl font-bold mb-4">Finished</h2>
 
-      <footer>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <img src="/vercel.svg" alt="Vercel" className={styles.logo} />
-        </a>
-      </footer>
-
-      <style jsx>{`
-        main {
-          padding: 5rem 0;
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-        }
-        footer {
-          width: 100%;
-          height: 100px;
-          border-top: 1px solid #eaeaea;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        }
-        footer img {
-          margin-left: 0.5rem;
-        }
-        footer a {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          text-decoration: none;
-          color: inherit;
-        }
-        code {
-          background: #fafafa;
-          border-radius: 5px;
-          padding: 0.75rem;
-          font-size: 1.1rem;
-          font-family: Menlo, Monaco, Lucida Console, Liberation Mono,
-            DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace;
-        }
-      `}</style>
-
-      <style jsx global>{`
-        html,
-        body {
-          padding: 0;
-          margin: 0;
-          font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto,
-            Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue,
-            sans-serif;
-        }
-        * {
-          box-sizing: border-box;
-        }
-      `}</style>
+      <div id="finished" className="section">
+        {books.map(book => book.progressStatus === 'finished' &&
+          <div key={book.key} className="mb-4">
+            <a href={book.path}>
+              <img src={book.coverPage} alt={book.fileName} className="w-32"/>
+            </a>
+            <ProgressBar progress={book.percentComplete} remaining={book.remainingPages}/>
+            <button onClick={() => deleteFromMokuro(book.key)} className="mt-2 px-2 py-1 bg-red-500 text-white rounded">Delete</button>
+          </div>
+        )}
+      </div>
     </div>
-  )
-}
+  );
+};
+
+export default Bookshelf;
