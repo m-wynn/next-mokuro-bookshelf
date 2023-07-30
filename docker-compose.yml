@@ -1,0 +1,43 @@
+services:
+    traefik:
+        image: "traefik:v2.8"
+        container_name: "traefik"
+        command:
+            # - "--api.insecure=true"
+            - "--providers.docker=true"
+            - "--providers.docker.exposedbydefault=false"
+            - "--entrypoints.web.address=:80"
+            - "--entrypoints.websecure.address=:443"
+            - "--certificatesresolvers.myresolver.acme.httpchallenge=true"
+            - "--certificatesresolvers.myresolver.acme.httpchallenge.entrypoint=web"
+            - "--certificatesresolvers.myresolver.acme.email=${MY_EMAIL}" and set your email
+            - "--certificatesresolvers.myresolver.acme.storage=/shared/acme.json"
+        ports:
+            - "80:80"
+            - "443:443"
+            # - "8080:8080" # Traefik dashboard
+        volumes:
+            - "/var/run/docker.sock:/var/run/docker.sock:ro"
+            - "./shared:/shared"
+
+    next-mokuro-bookshelf:
+        volumes:
+            - ./:/app/
+        build:
+            context: ./
+            dockerfile: ./Dockerfile
+        container_name: next-mokuro-bookshelf
+        ports:
+            - "3000:3000"
+        env_file:
+            - ./.env
+        environment:
+            - NODE_ENV=production
+            - PORT=3000
+        labels:
+            - "traefik.enable=true"
+            - "traefik.http.routers.next-mokuro-bookshelf.entrypoints=web, websecure"
+            - "traefik.http.routers.next-mokuro-bookshelf.rule=Host(`${MY_HOST}`)" 
+            - "traefik.http.routers.next-mokuro-bookshelf.tls.certresolver=myresolver"
+            - "traefik.http.routers.next-mokuro-bookshelf.tls.domains[0].main=${MY_HOST}"
+            - "traefik.http.services.next-mokuro-bookshelf.loadbalancer.server.port=3000"
