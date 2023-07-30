@@ -2,7 +2,7 @@ FROM node:18-alpine
 WORKDIR /app
 COPY . .
 
-COPY ./prod/.env ./
+COPY ./.env ./
 
 RUN npm install --frozen-lockfile
 RUN npm run build

@@ -1,1 +1,2 @@
-This is a starter template for [Learn Next.js](https://nextjs.org/learn).
+Copy .env.copy to .env
+mokuro folder should be in the public folder
