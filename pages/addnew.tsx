@@ -1,9 +1,13 @@
+import "tailwindcss/tailwind.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faBookmark, faCheck } from "@fortawesome/free-solid-svg-icons";
+import { faBookmark as faRegularBookmark } from "@fortawesome/free-regular-svg-icons";
+import Head from "next/head";
+import Link from "next/link";
 import fs from "fs";
 import path from "path";
-import Head from "next/head";
-import "tailwindcss/tailwind.css"; // Import Tailwind CSS
-import { useEffect, useState } from "react";
 import { Book, getFromLocalStorage } from "../components/book";
+import { useEffect, useState } from "react";
 
 type FileData = {
   index: string;
@@ -93,6 +97,11 @@ const addBook = (title: string, image: string, numFiles: number) => {
   localStorage.setItem(title, JSON.stringify(book));
   window.dispatchEvent(new Event("storage"));
 };
+
+const removeBook = (title: string) => {
+  localStorage.removeItem(title);
+  window.dispatchEvent(new Event("storage"));
+};
 type BookToAddProps = {
   file: FileData;
   folderName: string;
@@ -100,27 +109,49 @@ type BookToAddProps = {
 };
 
 const BookToAdd: React.FC<BookToAddProps> = ({ file, folderName, exists }) => (
-  <button
+  <div
     key={file.index}
-    // href={`/mokuro/${folderName}/${file.index}`}
-    onClick={() => {
-      exists
-        ? {}
-        : addBook(`mokuro_/${file.path}`, file.firstImage, file.numFiles);
-    }}
-    className={`w-24 m-2 ${exists ? "opacity-50" : ""}`}
+    className={`w-24 h-32 overflow-hidden relative m-2  hover:shadow-lg { exists ? "shadow-inner" : "shadow"`}
   >
-    <div className="w-24 h-32 overflow-hidden relative">
+    <Link href={file.path}>
       <img
         alt={file.title}
         src={`/mokuro/${folderName}/${file.title}/${file.firstImage}`}
-        className="absolute max-w-none h-32"
+        className={`absolute max-w-none h-32 ${exists ? "opacity-50" : ""}`}
       />
-      <div className="absolute bg-lavender pl-2 pr-2 font-bold text-crust right-0 bottom-0 rounded-tl-lg">
-        {file.title}
-      </div>
+    </Link>
+    <div className="text-crust absolute right-0 top-0">
+      {exists ? (
+        <button
+          title="Remove Bookmark"
+          onClick={() => removeBook(`mokuro_/${file.path}`)}
+          className="bg-surface2 text-crust hover:text-red-700 px-1"
+        >
+          <FontAwesomeIcon icon={faBookmark} />
+        </button>
+      ) : (
+        <button
+          title="Add Bookmark"
+          className="bg-surface2 text-crust hover:text-green-700 px-1"
+          onClick={() =>
+            addBook(`mokuro_/${file.path}`, file.firstImage, file.numFiles)
+          }
+        >
+          <FontAwesomeIcon icon={faRegularBookmark} />
+        </button>
+      )}
     </div>
-  </button>
+    {exists ? (
+      <div className="text-lg absolute pl-2 pr-2 text-green left-0 bottom-0 drop-shadow-white">
+        <FontAwesomeIcon icon={faCheck} />
+      </div>
+    ) : (
+      ""
+    )}
+    <div className="absolute bg-lavender pl-2 pr-2 font-bold text-crust right-0 bottom-0 rounded-tl-lg">
+      {file.title}
+    </div>
+  </div>
 );
 
 const AddNew: React.FC<Props> = ({ htmlFilesWithFolder }) => {
@@ -145,10 +176,15 @@ const AddNew: React.FC<Props> = ({ htmlFilesWithFolder }) => {
         <title>Add New</title>
         <meta charSet="utf-8" />
       </Head>
-      <h2 className="text-2xl font-bold mb-4">Add a volume</h2>
+      <h2 className="text-2xl font-bold mb-4">
+        <Link href="/">Index</Link> /{" "}
+        <Link href="" aria-disabled="true">
+          Add a volume
+        </Link>
+      </h2>
       {htmlFilesWithFolder.map(({ folderName, files }) => (
         <div key={folderName} className="mb-4 w-full">
-          <div className="w-full flex-initial bg-surface1 p-4">
+          <div className="w-full flex-initial bg-surface1 p-4 shadow-md">
             <h3 className="text-3xl font-bold mb-2">{folderName}</h3>
             <div key={folderName} className="mb-4 w-full flex flex-wrap">
               {files?.map((file) => (

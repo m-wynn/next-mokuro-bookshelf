@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import Head from "next/head";
 import Link from "next/link";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faBookmark, faBookOpen } from "@fortawesome/free-solid-svg-icons";
 import { Book, getFromLocalStorage } from "../components/book";
 
 type ProgressBarProps = {
@@ -49,7 +51,10 @@ const BookCard: React.FC<BookCardProps> = ({ book, onDelete }) => {
   };
 
   return (
-    <div key={book.key} className="m-2 w-44 flex-initial">
+    <div
+      key={book.key}
+      className="m-2 w-44 flex-initial shadow hover:shadow-lg"
+    >
       <div className="w-44 h-64 overflow-hidden relative">
         <a href={book.path}>
           <img
@@ -60,9 +65,10 @@ const BookCard: React.FC<BookCardProps> = ({ book, onDelete }) => {
         </a>
         <button
           onClick={deleteBook}
-          className="bg-lavender text-crust rounded-bl-lg absolute right-0 top-0 px-2"
+          title="Remove Bookmark"
+          className="bg-lavender text-crust rounded-bl-lg absolute right-0 top-0 px-2 hover:text-red"
         >
-          x
+          <FontAwesomeIcon icon={faBookmark} />
         </button>
         <div className="absolute bg-lavender px-2 font-bold text-crust right-0 bottom-0 rounded-tl-lg">
           {book.seriesName} - {book.fileName}
@@ -137,7 +143,7 @@ const Bookshelf: React.FC = () => {
       )}
       <Link href={`/addnew`}>
         <button className="bg-lavender text-white p-3 h-16 text-2xl absolute top-0 right-0">
-          Add a new volume
+          Manage Bookshelf
         </button>
       </Link>
     </div>
