@@ -25,6 +25,8 @@ services:
         volumes:
             - ./mokuro/:/app/public/mokuro
         container_name: next-mokuro-bookshelf
+        env_file:
+            - ./.env
         ports:
             - "3000:3000"
         labels: ## Only add Labels if you want to use traefiks for cert stuff
