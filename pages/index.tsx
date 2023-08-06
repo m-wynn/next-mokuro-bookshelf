@@ -41,19 +41,17 @@ const BookCard = ({ book, onDelete }: BookCardProps) => {
   return (
     <div
       key={book.key}
-      className="w-56 m-2 bookcard card card-compact image-full bg-base-300 flex-initial shadow hover:shadow-lg"
+      className="w-[13.5rem] h-[20.25rem] m-2 bookcard card card-compact image-full bg-base-300 flex-initial shadow hover:shadow-lg"
     >
-      <figure className="w-56 overflow-hidden">
-        <div className="relative h-72 w-56">
-          <img
-            src={book.coverPage}
-            alt={`${book.fileName}'s cover could not be loaded.  It may need to be re-added`}
-            className="h-72 max-w-none absolute flex items-center"
-          />
-        </div>
+      <figure className="overflow-hidden">
+        <img
+          src={book.coverPage}
+          alt={`${book.fileName}'s cover could not be loaded.  It may need to be re-added`}
+          className="w-[13.5rem] h-[20.25rem] bg-cover bg-center bg-no-repeat flex items-center"
+        />
       </figure>
       <progress
-        className="progress progress-primary w-56 z-50 rounded-none absolute bottom-3"
+        className="progress progress-primary w-[13.5rem] z-50 rounded-none absolute bottom-3"
         value={book.percentComplete}
         max="100"
       ></progress>

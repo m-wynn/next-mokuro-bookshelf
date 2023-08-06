@@ -115,17 +115,15 @@ type BookToAddProps = {
 const BookToAdd: React.FC<BookToAddProps> = ({ file, folderName, exists }) => (
   <div
     key={file.index}
-    className="w-36 h-48 m-2 bookcard card card-compact image-full bg-base-300 flex-initial shadow hover:shadow-lg"
+    className="w-36 h-[13.5rem] m-2 bookcard card card-compact image-full bg-base-300 flex-initial shadow hover:shadow-lg"
   >
-    <figure className="w-36 overflow-hidden">
-      <div className="relative h-48 w-36">
-        <img
-          src={`/mokuro/${folderName}/${file.title}/${file.firstImage}`}
-          className={`h-48 max-w-none absolute flex items-center ${
-            exists ? "opacity-70" : ""
-          }`}
-        />
-      </div>
+    <figure className="overflow-hidden">
+      <img
+        src={`/mokuro/${folderName}/${file.title}/${file.firstImage}`}
+        className={`w-36 h-[13.5rem] bg-cover bg-center bg-no-repeat flex items-center ${
+          exists ? "opacity-70" : ""
+        }`}
+      />
     </figure>
     <div className="card-body">
       <div className="card-actions absolute top-0 right-0">
