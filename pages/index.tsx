@@ -50,11 +50,15 @@ const BookCard = ({ book, onDelete }: BookCardProps) => {
           className="w-[13.5rem] h-[20.25rem] bg-cover bg-center bg-no-repeat flex items-center"
         />
       </figure>
-      <progress
-        className="progress progress-primary w-[13.5rem] z-50 rounded-none absolute bottom-3"
-        value={book.percentComplete}
-        max="100"
-      ></progress>
+      {book.progressStatus === "reading" ? (
+        <progress
+          className="progress progress-primary w-[13.5rem] z-50 rounded-none absolute bottom-3"
+          value={book.percentComplete}
+          max="100"
+        ></progress>
+      ) : (
+        ""
+      )}
       <div className="card-body">
         <div className="card-actions absolute top-0 right-0">
           <button
