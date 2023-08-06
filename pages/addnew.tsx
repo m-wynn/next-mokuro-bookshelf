@@ -8,6 +8,7 @@ import fs from "fs";
 import path from "path";
 import { Book, getFromLocalStorage } from "../components/book";
 import { useEffect, useState } from "react";
+import { GetServerSideProps } from "next";
 
 type FileData = {
   index: string;
@@ -24,9 +25,12 @@ type FolderData = {
 
 type Props = {
   htmlFilesWithFolder: FolderData[];
+  search: string;
 };
 
-export async function getServerSideProps(): Promise<{ props: Props }> {
+export const getServerSideProps: GetServerSideProps<{
+  htmlFilesWithFolder: FolderData[];
+}> = async () => {
   const mokuroPath = path.join(process.cwd(), "/public/mokuro/");
 
   // Read all items (files and folders) within mokuroPath
@@ -73,7 +77,7 @@ export async function getServerSideProps(): Promise<{ props: Props }> {
       htmlFilesWithFolder,
     },
   };
-}
+};
 const addBook = (title: string, image: string, numFiles: number) => {
   const book = {
     page_idx: 0,
@@ -111,50 +115,57 @@ type BookToAddProps = {
 const BookToAdd: React.FC<BookToAddProps> = ({ file, folderName, exists }) => (
   <div
     key={file.index}
-    className={`w-24 h-32 overflow-hidden relative m-2  hover:shadow-lg { exists ? "shadow-inner" : "shadow"`}
+    className="w-36 h-48 m-2 bookcard card card-compact image-full bg-base-300 flex-initial shadow hover:shadow-lg"
   >
-    <Link href={file.path}>
-      <img
-        alt={file.title}
-        src={`/mokuro/${folderName}/${file.title}/${file.firstImage}`}
-        className={`absolute max-w-none h-32 ${exists ? "opacity-50" : ""}`}
-      />
-    </Link>
-    <div className="text-crust absolute right-0 top-0">
-      {exists ? (
-        <button
-          title="Remove Bookmark"
-          onClick={() => removeBook(`mokuro_/${file.path}`)}
-          className="bg-surface2 text-crust hover:text-red-700 px-1"
-        >
-          <FontAwesomeIcon icon={faBookmark} />
-        </button>
-      ) : (
-        <button
-          title="Add Bookmark"
-          className="bg-surface2 text-crust hover:text-green-700 px-1"
-          onClick={() =>
-            addBook(`mokuro_/${file.path}`, file.firstImage, file.numFiles)
-          }
-        >
-          <FontAwesomeIcon icon={faRegularBookmark} />
-        </button>
-      )}
-    </div>
-    {exists ? (
-      <div className="text-lg absolute pl-2 pr-2 text-green left-0 bottom-0 drop-shadow-white">
-        <FontAwesomeIcon icon={faCheck} />
+    <figure className="w-36 overflow-hidden">
+      <div className="relative h-48 w-36">
+        <img
+          src={`/mokuro/${folderName}/${file.title}/${file.firstImage}`}
+          className={`h-48 max-w-none absolute flex items-center ${
+            exists ? "opacity-70" : ""
+          }`}
+        />
       </div>
-    ) : (
-      ""
-    )}
-    <div className="absolute bg-lavender pl-2 pr-2 font-bold text-crust right-0 bottom-0 rounded-tl-lg">
-      {file.title}
+    </figure>
+    <div className="card-body">
+      <div className="card-actions absolute top-0 right-0">
+        {exists ? (
+          <button
+            title="Remove Bookmark"
+            onClick={() => removeBook(`mokuro_/${file.path}`)}
+            className="bg-surface2 text-base-300 hover:text-red-700 px-1"
+          >
+            <FontAwesomeIcon icon={faBookmark} />
+          </button>
+        ) : (
+          <button
+            title="Add Bookmark"
+            className="bg-surface2 text-white hover:text-green-700 px-1"
+            onClick={() =>
+              addBook(`mokuro_/${file.path}`, file.firstImage, file.numFiles)
+            }
+          >
+            <FontAwesomeIcon icon={faBookmark} />
+          </button>
+        )}
+      </div>
+      <Link href={file.path} className="grow">
+        <h2 className="card-title text-[1.4rem] drop-shadow-[0_3px_4px_rgba(0,0,0,0.5)] text-white">
+          {file.title}
+        </h2>
+        {exists ? (
+          <h2 className="card-title text-med drop-shadow-[0_3px_4px_rgba(0,0,0,0.5)]  text-white">
+            In Library
+          </h2>
+        ) : (
+          ""
+        )}
+      </Link>
     </div>
   </div>
 );
 
-const AddNew: React.FC<Props> = ({ htmlFilesWithFolder }) => {
+const AddNew = ({ htmlFilesWithFolder, search }: Props) => {
   const [books, setBooks] = useState<Book[]>([]);
   useEffect(() => {
     function updateFromLocalStorage() {
@@ -176,33 +187,31 @@ const AddNew: React.FC<Props> = ({ htmlFilesWithFolder }) => {
         <title>Add New</title>
         <meta charSet="utf-8" />
       </Head>
-      <h2 className="text-2xl font-bold mb-4">
-        <Link href="/">Index</Link> /{" "}
-        <Link href="" aria-disabled="true">
-          Add a volume
-        </Link>
-      </h2>
-      {htmlFilesWithFolder.map(({ folderName, files }) => (
-        <div key={folderName} className="mb-4 w-full">
-          <div className="w-full flex-initial bg-surface1 p-4 shadow-md">
-            <h3 className="text-3xl font-bold mb-2">{folderName}</h3>
-            <div key={folderName} className="mb-4 w-full flex flex-wrap">
-              {files?.map((file) => (
-                <BookToAdd
-                  key={file.path}
-                  folderName={folderName}
-                  file={file}
-                  exists={
-                    books.find(
-                      (book) => book.key === `mokuro_/${file.path}`
-                    ) !== undefined
-                  }
-                />
-              ))}
+      {htmlFilesWithFolder
+        .filter(({ folderName, files }) =>
+          folderName.toLowerCase().includes(search.toLowerCase())
+        )
+        .map(({ folderName, files }) => (
+          <div key={folderName} className="mb-4 w-full">
+            <div className="w-full flex-initial bg-ctp-surface1 p-4 shadow-md">
+              <h3 className="text-3xl font-bold mb-2">{folderName}</h3>
+              <div key={folderName} className="mb-4 w-full flex flex-wrap">
+                {files?.map((file) => (
+                  <BookToAdd
+                    key={file.path}
+                    folderName={folderName}
+                    file={file}
+                    exists={
+                      books.find(
+                        (book) => book.key === `mokuro_/${file.path}`
+                      ) !== undefined
+                    }
+                  />
+                ))}
+              </div>
             </div>
           </div>
-        </div>
-      ))}
+        ))}
     </div>
   );
 };

@@ -15,3 +15,13 @@ div#__next > div {
 .drop-shadow-white {
   filter: drop-shadow(0px 1px 4px white);
 }
+
+.bookcard.image-full::before {
+  background: linear-gradient(
+    rgba(0, 0, 0, 0.6) 0%,
+    rgba(0, 0, 0, 0.3) 30%,
+    rgba(0, 0, 0, 0) 50%,
+    rgba(0, 0, 0, 0) 100%
+  ) !important;
+  opacity: 1 !important;
+}

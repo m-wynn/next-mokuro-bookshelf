@@ -1,14 +1,13 @@
 import { useEffect, useState } from "react";
 import Head from "next/head";
-import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBookmark, faBookOpen } from "@fortawesome/free-solid-svg-icons";
+import {
+  faTrash,
+  faTriangleExclamation,
+} from "@fortawesome/free-solid-svg-icons";
 import { Book, getFromLocalStorage } from "../components/book";
-
-type ProgressBarProps = {
-  progress: number;
-  page: number;
-};
+import Navbar from "../components/navbar";
+import Link from "next/link";
 
 type BookCardProps = {
   book: Book;
@@ -21,11 +20,11 @@ type ShelfProps = {
   onDelete: (key: string) => void;
 };
 
-const Shelf: React.FC<ShelfProps> = ({ title, books, onDelete }) => {
+const Shelf = ({ title, books, onDelete }: ShelfProps) => {
   return (
-    <div className="bg-surface1 p-4 mb-4">
-      <h2 className="text-2xl font-bold mb-4">{title}</h2>
-      <div className="section flex mb-6">
+    <div className="bg-ctp-surface2 p-4 mb-4 shadow-lg">
+      <h1 className="text text-4xl font-bold mb-4">{title}</h1>
+      <div className="section flex flex-wrap mb-6">
         {books.map((book) => (
           <BookCard key={book.key} book={book} onDelete={onDelete} />
         ))}
@@ -34,18 +33,7 @@ const Shelf: React.FC<ShelfProps> = ({ title, books, onDelete }) => {
   );
 };
 
-const ProgressBar: React.FC<ProgressBarProps> = ({ progress, page }) => {
-  return (
-    <div className="relative h-6 bg-crust">
-      <div className="h-6 bg-peach" style={{ width: `${progress}%` }}></div>
-      <span className="absolute inset-0 flex items-center justify-center text-sm font-medium text-text">
-        {progress}% (pg {page})
-      </span>
-    </div>
-  );
-};
-
-const BookCard: React.FC<BookCardProps> = ({ book, onDelete }) => {
+const BookCard = ({ book, onDelete }: BookCardProps) => {
   const deleteBook = () => {
     onDelete(book.key);
   };
@@ -53,49 +41,50 @@ const BookCard: React.FC<BookCardProps> = ({ book, onDelete }) => {
   return (
     <div
       key={book.key}
-      className="m-2 w-44 flex-initial shadow hover:shadow-lg"
+      className="w-56 m-2 bookcard card card-compact image-full bg-base-300 flex-initial shadow hover:shadow-lg"
     >
-      <div className="w-44 h-64 overflow-hidden relative">
-        <a href={book.path}>
+      <figure className="w-56 overflow-hidden">
+        <div className="relative h-72 w-56">
           <img
             src={book.coverPage}
-            alt={book.fileName}
-            className="absolute max-w-none h-64"
+            alt={`${book.fileName}'s cover could not be loaded.  It may need to be re-added`}
+            className="h-72 max-w-none absolute flex items-center"
           />
-        </a>
-        <button
-          onClick={deleteBook}
-          title="Remove Bookmark"
-          className="bg-lavender text-crust rounded-bl-lg absolute right-0 top-0 px-2 hover:text-red"
-        >
-          <FontAwesomeIcon icon={faBookmark} />
-        </button>
-        <div className="absolute bg-lavender px-2 font-bold text-crust right-0 bottom-0 rounded-tl-lg">
-          {book.seriesName} - {book.fileName}
         </div>
+      </figure>
+      <progress
+        className="progress progress-primary w-56 z-50 rounded-none absolute bottom-3"
+        value={book.percentComplete}
+        max="100"
+      ></progress>
+      <div className="card-body">
+        <div className="card-actions absolute top-0 right-0">
+          <button
+            className="btn btn-circle btn-xs no-animation btn-ghost text-white hover:text-error"
+            onClick={deleteBook}
+          >
+            <FontAwesomeIcon icon={faTrash} />
+          </button>
+        </div>
+        <Link href={book.path} className="grow">
+          <h2 className="card-title text-[1.6rem] drop-shadow-[0_3px_4px_rgba(0,0,0,0.5)] text-white">
+            {book.seriesName}
+          </h2>
+          <h2 className="card-title drop-shadow-[0_3px_4px_rgba(0,0,0,0.5)]  text-white">
+            {book.fileName}
+          </h2>
+        </Link>
       </div>
-      <ProgressBar progress={book.percentComplete} page={book.page} />
     </div>
   );
 };
 
-const Bookshelf: React.FC = () => {
-  const [sortAscending, setSortAscending] = useState(true);
-  const [books, setBooks] = useState<Book[]>([]);
-  const [sortBy, setSortBy] = useState<"title" | "remainingPages">("title");
+type BookShelfProps = {
+  search: string;
+};
 
-  const determineProgressStatus = (
-    currentPage: number,
-    totalPages: number
-  ): "future" | "finished" | "reading" => {
-    if (1 === currentPage) {
-      return "future";
-    } else if (currentPage === totalPages) {
-      return "finished";
-    } else {
-      return "reading";
-    }
-  };
+const Bookshelf = ({ search }: BookShelfProps) => {
+  const [books, setBooks] = useState<Book[]>([]);
 
   useEffect(() => {
     function updateFromLocalStorage() {
@@ -116,36 +105,55 @@ const Bookshelf: React.FC = () => {
     setBooks((prevBooks) => prevBooks.filter((book) => book.key !== key));
   };
   const readingBooks = books.filter(
-    (book) => book.progressStatus === "reading"
+    (book) =>
+      book.progressStatus === "reading" &&
+      `${book.fileName} ${book.seriesName}`
+        .toLowerCase()
+        .includes(search.toLowerCase())
   );
   const finishedBooks = books.filter(
-    (book) => book.progressStatus === "finished"
+    (book) =>
+      book.progressStatus === "finished" &&
+      `${book.fileName} ${book.seriesName}`
+        .toLowerCase()
+        .includes(search.toLowerCase())
   );
-  const futureBooks = books.filter((book) => book.progressStatus === "future");
+  const futureBooks = books.filter(
+    (book) =>
+      book.progressStatus === "future" &&
+      `${book.fileName} ${book.seriesName}`
+        .toLowerCase()
+        .includes(search.toLowerCase())
+  );
 
   return (
-    <div className="root latte bg-base p-5">
+    <div className="root latte bg-ctp-base p-5">
       <Head>
         <title>Bookshelf</title>
         <meta charSet="utf-8" />
       </Head>
-
+      {readingBooks.length === 0 &&
+        futureBooks.length === 0 &&
+        finishedBooks.length === 0 && (
+          <div className="alert">
+            <FontAwesomeIcon icon={faTriangleExclamation} />
+            <span>No books found{search != "" ? ` for '${search}'` : ""}</span>
+            <div>
+              <Link href="/addnew">
+                <button className="btn btn-sm btn-primary">Add Some</button>
+              </Link>
+            </div>
+          </div>
+        )}
       {readingBooks.length > 0 && (
         <Shelf title="Reading" books={readingBooks} onDelete={deleteBook} />
       )}
-
       {futureBooks.length > 0 && (
         <Shelf title="Future" books={futureBooks} onDelete={deleteBook} />
       )}
-
       {finishedBooks.length > 0 && (
         <Shelf title="Finished" books={finishedBooks} onDelete={deleteBook} />
       )}
-      <Link href={`/addnew`}>
-        <button className="bg-lavender text-white p-3 h-16 text-2xl absolute top-0 right-0">
-          Manage Bookshelf
-        </button>
-      </Link>
     </div>
   );
 };
