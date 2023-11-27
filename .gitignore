@@ -32,5 +32,9 @@ yarn-error.log*
 .env
 
 /mokuro
+/db
+dev.db
+dev.db-journal
+*.env*
 
 /shared/acme.json

@@ -1,20 +1,39 @@
-// Typescript book class
 export class Book {
   key: string;
   seriesName: string;
   path: string;
   fileName: string;
-  mokuro: {
-    cover_page: string;
-    page_idx: number;
-    last_page_idx: number;
-  };
+  mokuro: LocalStorageBook;
   coverPage: string;
   page: number;
   progressStatus: "reading" | "finished" | "future";
   percentComplete: number;
   remainingPages: number;
 }
+
+export class LocalStorageBook {
+  page_idx: number = 0;
+  page2_idx: number = 1;
+  hasCover: boolean = false;
+  r2l: boolean = true;
+  singlePageView: boolean = true;
+  ctrlToPan: boolean = false;
+  textBoxBorders: boolean = false;
+  editableText: boolean = false;
+  displayOCR: boolean = true;
+  fontSize: string = "auto";
+  eInkMode: boolean = false;
+  defaultZoomMode: string = "fit to screen";
+  toggleOCRTextBoxes: boolean = false;
+  backgroundColor: string = "#C4C3DO";
+  last_page_idx: number;
+  cover_page: string;
+
+  updateLocalStorage = (key: string) => {
+    localStorage.setItem(`mokuro_${key}`, JSON.stringify(self));
+  };
+}
+
 const determineProgressStatus = (
   currentPage: number,
   totalPages: number
@@ -28,9 +47,13 @@ const determineProgressStatus = (
   }
 };
 
-export function getFromLocalStorage(): Book[] {
+export function getFromLocalStorage(key?: string): Book[] {
   const keys = Object.keys(localStorage);
-  const storagePrefix = "mokuro_";
+  var storagePrefix = "mokuro_";
+
+  if (key != null) {
+    storagePrefix = `${storagePrefix}/${key}`;
+  }
 
   return keys
     .filter((key) => key.startsWith(storagePrefix))
@@ -38,7 +61,7 @@ export function getFromLocalStorage(): Book[] {
       const path = decodeURI(key.substring(storagePrefix.length));
       const fileName = path.split("/").pop().replace(".html", "");
       const seriesName = path.split("/").slice(-2)[0];
-      const mokuro = JSON.parse(localStorage.getItem(key));
+      const mokuro: LocalStorageBook = JSON.parse(localStorage.getItem(key));
 
       return {
         key,

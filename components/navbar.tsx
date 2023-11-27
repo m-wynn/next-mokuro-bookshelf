@@ -5,9 +5,9 @@ class NavBarProps {
 }
 
 const NavBar = ({ setSearch }: NavBarProps) => (
-  <div className="navbar bg-ctp-surface1 shadow mb-4">
+  <div className="mb-4 shadow navbar bg-ctp-surface1">
     <div className="flex-1">
-      <Link href="/" className="btn btn-ghost normal-case text-xl">
+      <Link href="/" className="text-xl normal-case btn btn-ghost">
         Hondana
       </Link>
     </div>
@@ -16,11 +16,11 @@ const NavBar = ({ setSearch }: NavBarProps) => (
         <input
           type="text"
           placeholder="Search"
-          className="input input-bordered w-24 md:w-auto"
+          className="w-24 md:w-auto input input-bordered"
           onChange={(e) => setSearch(e.target.value)}
         />
       </div>
-      <Link href="/addnew" className="btn btn-primary normal-case">
+      <Link href="/addnew" className="normal-case btn btn-primary">
         Manage Bookshelf
       </Link>
     </div>

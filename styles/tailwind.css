@@ -9,7 +9,7 @@ body,
 body > div:first-child,
 div#__next,
 div#__next > div {
-  height: 100%;
+  min-height: 100%;
 }
 
 .drop-shadow-white {
@@ -24,4 +24,14 @@ div#__next > div {
     rgba(0, 0, 0, 0) 100%
   ) !important;
   opacity: 1 !important;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
 }
