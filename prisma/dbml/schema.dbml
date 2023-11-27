@@ -1,0 +1,92 @@
+//// ------------------------------------------------------
+//// THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+//// ------------------------------------------------------
+
+Table User {
+  id Int [pk, increment]
+  name String [unique, not null]
+  password String [not null]
+  role Role [not null, default: 'READER']
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  requirePasswordReset Boolean [not null, default: false]
+  readings Reading [not null]
+  uploadedVolumes Volume [not null]
+  uploadedPages Page [not null]
+  uploadedBooks Book [not null]
+}
+
+Table Book {
+  id Int [pk, increment]
+  name String [unique, not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  uploadedBy User [not null]
+  uploadedById Int [not null]
+  volumes Volume [not null]
+}
+
+Table Volume {
+  id Int [pk, increment]
+  number Int [not null]
+  book Book [not null]
+  bookId Int [not null]
+  cover String [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  uploadedBy User [not null]
+  uploadedById Int [not null]
+  readings Reading [not null]
+  pages Page [not null]
+}
+
+Table Page {
+  id Int [pk, increment]
+  number Int [not null]
+  volume Volume [not null]
+  volumeId Int [not null]
+  ocr Json [not null]
+  fileName String [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  uploadedBy User [not null]
+  uploadedById Int [not null]
+}
+
+Table Reading {
+  id Int [pk, increment]
+  user User [not null]
+  userId Int [not null]
+  volume Volume [not null]
+  volumeId Int [not null]
+  page Int [not null, default: 0]
+  status ReadingStatus [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+}
+
+Enum Role {
+  ADMIN
+  EDITOR
+  READER
+}
+
+Enum ReadingStatus {
+  UNREAD
+  READING
+  READ
+}
+
+Ref: Book.uploadedById > User.id
+
+Ref: Volume.bookId > Book.id
+
+Ref: Volume.uploadedById > User.id
+
+Ref: Page.volumeId > Volume.id
+
+Ref: Page.uploadedById > User.id
+
+Ref: Reading.userId > User.id
+
+Ref: Reading.volumeId > Volume.id

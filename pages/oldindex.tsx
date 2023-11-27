@@ -6,7 +6,6 @@ import {
   faTriangleExclamation,
 } from "@fortawesome/free-solid-svg-icons";
 import { Book, getFromLocalStorage } from "../components/book";
-import Navbar from "../components/navbar";
 import Link from "next/link";
 
 type BookCardProps = {

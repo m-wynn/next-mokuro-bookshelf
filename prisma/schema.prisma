@@ -1,0 +1,92 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+  engineType    = "binary"
+}
+
+generator dbml {
+  provider = "prisma-dbml-generator"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                   Int       @id @default(autoincrement())
+  name                 String    @unique
+  password             String
+  role                 Role      @default(READER)
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+  requirePasswordReset Boolean   @default(false)
+  readings             Reading[]
+  uploadedVolumes      Volume[]
+  uploadedPages        Page[]
+  uploadedBooks        Book[]
+}
+
+model Book {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  uploadedBy   User      @relation(fields: [uploadedById], references: [id])
+  uploadedById Int
+  volumes   Volume[]
+}
+
+model Volume {
+  id           Int       @id @default(autoincrement())
+  number       Int
+  book         Book      @relation(fields: [bookId], references: [id])
+  bookId       Int
+  cover        String
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  uploadedBy   User      @relation(fields: [uploadedById], references: [id])
+  uploadedById Int
+  readings     Reading[]
+  pages        Page[]
+}
+
+model Page {
+  id           Int      @id @default(autoincrement())
+  number       Int
+  volume       Volume   @relation(fields: [volumeId], references: [id])
+  volumeId     Int
+  ocr          Json
+  fileName     String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  uploadedBy   User     @relation(fields: [uploadedById], references: [id])
+  uploadedById Int
+}
+
+model Reading {
+  id        Int           @id @default(autoincrement())
+  user      User          @relation(fields: [userId], references: [id])
+  userId    Int
+  volume    Volume        @relation(fields: [volumeId], references: [id])
+  volumeId  Int
+  page      Int           @default(0)
+  status    ReadingStatus
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+}
+
+enum Role {
+  ADMIN // me
+  EDITOR
+  READER
+}
+
+enum ReadingStatus {
+  UNREAD
+  READING
+  READ
+}
