@@ -1,0 +1,27 @@
+name: Build and Test Docker
+
+on:
+  push:
+    branches: [ "main", "dev" ]
+  pull_request:
+    branches: [ "dev" ]
+
+env:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Create .env
+      run: touch .env
+    - uses: actions/checkout@v3
+    - name: Build the Docker image
+      run: docker-compose build --no-cache --force-rm 
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Create .env
+      run: touch .env
+    - name: Test the Docker image
+      run: docker-compose up -d 
