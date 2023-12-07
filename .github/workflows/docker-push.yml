@@ -28,7 +28,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
           
       - name: Create .env
-      run: touch .env
+        run: touch .env
 
       - name: Extract metadata (tags, labels) for Docker
         id: meta
