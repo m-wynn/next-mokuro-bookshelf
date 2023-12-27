@@ -37,23 +37,29 @@ export default function VolumeEditor({ params: { volumeid } }): JSX.Element {
     fetch("/api/volume", {
       method: "POST",
       body: formData,
-    }).then((response) => {
-      console.log(response);
-    });
-
-    Array.from(data.pages).forEach((page, i) => {
-      const pageFormData = new FormData();
-      pageFormData.append("volumeId", "0");
-      pageFormData.append("number", i.toString());
-      pageFormData.append("page", page);
-      pageFormData.append(
-        "ocr",
-        Array.from(data.ocrFiles).find(
-          (ocrFile) =>
-            ocrFile.name === page.name.replace(/\.[^/.]+$/, "") + ".json",
-        ) as Blob,
-      );
-    });
+    })
+      .then((response) => response.json())
+      .then((volume) => {
+        Array.from(data.pages).forEach((page, i) => {
+          const pageFormData = new FormData();
+          pageFormData.append("volumeId", volume.id);
+          pageFormData.append("number", i.toString());
+          pageFormData.append("file", page);
+          pageFormData.append(
+            "ocr",
+            Array.from(data.ocrFiles).find(
+              (ocrFile) =>
+                ocrFile.name === page.name.replace(/\.[^/.]+$/, "") + ".json",
+            ) as Blob,
+          );
+          fetch("/api/page", {
+            method: "POST",
+            body: pageFormData,
+          }).then((response) => {
+            console.log(response);
+          });
+        });
+      });
   };
 
   return (

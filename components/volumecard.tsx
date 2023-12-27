@@ -5,7 +5,7 @@ type VolumeCardProps = {
   percentComplete?: number;
   actions?: React.ReactNode;
   href: string;
-  bookName: string;
+  seriesName: string;
   volumeNumber: number;
 };
 
@@ -13,7 +13,7 @@ const VolumeCard = ({
   coverUri,
   percentComplete,
   volumeNumber,
-  bookName,
+  seriesName,
   actions,
   href,
 }: VolumeCardProps) => {
@@ -23,7 +23,7 @@ const VolumeCard = ({
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={coverUri}
-          alt={`${bookName} volume ${volumeNumber}`}
+          alt={`${seriesName} volume ${volumeNumber}`}
           className="flex items-center bg-center bg-no-repeat bg-cover w-[13.5rem] h-[20.25rem]"
         />
       </figure>
@@ -40,7 +40,7 @@ const VolumeCard = ({
         <div className="absolute top-0 right-0 card-actions">{actions}</div>
         <Link href={href} className="grow">
           <h2 className="card-title text-[1.6rem] drop-shadow-[0_3px_4px_rgba(0,0,0,0.5)] text-white">
-            {bookName}
+            {seriesName}
           </h2>
           <h2 className="card-title drop-shadow-[0_3px_4px_rgba(0,0,0,0.5)]  text-white">
             Volume {volumeNumber}

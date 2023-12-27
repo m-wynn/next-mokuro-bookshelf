@@ -1,21 +1,53 @@
 import prisma from "db";
 import { promises as fs } from "fs";
 import { NextRequest, NextResponse } from "next/server";
-import { authConfig } from "lib/auth";
-import { getServerSession } from "next-auth";
+import { auth } from "auth/lucia";
+import * as context from "next/headers";
 
-type Params = {
-  page: number;
-  volumeId: number;
-  file: File;
-};
-
-export async function POST(request: NextRequest) {
-  const session = await getServerSession(authConfig);
+export async function GET(request: NextRequest) {
+  const session = await auth.handleRequest(request.method, context).validate();
   if (!session) {
     return NextResponse.json({ error: "Not logged in" }, { status: 401 });
   }
-  if (!(session.user.role in ["ADMIN", "EDITOR"])) {
+
+  const searchParams = request.nextUrl.searchParams;
+
+  if (searchParams.has("series") && searchParams.has("volume")) {
+    console.log(
+      `series: ${searchParams.get("series")}, volume: ${searchParams.get(
+        "volume",
+      )}`,
+    );
+    const pages = await prisma.page.findMany({
+      where: {
+        volume: {
+          number: +searchParams.get("volume"),
+          seriesId: +searchParams.get("series"),
+        },
+      },
+      select: {
+        number: true,
+        ocr: true,
+        fileName: true,
+      },
+      orderBy: {
+        number: "asc",
+      },
+    });
+    return NextResponse.json(pages);
+  }
+  return NextResponse.json(
+    { error: "Missing series or volume" },
+    { status: 400 },
+  );
+}
+
+export async function POST(request: NextRequest) {
+  const session = await auth.handleRequest(request.method, context).validate();
+  if (!session) {
+    return NextResponse.json({ error: "Not logged in" }, { status: 401 });
+  }
+  if (!["ADMIN", "EDITOR"].includes(session.user.role)) {
     return NextResponse.json(
       { error: "Not authorized to upload" },
       { status: 403 },
@@ -25,19 +57,42 @@ export async function POST(request: NextRequest) {
   const req = await request.formData();
   let volumeId = parseInt(req.get("volumeId") as string);
   let number = parseInt(req.get("number") as string);
-  let ocr = JSON.parse(req.get("ocr") as string);
+  let ocr = req.get("ocr") as Blob | null;
   let file = req.get("file") as Blob;
+
+  if (volumeId == null || number == null || file == null) {
+    throw new Error("Missing required fields");
+  }
+
+  let ocrData = ocr != null ? JSON.parse(await ocr.text()) : null;
+
   await fs.writeFile(
     `${process.env.IMAGE_PATH}/${volumeId}/${number}-${file.name}`,
     Buffer.from(await file.arrayBuffer()),
   );
-  prisma.page.create({
-    data: {
+
+  const page = await prisma.page.upsert({
+    where: {
+      volumeNum: {
+        number: number,
+        volumeId: volumeId,
+      },
+    },
+    update: {
       number: number,
       volumeId: volumeId,
-      ocr: ocr,
-      fileName: `${volumeId}/${number}-${file.name}`,
-      uploadedById: session.user.id,
+      ocr: ocrData,
+      fileName: `${number}-${file.name}`,
+      uploadedById: session.user.userId,
+    },
+    create: {
+      number: number,
+      volumeId: volumeId,
+      ocr: ocrData,
+      fileName: `${number}-${file.name}`,
+      uploadedById: session.user.userId,
     },
   });
+
+  return NextResponse.json(page);
 }

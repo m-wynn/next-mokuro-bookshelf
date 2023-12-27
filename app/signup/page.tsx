@@ -1,16 +1,8 @@
 "use client";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { signIn } from "next-auth/react";
-import { useEffect, useState } from "react";
-import { User } from "@prisma/client";
+import { useRouter } from "next/navigation";
 import Input from "@/input";
-
-type Inputs = {
-  username: string;
-  password: string;
-  confirmPassword: string;
-  inviteCode: string;
-};
+import { SignupForm } from "auth";
 
 export default function Register() {
   const {
@@ -18,22 +10,32 @@ export default function Register() {
     handleSubmit,
     watch,
     formState: { errors },
-  } = useForm<Inputs>();
+  } = useForm<SignupForm>();
+  const router = useRouter();
 
-  const [users, setUsers] = useState<User[]>([]);
-  const onSubmit: SubmitHandler<Inputs> = async (data) => {
-    await signIn("register", data);
-    fetch("/api/volume", {
+  const onSubmit: SubmitHandler<SignupForm> = async (data) => {
+    const response = await fetch("/api/signup", {
       method: "POST",
-      body: formData,
+      body: JSON.stringify(data),
     });
+
+    console.log(response);
+
+    if (response.status === 0) {
+      // redirected
+      // when using `redirect: "manual"`, response status 0 is returned
+      return router.refresh();
+    }
   };
   return (
     <div className="flex justify-center items-center w-screen h-screen">
       <div className="w-3/5 max-w-2xl card bg-base-300 rounded-box">
         <div className="items-center card-body">
           <h2 className="card-title">Sign Up</h2>
-          <form className="flex flex-col justify-around items-center w-full">
+          <form
+            className="flex flex-col justify-around items-center w-full"
+            onSubmit={handleSubmit(onSubmit)}
+          >
             <Input
               label="Username"
               placeholder="renge"
@@ -57,8 +59,8 @@ export default function Register() {
             />
             <Input
               label="Confirm Password"
-              placeholder="ny@np@55u"
               type="password"
+              placeholder="ny@np@55u"
               errors={errors?.confirmPassword || null}
               register={register("confirmPassword", {
                 validate: (value) =>
