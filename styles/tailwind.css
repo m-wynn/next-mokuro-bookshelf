@@ -16,7 +16,7 @@ div#__next > div {
   filter: drop-shadow(0px 1px 4px white);
 }
 
-.bookcard.image-full::before {
+.readingcard.image-full::before {
   background: linear-gradient(
     rgba(0, 0, 0, 0.6) 0%,
     rgba(0, 0, 0, 0.3) 30%,

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import Input from "./input";
+import Input from "@/input";
 function readFile(file: File) {
   return new Promise((resolve, reject) => {
     var fr = new FileReader();

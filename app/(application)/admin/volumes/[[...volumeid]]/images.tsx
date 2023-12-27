@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import Input from "./input";
+import Input from "@/input";
 
 export default function Images({ register, watch, errors }): JSX.Element {
   const pages: FileList = watch("pages");

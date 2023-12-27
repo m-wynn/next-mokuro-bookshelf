@@ -1,6 +1,6 @@
 import VolumeCard from "@/volumecard";
 import { useEffect, useState } from "react";
-import Input from "./input";
+import Input from "@/input";
 export default function Info({ errors, register, watch }): JSX.Element {
   const [coverUri, setCoverUri] = useState("");
 
@@ -62,7 +62,7 @@ export default function Info({ errors, register, watch }): JSX.Element {
                 coverUri == "" ? "https://placekitten.com/400/540" : coverUri
               }
               href="#"
-              bookName={!title || title == "" ? "Manga Title" : title}
+              seriesName={!title || title == "" ? "Manga Title" : title}
               volumeNumber={volumeNumber || "?"}
             />
           </div>

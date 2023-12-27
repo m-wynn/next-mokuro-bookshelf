@@ -1,0 +1,82 @@
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
+import { SignupForm } from "auth";
+import { auth } from "auth/lucia";
+import prisma from "db";
+import rateLimit from "lib/rate-limit";
+import * as context from "next/headers";
+import { NextResponse } from "next/server";
+
+import type { NextRequest } from "next/server";
+import { env } from "process";
+
+const limiter = rateLimit({
+  interval: 60 * 1000,
+  uniqueTokenPerInterval: 5,
+});
+
+export const POST = async (request: NextRequest) => {
+  try {
+    await limiter.check(5, "SIGNUP_RATE_LIMIT");
+  } catch (e) {
+    return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+  }
+  const { username, password, confirmPassword, inviteCode }: SignupForm =
+    await request.json();
+
+  if (password.length < 8) {
+    return NextResponse.json({ error: "Invalid password" }, { status: 400 });
+  }
+  if (password !== confirmPassword) {
+    return NextResponse.json(
+      { error: "Passwords do not match" },
+      { status: 400 },
+    );
+  }
+
+  if (inviteCode !== env.INVITE_CODE) {
+    return NextResponse.json({ error: "Invalid invite code" }, { status: 400 });
+  }
+
+  try {
+    const userCount = await prisma.user.count();
+    const user = await auth.createUser({
+      key: {
+        providerId: "username", // auth method
+        providerUserId: username.toLowerCase(), // unique id when using "username" auth method
+        password, // hashed by Lucia
+      },
+      attributes: {
+        name: username,
+        role: userCount === 0 ? "ADMIN" : "USER", // first user is admin
+      },
+    });
+    const session = await auth.createSession({
+      userId: user.userId,
+      attributes: {},
+    });
+    const authRequest = auth.handleRequest(request.method, context);
+    authRequest.setSession(session);
+    return new Response(null, {
+      status: 302,
+      headers: {
+        Location: "/", // redirect home
+      },
+    });
+  } catch (e) {
+    if (
+      e instanceof PrismaClientKnownRequestError &&
+      e.code === "P2002" // Unique constraint failed
+    ) {
+      return NextResponse.json(
+        { error: "Username already taken" },
+        { status: 400 },
+      );
+    }
+    console.error(e);
+
+    return NextResponse.json(
+      { error: "An unknown error occurred" },
+      { status: 500 },
+    );
+  }
+};

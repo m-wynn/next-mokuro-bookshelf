@@ -2,7 +2,6 @@
 
 import "@fortawesome/fontawesome-svg-core/styles.css";
 import "../styles/tailwind.css";
-import NextAuthProvider from "@/NextAuthProvider";
 
 export default function RootLayout({
   children,
@@ -10,12 +9,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body data-theme="catppuccin-mocha">
-        <NextAuthProvider>
-          <div>{children}</div>
-        </NextAuthProvider>
-      </body>
+    <html lang="en" data-theme="catppuccin-mocha">
+      <body className="min-h-screen">{children}</body>
     </html>
   );
 }
