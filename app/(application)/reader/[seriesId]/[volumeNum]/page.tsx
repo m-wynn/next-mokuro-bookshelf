@@ -38,11 +38,10 @@ export default function Page({
   params: { seriesId: string; volumeNum: string };
 }) {
   const [pages, setPages] = useState<Page[]>([]);
+  const [volumeId, setVolumeId] = useState(null);
   const [useTwoPages, setUseTwoPages] = useState(false);
   const [firstPageIsCover, setFirstPageIsCover] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
-
-  const [volumeId, setVolumeId] = useState(null);
 
   useEffect(() => {
     const getVolume = async () => {
@@ -68,6 +67,12 @@ export default function Page({
       });
     }
   }, [currentPage, volumeId]);
+
+  useEffect(() => {
+    const settings = JSON.parse(window.localStorage.getItem('settings') || '{}');
+    setUseTwoPages(!!settings?.[volumeId]?.useTwoPages);
+    setFirstPageIsCover(!!settings?.[volumeId]?.firstPageIsCover);
+  }, [volumeId]);
 
   const setBoundPage = useCallback(
     (page: number) => {
@@ -184,6 +189,7 @@ export default function Page({
           firstPageIsCover={firstPageIsCover}
         />
         <Settings
+          volumeId={volumeId}
           useTwoPages={useTwoPages}
           setUseTwoPages={setUseTwoPages}
           firstPageIsCover={firstPageIsCover}
@@ -213,11 +219,6 @@ export default function Page({
           }}
         >
           <div id="visiblePagesContainer" className="flex flex-row flex-nowrap">
-            <PageContainer
-              page={page}
-              preloads={[]}
-              getImageUri={getImageUri}
-            />
             {showTwoPages ? (
               <PageContainer
                 page={pages[currentPage + 1]}
@@ -225,6 +226,11 @@ export default function Page({
                 getImageUri={getImageUri}
               />
             ) : null}
+            <PageContainer
+              page={page}
+              preloads={[]}
+              getImageUri={getImageUri}
+            />
           </div>
         </TransformComponent>
       </TransformWrapper>
