@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "auth/lucia";
 import * as context from "next/headers";
 
-export async function POST(request: NextRequest) {
+export async function GET(request: NextRequest) {
   const session = await auth.handleRequest(request.method, context).validate();
   if (!session) {
     return NextResponse.json({ error: "Not logged in" }, { status: 401 });
