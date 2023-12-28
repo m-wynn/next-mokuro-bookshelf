@@ -11,6 +11,7 @@ import PageContainer from "./PageContainer";
 import Settings from "./Settings";
 
 import { Page } from "./page";
+import { useVolumeContext } from "./VolumeDataProvider";
 
 export default function PagesContainer({
   volumeId,
@@ -21,9 +22,10 @@ export default function PagesContainer({
   progressPage: number;
   pages: Page[];
 }) {
-  const [useTwoPages, setUseTwoPages] = useState(false);
-  const [firstPageIsCover, setFirstPageIsCover] = useState(false);
-  const [currentPage, setCurrentPage] = useState(progressPage);
+  const volumeData = useVolumeContext();
+  const [useTwoPages, setUseTwoPages] = useState(volumeData.useTwoPages);
+  const [firstPageIsCover, setFirstPageIsCover] = useState(volumeData.firstPageIsCover);
+  const [currentPage, setCurrentPage] = useState(volumeData.currentPage);
 
   const layoutChanged = useRef({ useTwoPages, firstPageIsCover }).current;
 
@@ -36,13 +38,13 @@ export default function PagesContainer({
     }
   }, [currentPage, volumeId]);
 
-  useEffect(() => {
-    const settings = JSON.parse(
-      window.localStorage.getItem("settings") || "{}",
-    );
-    setUseTwoPages(!!settings?.[volumeId]?.useTwoPages);
-    setFirstPageIsCover(!!settings?.[volumeId]?.firstPageIsCover);
-  }, [volumeId]);
+  // useEffect(() => {
+  //   const settings = JSON.parse(
+  //     window.localStorage.getItem("settings") || "{}",
+  //   );
+  //   setUseTwoPages(!!settings?.[volumeId]?.useTwoPages);
+  //   setFirstPageIsCover(!!settings?.[volumeId]?.firstPageIsCover);
+  // }, [volumeId]);
 
   const setBoundPage = useCallback(
     (page: number) => {

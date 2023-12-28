@@ -1,4 +1,5 @@
 import PagesContainer from "./PagesContainer";
+import VolumeDataProvider from "./VolumeDataProvider";
 import prisma from "db";
 import { auth } from "auth/lucia";
 import * as context from "next/headers";
@@ -59,13 +60,15 @@ export default async function Page({
   if (!volume) return <div>Volume not found</div>;
 
   return (
-    <PagesContainer
-      volumeId={volume.id}
-      progressPage={volume.readings[0].page ?? 0}
-      pages={volume.pages.map((page) => ({
-        ...page,
-        ocr: page.ocr as OcrContents,
-      }))}
-    />
+    <VolumeDataProvider volumeId={volume.id}>
+      <PagesContainer
+        volumeId={volume.id}
+        progressPage={volume.readings[0].page ?? 0}
+        pages={volume.pages.map((page) => ({
+          ...page,
+          ocr: page.ocr as OcrContents,
+        }))}
+      />
+    </VolumeDataProvider>
   );
 }

@@ -33,14 +33,14 @@ export default function Settings({
         <Checkbox
           fa={faTableColumns}
           value={useTwoPages}
-          set={(isChecked) => { setSetting(volumeId, setUseTwoPages, 'useTwoPages', isChecked); }}
+          set={setUseTwoPages}
         >
           Display Two Pages
         </Checkbox>
         <Checkbox
           fa={faBook}
           value={firstPageIsCover}
-          set={(isChecked) => { setSetting(volumeId, setFirstPageIsCover, 'firstPageIsCover', isChecked); }}
+          set={setFirstPageIsCover}
         >
           First Page Is Cover
         </Checkbox>
