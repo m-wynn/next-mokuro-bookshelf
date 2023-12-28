@@ -6,7 +6,19 @@ import {
   faTableColumns,
 } from "@fortawesome/free-solid-svg-icons";
 
+const setSetting = (volumeId, setCallback, settingKey, value) => {
+  let settings = JSON.parse(window.localStorage.getItem('settings') || '{}');
+  if (!settings[volumeId]) {
+    settings[volumeId] = {};
+  }
+
+  settings[volumeId][settingKey] = value;
+  localStorage.setItem('settings', JSON.stringify(settings));
+  setCallback(value);
+}
+
 export default function Settings({
+  volumeId,
   useTwoPages,
   setUseTwoPages,
   firstPageIsCover,
@@ -18,13 +30,17 @@ export default function Settings({
         <FontAwesomeIcon role="button" icon={faBars} />
       </summary>
       <ul className="p-2 mt-4 w-64 shadow menu dropdown-content z-[1] bg-base-300 rounded-box">
-        <Checkbox fa={faTableColumns} value={useTwoPages} set={setUseTwoPages}>
+        <Checkbox
+          fa={faTableColumns}
+          value={useTwoPages}
+          set={(isChecked) => { setSetting(volumeId, setUseTwoPages, 'useTwoPages', isChecked); }}
+        >
           Display Two Pages
         </Checkbox>
         <Checkbox
           fa={faBook}
           value={firstPageIsCover}
-          set={setFirstPageIsCover}
+          set={(isChecked) => { setSetting(volumeId, setFirstPageIsCover, 'firstPageIsCover', isChecked); }}
         >
           First Page Is Cover
         </Checkbox>

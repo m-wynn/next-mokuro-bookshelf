@@ -224,11 +224,6 @@ export default function Page({
               id="visiblePagesContainer"
               className="flex flex-row flex-nowrap"
             >
-              <PageContainer
-                page={page}
-                preloads={[]}
-                getImageUri={getImageUri}
-              />
               {showTwoPages ? (
                 <PageContainer
                   page={pages[currentPage + 1]}
@@ -236,6 +231,11 @@ export default function Page({
                   getImageUri={getImageUri}
                 />
               ) : null}
+              <PageContainer
+                page={page}
+                preloads={[]}
+                getImageUri={getImageUri}
+              />
             </div>
           </TransformComponent>
         </TransformWrapper>

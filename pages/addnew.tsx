@@ -32,6 +32,7 @@ export const getServerSideProps: GetServerSideProps<{
   htmlFilesWithFolder: FolderData[];
 }> = async () => {
   const mokuroPath = path.join(process.cwd(), "/public/mokuro/");
+  fs.mkdirSync(mokuroPath, { recursive: true });
 
   // Read all items (files and folders) within mokuroPath
   const items = await fs.promises.readdir(mokuroPath);
