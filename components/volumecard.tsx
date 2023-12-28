@@ -18,7 +18,7 @@ const VolumeCard = ({
   href,
 }: VolumeCardProps) => {
   return (
-    <div className="flex-initial m-2 shadow hover:shadow-lg w-[13.5rem] h-[20.25rem] bookcard card card-compact image-full bg-base-300">
+    <div className="flex-initial m-2 shadow hover:shadow-lg w-[13.5rem] h-[20.25rem] readingcard card card-compact image-full bg-base-300">
       <figure className="overflow-hidden">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img

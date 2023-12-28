@@ -14,11 +14,11 @@ export default async function DashboardLayout({
     <>
       <header>
         <nav>
-          <Navbar />
+          <Navbar role={session.user.role} />
         </nav>
       </header>
 
-      <main>{children}</main>
+      {children}
     </>
   );
 }

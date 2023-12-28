@@ -9,7 +9,10 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Not logged in" }, { status: 401 });
   }
 
-  const volumes = await prisma.reading.findMany({
+  const readings = await prisma.reading.findMany({
+    where: {
+      userId: session.userId,
+    },
     select: {
       id: true,
       page: true,
@@ -32,5 +35,5 @@ export async function GET(request: NextRequest) {
     },
   });
 
-  return NextResponse.json(volumes);
+  return NextResponse.json(readings);
 }
