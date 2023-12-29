@@ -57,12 +57,24 @@ const getVolume = async (seriesId, volumeNum, userId) => {
     },
     select: {
       id: true,
+      firstPageIsCover: true,
       readings: {
         where: {
           userId: userId,
         },
         select: {
           page: true,
+          useTwoPagesOverride: true,
+          firstPageIsCoverOverride: true,
+          user: {
+            select: {
+              userSetting: {
+                select: {
+                  useTwoPages: true
+                }
+              }
+            }
+          }
         },
       },
       pages: {
@@ -74,7 +86,7 @@ const getVolume = async (seriesId, volumeNum, userId) => {
         orderBy: {
           number: 'asc'
         }
-      },
+      }
     },
   });
 }
