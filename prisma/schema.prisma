@@ -29,7 +29,7 @@ model User {
   uploadedSeries       Series[]
   auth_session         Session[]
   key                  Key[]
-  UserSetting          UserSetting?
+  userSetting          UserSetting?
 }
 
 model Session {
@@ -94,16 +94,17 @@ model Page {
 }
 
 model Reading {
-  id          Int           @id @default(autoincrement())
-  user        User          @relation(fields: [userId], references: [id])
-  userId      String
-  volume      Volume        @relation(fields: [volumeId], references: [id])
-  volumeId    Int
-  page        Int           @default(0)
-  status      ReadingStatus
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-  useTwoPages Boolean       @default(false)
+  id                       Int           @id @default(autoincrement())
+  user                     User          @relation(fields: [userId], references: [id])
+  userId                   String
+  volume                   Volume        @relation(fields: [volumeId], references: [id])
+  volumeId                 Int
+  page                     Int           @default(0)
+  status                   ReadingStatus
+  createdAt                DateTime      @default(now())
+  updatedAt                DateTime      @updatedAt
+  useTwoPagesOverride      Boolean?      @map("useTwoPages")
+  firstPageIsCoverOverride Boolean?
 
   @@unique(name: "volumeUser", [userId, volumeId])
 }

@@ -19,11 +19,21 @@ export default function VolumeDataProvider({ children, volume }: { children: Rea
   }
 
   const getUseTwoPages = () => {
-    return true;
+    const defaultSetting = !!volume.readings[0]?.user.UserSetting?.useTwoPages;
+    const override = volume.readings[0]?.useTwoPagesOverride;
+    if (override === null) {
+      return defaultSetting;
+    }
+    return override;
   }
 
   const getFirstPageIsCover = () => {
-    return true;
+    const defaultSetting = volume.firstPageIsCover;
+    const override = volume.readings[0]?.firstPageIsCoverOverride;
+    if (override === null) {
+      return defaultSetting;
+    }
+    return override;
   }
 
   const value = {

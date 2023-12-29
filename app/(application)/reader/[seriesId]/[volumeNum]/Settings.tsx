@@ -6,14 +6,11 @@ import {
   faTableColumns,
 } from "@fortawesome/free-solid-svg-icons";
 
-const setSetting = (volumeId, setCallback, settingKey, value) => {
-  let settings = JSON.parse(window.localStorage.getItem('settings') || '{}');
-  if (!settings[volumeId]) {
-    settings[volumeId] = {};
-  }
-
-  settings[volumeId][settingKey] = value;
-  localStorage.setItem('settings', JSON.stringify(settings));
+const setVolumeSetting = (volumeId, setCallback, settingKey, value) => {
+  fetch(`/api/volumeSetting/${volumeId}`, {
+    method: "POST",
+    body: JSON.stringify({ [settingKey]: value }),
+  });
   setCallback(value);
 }
 
@@ -33,14 +30,14 @@ export default function Settings({
         <Checkbox
           fa={faTableColumns}
           value={useTwoPages}
-          set={setUseTwoPages}
+          set={(checked) => { setVolumeSetting(volumeId, setUseTwoPages, 'useTwoPagesOverride', checked) }}
         >
           Display Two Pages
         </Checkbox>
         <Checkbox
           fa={faBook}
           value={firstPageIsCover}
-          set={setFirstPageIsCover}
+          set={(checked) => { setVolumeSetting(volumeId, setFirstPageIsCover, 'firstPageIsCoverOverride', checked) }}
         >
           First Page Is Cover
         </Checkbox>
