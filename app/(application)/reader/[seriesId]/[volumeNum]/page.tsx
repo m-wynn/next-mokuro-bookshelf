@@ -71,6 +71,9 @@ const getVolume = async (seriesId, volumeNum, userId) => {
           ocr: true,
           number: true,
         },
+        orderBy: {
+          number: 'asc'
+        }
       },
     },
   });
