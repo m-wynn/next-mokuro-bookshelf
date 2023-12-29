@@ -28,8 +28,8 @@ const PageContainer = ({ page, preloads, getImageUri }) => {
           <Image
             key={getImageUri(nextPage.fileName)}
             src={getImageUri(nextPage.fileName)}
-            width={nextPage.ocr.img_width}
-            height={nextPage.ocr.img_height}
+            width={nextPage.ocr?.img_width || 0}
+            height={nextPage.ocr?.img_height || 0}
             alt={nextPage.fileName}
             unoptimized={true}
             priority={true}

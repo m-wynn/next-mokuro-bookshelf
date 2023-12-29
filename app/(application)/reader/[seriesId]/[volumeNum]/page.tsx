@@ -70,11 +70,11 @@ const getVolume = async (seriesId, volumeNum, userId) => {
             select: {
               userSetting: {
                 select: {
-                  useTwoPages: true
-                }
-              }
-            }
-          }
+                  useTwoPages: true,
+                },
+              },
+            },
+          },
         },
       },
       pages: {
@@ -84,9 +84,9 @@ const getVolume = async (seriesId, volumeNum, userId) => {
           number: true,
         },
         orderBy: {
-          number: 'asc'
-        }
-      }
+          number: "asc",
+        },
+      },
     },
   });
-}
+};

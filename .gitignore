@@ -38,3 +38,5 @@ dev.db-journal
 *.env*
 
 /shared/acme.json
+
+/public/images

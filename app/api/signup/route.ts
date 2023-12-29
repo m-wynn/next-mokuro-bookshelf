@@ -56,12 +56,7 @@ export const POST = async (request: NextRequest) => {
     });
     const authRequest = auth.handleRequest(request.method, context);
     authRequest.setSession(session);
-    return new Response(null, {
-      status: 302,
-      headers: {
-        Location: "/", // redirect home
-      },
-    });
+    return NextResponse.json("User Created", { status: 201 });
   } catch (e) {
     if (
       e instanceof PrismaClientKnownRequestError &&

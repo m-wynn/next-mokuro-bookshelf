@@ -3,6 +3,7 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import Input from "@/input";
 import { SignupForm } from "auth";
+import { useState } from "react";
 
 export default function Register() {
   const {
@@ -12,19 +13,24 @@ export default function Register() {
     formState: { errors },
   } = useForm<SignupForm>();
   const router = useRouter();
+  const [error, setError] = useState<string | null>(null);
 
   const onSubmit: SubmitHandler<SignupForm> = async (data) => {
     const response = await fetch("/api/signup", {
       method: "POST",
       body: JSON.stringify(data),
     });
-
     console.log(response);
 
-    if (response.status === 0) {
-      // redirected
-      // when using `redirect: "manual"`, response status 0 is returned
-      return router.refresh();
+    if (response.status === 201) {
+      return router.push("/");
+    } else {
+      try {
+        const data = await response.json();
+        setError(data.error);
+      } catch (error) {
+        setError("An error occurred");
+      }
     }
   };
   return (
@@ -50,7 +56,7 @@ export default function Register() {
               type="password"
               errors={errors?.password || null}
               register={register("password", {
-                required: "Username is required",
+                required: "Password is required",
                 minLength: {
                   value: 8,
                   message: "Password must be at least 8 characters",
@@ -74,6 +80,7 @@ export default function Register() {
                 required: "Invite Code is required",
               })}
             />
+            {error && <p className="mt-4 text-error">{error}</p>}
 
             <button className="mt-8 max-w-xs btn btn-block" type="submit">
               Submit
