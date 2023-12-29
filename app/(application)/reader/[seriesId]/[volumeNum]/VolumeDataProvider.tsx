@@ -1,22 +1,27 @@
 "use client";
 
-import { DataType, DataValuesType } from '@/types/Data'
-import { createContext, useState, useContext, useEffect } from 'react'
+import { createContext, useContext } from "react";
 
 const VolumeContext = createContext({
   currentPage: 0,
   useTwoPages: false,
-  firstPageIsCover: false
+  firstPageIsCover: false,
 });
 
 export function useVolumeContext() {
   return useContext(VolumeContext);
 }
 
-export default function VolumeDataProvider({ children, volume }: { children: React.ReactNode }) {
+export default function VolumeDataProvider({
+  children,
+  volume,
+}: {
+  children: React.ReactNode;
+  volume: any;
+}) {
   const getCurrentPage = () => {
-    return volume.readings[0].page ?? 0;
-  }
+    return volume.readings[0]?.page ?? 0;
+  };
 
   const getUseTwoPages = () => {
     const defaultSetting = !!volume.readings[0]?.user.UserSetting?.useTwoPages;
@@ -25,7 +30,7 @@ export default function VolumeDataProvider({ children, volume }: { children: Rea
       return defaultSetting;
     }
     return override;
-  }
+  };
 
   const getFirstPageIsCover = () => {
     const defaultSetting = volume.firstPageIsCover;
@@ -34,13 +39,15 @@ export default function VolumeDataProvider({ children, volume }: { children: Rea
       return defaultSetting;
     }
     return override;
-  }
+  };
 
   const value = {
     currentPage: getCurrentPage(),
     useTwoPages: getUseTwoPages(),
-    firstPageIsCover: getFirstPageIsCover()
-  }
+    firstPageIsCover: getFirstPageIsCover(),
+  };
 
-  return <VolumeContext.Provider value={value}>{children}</VolumeContext.Provider>
+  return (
+    <VolumeContext.Provider value={value}>{children}</VolumeContext.Provider>
+  );
 }

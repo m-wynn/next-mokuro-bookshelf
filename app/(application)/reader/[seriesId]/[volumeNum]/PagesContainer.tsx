@@ -12,6 +12,9 @@ import Settings from "./Settings";
 
 import { Page } from "./page";
 import { useVolumeContext } from "./VolumeDataProvider";
+import { useGlobalContext } from "app/(application)/GlobalContext";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faMaximize } from "@fortawesome/free-solid-svg-icons";
 
 export default function PagesContainer({
   volumeId,
@@ -22,7 +25,9 @@ export default function PagesContainer({
 }) {
   const volumeData = useVolumeContext();
   const [useTwoPages, setUseTwoPages] = useState(volumeData.useTwoPages);
-  const [firstPageIsCover, setFirstPageIsCover] = useState(volumeData.firstPageIsCover);
+  const [firstPageIsCover, setFirstPageIsCover] = useState(
+    volumeData.firstPageIsCover,
+  );
   const [currentPage, setCurrentPage] = useState(volumeData.currentPage);
 
   const layoutChanged = useRef({ useTwoPages, firstPageIsCover }).current;
@@ -112,12 +117,20 @@ export default function PagesContainer({
     };
   }, [handleKeyDown]);
 
-  useEffect(() => {
-    if (transformComponentRef.current && pages) {
+  const reZoom = () => {
+    if (transformComponentRef.current) {
       const { zoomToElement } = transformComponentRef.current;
       zoomToElement("visiblePagesContainer", undefined, 50);
     }
-  }, [currentPage, pages, showTwoPages]);
+  };
+
+  const { fullScreen, setFullScreen } = useGlobalContext();
+
+  useEffect(() => {
+    if (pages) {
+      reZoom();
+    }
+  }, [currentPage, pages, showTwoPages, fullScreen]);
 
   const page = useMemo(() => pages[currentPage], [pages, currentPage]);
 
@@ -127,23 +140,33 @@ export default function PagesContainer({
   );
 
   return (
-    <div id="pagesContainer" className="flex flex-col m-0 w-full h-full">
-      <div className="join">
-        <Pagination
-          currentPage={currentPage}
-          setBoundPage={setBoundPage}
-          pageCount={pages.length}
-          useTwoPages={useTwoPages}
-          firstPageIsCover={firstPageIsCover}
-        />
-        <Settings
-          volumeId={volumeId}
-          useTwoPages={useTwoPages}
-          setUseTwoPages={setUseTwoPages}
-          firstPageIsCover={firstPageIsCover}
-          setFirstPageIsCover={setFirstPageIsCover}
-        />
-      </div>
+    <div
+      id="pagesContainer"
+      className={`flex flex-col m-0 w-full h-full ${
+        fullScreen ? "fixed top-0" : ""
+      }`}
+    >
+      {!fullScreen && (
+        <div className="join">
+          <button className="join-item btn" onClick={() => setFullScreen(true)}>
+            <FontAwesomeIcon icon={faMaximize} />
+          </button>
+          <Pagination
+            currentPage={currentPage}
+            setBoundPage={setBoundPage}
+            pageCount={pages.length}
+            useTwoPages={useTwoPages}
+            firstPageIsCover={firstPageIsCover}
+          />
+          <Settings
+            volumeId={volumeId}
+            useTwoPages={useTwoPages}
+            setUseTwoPages={setUseTwoPages}
+            firstPageIsCover={firstPageIsCover}
+            setFirstPageIsCover={setFirstPageIsCover}
+          />
+        </div>
+      )}
       <TransformWrapper
         limitToBounds={false}
         centerOnInit={true}
@@ -176,7 +199,16 @@ export default function PagesContainer({
             ) : null}
             <PageContainer
               page={page}
-              preloads={[]}
+              preloads={
+                showTwoPages
+                  ? [
+                      [2, 3, 4]
+                        .map((i) => currentPage + i)
+                        .filter((i) => i < pages.length)
+                        .map((i) => pages[i]),
+                    ]
+                  : [pages[currentPage + 1]]
+              }
               getImageUri={getImageUri}
             />
           </div>

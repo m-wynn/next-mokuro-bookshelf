@@ -1,5 +1,3 @@
-"use client";
-
 import "@fortawesome/fontawesome-svg-core/styles.css";
 import "../styles/tailwind.css";
 
@@ -10,7 +8,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" data-theme="catppuccin-mocha">
-      <body className="flex flex-col h-screen">{children}</body>
+      <body>{children}</body>
     </html>
   );
 }

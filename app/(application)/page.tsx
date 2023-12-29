@@ -1,28 +1,17 @@
-import { useSession } from "next-auth/react";
-import Head from "next/head";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faTrash,
-  faTriangleExclamation,
-} from "@fortawesome/free-solid-svg-icons";
-// import { volume, getFromLocalStorage } from "../../components/book";
+import { faTriangleExclamation } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
 import { auth } from "auth/lucia";
 import * as context from "next/headers";
 import VolumeCard from "@/volumecard";
-
-type VolumeCardProps = {
-  reading: Reading;
-  onDelete: (key: string) => void;
-};
+import prisma from "db";
 
 type ShelfProps = {
   title: string;
   readings: Reading[];
-  onDelete: (key: string) => void;
 };
 
-const Shelf = ({ title, readings, onDelete }: ShelfProps) => {
+const Shelf = ({ title, readings }: ShelfProps) => {
   return (
     <div className="p-4 m-4 shadow-lg bg-base-200">
       <h1 className="mb-4 text-4xl font-bold text">{title}</h1>
@@ -95,21 +84,21 @@ const Bookshelf = async () => {
       `${reading.volume.series.name}`
         .toLowerCase()
         .includes(search.toLowerCase()),
-  );
+  ) as unknown as Reading[];
   const unread = readings.filter(
     (reading) =>
       reading.status === "UNREAD" &&
       `${reading.volume.series.name}`
         .toLowerCase()
         .includes(search.toLowerCase()),
-  );
+  ) as unknown as Reading[];
   const read = readings.filter(
     (reading) =>
       reading.status === "READ" &&
       `${reading.volume.series.name}`
         .toLowerCase()
         .includes(search.toLowerCase()),
-  );
+  ) as unknown as Reading[];
 
   return (
     <div>

@@ -5,4 +5,8 @@ declare module "auth" {
     confirmPassword: string;
     inviteCode: string;
   };
+  type LoginForm = {
+    username: string;
+    password: string;
+  };
 }

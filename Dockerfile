@@ -1,13 +1,18 @@
 FROM node:21 as base
 WORKDIR /app
-COPY . .
 
 EXPOSE 3000
 
 ENV PORT 3000
 
+COPY package.json package-lock.json ./
+
 RUN npm install --frozen-lockfile
+
 USER 1000
+
+COPY . .
+
 
 FROM base as prod
 

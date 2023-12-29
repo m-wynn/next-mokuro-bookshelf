@@ -5,5 +5,14 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <main className="overflow-hidden">{children}</main>;
+  return (
+    <div
+      className="overflow-hidden fixed w-screen t-0"
+      style={{
+        height: "calc(100vh - 4rem)",
+      }}
+    >
+      {children}
+    </div>
+  );
 }

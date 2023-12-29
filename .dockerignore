@@ -25,3 +25,5 @@ yarn-error.log*
 /mokuro
 
 /shared/acme.json
+
+/public/images
