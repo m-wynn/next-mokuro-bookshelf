@@ -10,15 +10,14 @@ export async function POST(request: NextRequest, { params: { volumeId } }) {
   }
 
   const res = await request.json();
-  const { useTwoPagesOverride, firstPageIsCoverOverride } = res;
-
+  const validSettings = ['useTwoPagesOverride', 'firstPageIsCoverOverride'];
   const toUpdate = {};
-  if (useTwoPagesOverride !== null) {
-    toUpdate.useTwoPagesOverride = useTwoPagesOverride;
-  }
-  if (firstPageIsCoverOverride !== null) {
-    toUpdate.firstPageIsCoverOverride = firstPageIsCoverOverride;
-  }
+
+  validSettings.forEach(key => {
+    if (res[key] !== null) {
+      toUpdate[key] = res[key];
+    }
+  });
 
   const reading = await prisma.reading.upsert({
     where: {
@@ -44,5 +43,5 @@ export async function POST(request: NextRequest, { params: { volumeId } }) {
     return NextResponse.json({ error: "No such volume" }, { status: 404 });
   }
 
-  return NextResponse.json(reading);
+  return NextResponse.json({ success: true });
 }

@@ -62,5 +62,5 @@ export async function POST(request: NextRequest, { params: { volumeId } }) {
     return NextResponse.json({ error: "No such volume" }, { status: 404 });
   }
 
-  return NextResponse.json(reading);
+  return NextResponse.json({ success: true });
 }
