@@ -17,18 +17,19 @@ datasource db {
 }
 
 model User {
-  id                   String    @id @unique
-  name                 String    @unique
-  role                 Role      @default(READER)
-  createdAt            DateTime  @default(now())
-  updatedAt            DateTime  @updatedAt
-  requirePasswordReset Boolean   @default(false)
+  id                   String       @id @unique
+  name                 String       @unique
+  role                 Role         @default(READER)
+  createdAt            DateTime     @default(now())
+  updatedAt            DateTime     @updatedAt
+  requirePasswordReset Boolean      @default(false)
   readings             Reading[]
   uploadedVolumes      Volume[]
   uploadedPages        Page[]
   uploadedSeries       Series[]
   auth_session         Session[]
   key                  Key[]
+  UserSetting          UserSetting?
 }
 
 model Session {
@@ -61,17 +62,18 @@ model Series {
 }
 
 model Volume {
-  id           Int       @id @default(autoincrement())
-  number       Int
-  series       Series    @relation(fields: [seriesId], references: [id])
-  seriesId     Int
-  cover        String
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-  uploadedBy   User      @relation(fields: [uploadedById], references: [id])
-  uploadedById String
-  readings     Reading[]
-  pages        Page[]
+  id               Int       @id @default(autoincrement())
+  number           Int
+  series           Series    @relation(fields: [seriesId], references: [id])
+  seriesId         Int
+  cover            String
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  uploadedBy       User      @relation(fields: [uploadedById], references: [id])
+  uploadedById     String
+  readings         Reading[]
+  pages            Page[]
+  firstPageIsCover Boolean   @default(false)
 
   @@unique(name: "seriesNum", [number, seriesId])
 }
@@ -92,17 +94,25 @@ model Page {
 }
 
 model Reading {
-  id        Int           @id @default(autoincrement())
-  user      User          @relation(fields: [userId], references: [id])
-  userId    String
-  volume    Volume        @relation(fields: [volumeId], references: [id])
-  volumeId  Int
-  page      Int           @default(0)
-  status    ReadingStatus
-  createdAt DateTime      @default(now())
-  updatedAt DateTime      @updatedAt
+  id          Int           @id @default(autoincrement())
+  user        User          @relation(fields: [userId], references: [id])
+  userId      String
+  volume      Volume        @relation(fields: [volumeId], references: [id])
+  volumeId    Int
+  page        Int           @default(0)
+  status      ReadingStatus
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  useTwoPages Boolean       @default(false)
 
   @@unique(name: "volumeUser", [userId, volumeId])
+}
+
+model UserSetting {
+  id          Int     @id @default(autoincrement())
+  user        User    @relation(fields: [userId], references: [id])
+  userId      String  @unique
+  useTwoPages Boolean @default(false)
 }
 
 enum Role {

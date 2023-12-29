@@ -15,6 +15,7 @@ Table User {
   uploadedSeries Series [not null]
   auth_session Session [not null]
   key Key [not null]
+  UserSetting UserSetting
 }
 
 Table Session {
@@ -54,6 +55,7 @@ Table Volume {
   uploadedById String [not null]
   readings Reading [not null]
   pages Page [not null]
+  firstPageIsCover Boolean [not null, default: false]
 
   indexes {
     (number, seriesId) [unique]
@@ -87,10 +89,18 @@ Table Reading {
   status ReadingStatus [not null]
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
+  useTwoPages Boolean [not null, default: false]
 
   indexes {
     (userId, volumeId) [unique]
   }
+}
+
+Table UserSetting {
+  id Int [pk, increment]
+  user User [not null]
+  userId String [unique, not null]
+  useTwoPages Boolean [not null, default: false]
 }
 
 Enum Role {
@@ -122,3 +132,5 @@ Ref: Page.uploadedById > User.id
 Ref: Reading.userId > User.id
 
 Ref: Reading.volumeId > Volume.id
+
+Ref: UserSetting.userId - User.id
