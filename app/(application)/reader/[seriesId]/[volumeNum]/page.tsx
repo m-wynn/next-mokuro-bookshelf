@@ -3,26 +3,12 @@ import VolumeDataProvider from "./VolumeDataProvider";
 import prisma from "db";
 import { auth } from "auth/lucia";
 import * as context from "next/headers";
+import { OcrPage } from "volume";
 
 export type Page = {
   fileName: string;
-  ocr: OcrContents | null;
+  ocr: OcrPage;
   number: number;
-};
-
-type OcrContents = {
-  version: string;
-  img_width: number;
-  img_height: number;
-  blocks: OcrBlock[];
-};
-
-type OcrBlock = {
-  box: number[];
-  vertical: boolean;
-  font_size: number;
-  lines_coords: number[][];
-  lines: string[];
 };
 
 export default async function Page({
@@ -40,14 +26,18 @@ export default async function Page({
         volumeId={volume.id}
         pages={volume.pages.map((page) => ({
           ...page,
-          ocr: page.ocr as OcrContents,
+          ocr: page.ocr as unknown as OcrPage,
         }))}
       />
     </VolumeDataProvider>
   );
 }
 
-const getVolume = async (seriesId, volumeNum, userId) => {
+const getVolume = async (
+  seriesId: string,
+  volumeNum: string,
+  userId: string,
+) => {
   return await prisma.volume.findUnique({
     where: {
       seriesNum: {

@@ -1,10 +1,15 @@
 "use client";
 
 import { createContext, useContext, useState } from "react";
+import { Reading } from "volume";
+
+const emptyReadings: Reading[] = [];
 
 const GlobalContext = createContext({
   fullScreen: false,
   setFullScreen: (fullScreen: boolean) => {},
+  allReadings: emptyReadings,
+  setAllReadings: (allReadings: any) => {},
 });
 
 export function useGlobalContext() {
@@ -13,14 +18,19 @@ export function useGlobalContext() {
 
 export default function GlobalDataProvider({
   children,
+  readings,
 }: {
   children: React.ReactNode;
+  readings: Reading[];
 }) {
   const [fullScreen, setFullScreen] = useState(false);
+  const [allReadings, setAllReadings] = useState<Reading[]>(readings);
 
   const value = {
     fullScreen,
     setFullScreen,
+    allReadings,
+    setAllReadings,
   };
 
   return (

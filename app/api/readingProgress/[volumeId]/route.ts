@@ -49,12 +49,14 @@ export async function POST(request: NextRequest, { params: { volumeId } }) {
       userId: session.user.userId,
       page: page,
       status: "READING",
+      isActive: true,
     },
     create: {
       volumeId: parseInt(volumeId),
       userId: session.user.userId,
       page: page,
       status: "READING",
+      isActive: true,
     },
   });
 

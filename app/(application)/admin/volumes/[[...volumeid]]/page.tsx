@@ -4,16 +4,24 @@ import Info from "./info";
 import Ocr from "./ocr";
 import Images from "./images";
 import { SubmitHandler, useForm } from "react-hook-form";
+import {
+  FieldErrors,
+  FieldValues,
+  UseFormRegister,
+  UseFormWatch,
+} from "react-hook-form";
 
-type Inputs = {
-  title: string;
-  volumeNumber: number;
-  coverImage: FileList;
-  ocrFiles: FileList;
-  pages: FileList;
+export type FormChild = {
+  errors: FieldErrors<FieldValues>;
+  register: UseFormRegister<FieldValues>;
+  watch: UseFormWatch<FieldValues>;
 };
 
-export default function VolumeEditor({ params: { volumeid } }) {
+export default function VolumeEditor({
+  params: { volumeid },
+}: {
+  params: { volumeid: string | null };
+}) {
   const [uploadedPages, setUploadedPages] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   useEffect(() => {
@@ -29,7 +37,7 @@ export default function VolumeEditor({ params: { volumeid } }) {
     formState: { errors },
   } = useForm();
 
-  const onSubmit: SubmitHandler<Inputs> = async (data) => {
+  const onSubmit: SubmitHandler<FieldValues> = async (data) => {
     setTotalPages(data.pages.length);
     const formData = new FormData();
     formData.append("title", data.title);
@@ -42,16 +50,17 @@ export default function VolumeEditor({ params: { volumeid } }) {
     });
     const volume = await response.json();
     await Promise.all(
-      Array.from(data.pages).map(async (page, i) => {
+      Array.from(data.pages as FileList).map(async (page, i) => {
         const pageFormData = new FormData();
         pageFormData.append("volumeId", volume.id);
         pageFormData.append("number", i.toString());
         pageFormData.append("file", page);
         pageFormData.append(
           "ocr",
-          Array.from(data.ocrFiles).find(
+          Array.from(data.ocrFiles as FileList).find(
             (ocrFile) =>
-              ocrFile.name === page.name.replace(/\.[^/.]+$/, "") + ".json",
+              ocrFile.name ===
+              (page as File).name.replace(/\.[^/.]+$/, "") + ".json",
           ) as Blob,
         );
         await fetch("/api/page", {

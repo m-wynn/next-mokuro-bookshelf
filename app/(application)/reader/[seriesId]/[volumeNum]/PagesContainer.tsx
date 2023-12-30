@@ -15,6 +15,8 @@ import { useVolumeContext } from "./VolumeDataProvider";
 import { useGlobalContext } from "app/(application)/GlobalContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMaximize } from "@fortawesome/free-solid-svg-icons";
+import { updateReadingProgress } from "./functions";
+import { Reading } from "volume";
 
 export default function PagesContainer({
   volumeId,
@@ -31,15 +33,30 @@ export default function PagesContainer({
   const [currentPage, setCurrentPage] = useState(volumeData.currentPage);
 
   const layoutChanged = useRef({ useTwoPages, firstPageIsCover }).current;
+  const { fullScreen, setFullScreen, setAllReadings } = useGlobalContext();
 
   useEffect(() => {
-    if (currentPage > 0) {
-      fetch(`/api/readingProgress/${volumeId}`, {
-        method: "POST",
-        body: JSON.stringify({ page: currentPage }),
-      });
-    }
-  }, [currentPage, volumeId]);
+    (async () => {
+      const reading = await updateReadingProgress(volumeId, currentPage);
+      if (reading) {
+        setAllReadings((prev: Reading[]) => {
+          let found = false;
+          const edited = prev.map((r) => {
+            if (r.id === reading.id) {
+              found = true;
+              return reading;
+            } else {
+              return r;
+            }
+          });
+          if (!found) {
+            edited.push(reading);
+          }
+          return edited;
+        });
+      }
+    })();
+  }, [currentPage, volumeId, setAllReadings]);
 
   const setBoundPage = useCallback(
     (page: number) => {
@@ -124,8 +141,6 @@ export default function PagesContainer({
     }
   };
 
-  const { fullScreen, setFullScreen } = useGlobalContext();
-
   useEffect(() => {
     if (pages) {
       reZoom();
@@ -190,25 +205,12 @@ export default function PagesContainer({
           }}
         >
           <div id="visiblePagesContainer" className="flex flex-row flex-nowrap">
-            {showTwoPages ? (
-              <PageContainer
-                page={pages[currentPage + 1]}
-                preloads={[]}
-                getImageUri={getImageUri}
-              />
-            ) : null}
             <PageContainer
               page={page}
-              preloads={
-                showTwoPages
-                  ? [
-                      [2, 3, 4]
-                        .map((i) => currentPage + i)
-                        .filter((i) => i < pages.length)
-                        .map((i) => pages[i]),
-                    ]
-                  : [pages[currentPage + 1]]
-              }
+              preloads={(showTwoPages ? [2, 3, 4] : [1, 2])
+                .map((i) => currentPage + i)
+                .filter((i) => i < pages.length)
+                .map((i) => pages[i])}
               getImageUri={getImageUri}
             />
           </div>

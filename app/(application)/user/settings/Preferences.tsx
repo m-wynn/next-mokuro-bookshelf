@@ -1,13 +1,11 @@
 "use client";
-import { useState } from 'react';
+import { useState } from "react";
 import React from "react";
 import { Role } from "@prisma/client";
-import {
-  faTableColumns
-} from "@fortawesome/free-solid-svg-icons";
+import { faTableColumns } from "@fortawesome/free-solid-svg-icons";
 import Checkbox from "@/checkbox";
 
-export default function Preferences({user, updateUseTwoPages}) {
+export default function Preferences({ user, updateUseTwoPages }) {
   const [useTwoPages, setUseTwoPages] = useState(user.userSetting?.useTwoPages);
 
   return (
@@ -18,7 +16,10 @@ export default function Preferences({user, updateUseTwoPages}) {
           <Checkbox
             fa={faTableColumns}
             value={useTwoPages}
-            set={(checked) => { updateUseTwoPages(checked); setUseTwoPages(checked); }}
+            set={(checked) => {
+              updateUseTwoPages(checked);
+              setUseTwoPages(checked);
+            }}
           >
             Display Two Pages
           </Checkbox>
@@ -26,4 +27,4 @@ export default function Preferences({user, updateUseTwoPages}) {
       </div>
     </div>
   );
-};
+}

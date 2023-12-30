@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import Input from "@/input";
+import { OcrPage } from "volume";
+import { FormChild } from "./page";
 function readFile(file: File) {
   return new Promise((resolve, reject) => {
     var fr = new FileReader();
@@ -11,22 +13,11 @@ function readFile(file: File) {
   });
 }
 
-export interface OcrPage {
-  version: string;
-  img_width: number;
-  img_height: number;
-  blocks: OcrBlock[];
-}
-
-export interface OcrBlock {
-  box: number[];
-  vertical: boolean;
-  font_size: number;
-  lines_coords: number[][][];
-  lines: string[];
-}
-
-export default function Ocr({ errors, register, watch }): JSX.Element {
+export default function Ocr({
+  errors,
+  register,
+  watch,
+}: FormChild): JSX.Element {
   const [ocrText, setOcrText] = useState<{ string: OcrPage } | {}>({});
 
   const volumeNumber = watch("volumeNumber");
@@ -62,7 +53,7 @@ export default function Ocr({ errors, register, watch }): JSX.Element {
                 errors?.ocrFiles && "file-input-error"
               }`}
               errors={errors?.coverImage || null}
-              register={...register("ocrFiles", {
+              register={register("ocrFiles", {
                 required: "OCR Files are required",
               })}
             />

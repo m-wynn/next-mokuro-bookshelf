@@ -91,6 +91,7 @@ Table Reading {
   updatedAt DateTime [not null]
   useTwoPagesOverride Boolean
   firstPageIsCoverOverride Boolean
+  isActive Boolean [not null, default: true]
 
   indexes {
     (userId, volumeId) [unique]

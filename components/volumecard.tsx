@@ -2,20 +2,22 @@ import Link from "next/link";
 
 type VolumeCardProps = {
   coverUri: string;
-  percentComplete?: number;
-  actions?: React.ReactNode;
+  pagesRead?: number;
+  totalPages?: number;
   href: string;
   seriesName: string;
   volumeNumber: number;
+  children?: React.ReactNode;
 };
 
 const VolumeCard = ({
   coverUri,
-  percentComplete,
+  pagesRead,
+  totalPages,
   volumeNumber,
   seriesName,
-  actions,
   href,
+  children,
 }: VolumeCardProps) => {
   return (
     <div className="flex-initial m-2 shadow hover:shadow-lg w-[13.5rem] h-[20.25rem] readingcard card card-compact image-full bg-base-300">
@@ -27,18 +29,20 @@ const VolumeCard = ({
           className="flex items-center bg-center bg-no-repeat bg-cover w-[13.5rem] h-[20.25rem]"
         />
       </figure>
-      {percentComplete ? (
+      {pagesRead && totalPages ? (
         <progress
           className="absolute bottom-3 z-50 rounded-none progress progress-primary w-[13.5rem]"
-          value={percentComplete}
-          max="100"
+          value={pagesRead}
+          max={totalPages}
         ></progress>
       ) : (
         ""
       )}
       <div className="card-body">
-        <div className="absolute top-0 right-0 card-actions">{actions}</div>
-        <Link href={href} className="grow">
+        <div className="absolute top-0 right-0 z-20 card-actions">
+          {children}
+        </div>
+        <Link href={href} className="z-[1] grow">
           <h2 className="card-title text-[1.6rem] drop-shadow-[0_3px_4px_rgba(0,0,0,0.5)] text-white">
             {seriesName}
           </h2>

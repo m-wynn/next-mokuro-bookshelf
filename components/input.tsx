@@ -1,4 +1,10 @@
-import { FieldError, UseFormRegisterReturn } from "react-hook-form";
+import {
+  FieldError,
+  FieldErrors,
+  FieldErrorsImpl,
+  Merge,
+  UseFormRegisterReturn,
+} from "react-hook-form";
 export default function Input({
   label,
   errors,
@@ -10,7 +16,7 @@ export default function Input({
   type = "text",
 }: {
   label: string;
-  errors: FieldError | null;
+  errors: FieldError | Merge<FieldErrors, FieldErrorsImpl<any>> | null;
   register: UseFormRegisterReturn<string>;
   placeholder?: string;
   extraProperties?: { [key: string]: string | boolean };
@@ -39,7 +45,7 @@ export default function Input({
       />
       {errors && (
         <label className="label label-text-alt text-error">
-          {errors.message}
+          {errors?.message as string}
         </label>
       )}
     </div>
