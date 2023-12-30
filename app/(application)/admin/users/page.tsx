@@ -21,7 +21,7 @@ const Users = async () => {
   const updateRole = async (id: string, role: Role) => {
     "use server";
     const session = await getSession("POST");
-    if (session.user.role == "ADMIN") {
+    if (session.user.role === "ADMIN") {
       const user = await prisma.user.update({
         where: {
           id,
