@@ -6,7 +6,7 @@ import * as context from "next/headers";
 import { OcrPage } from "volume";
 
 export type Page = {
-  fileName: string;
+  id: string;
   ocr: OcrPage;
   number: number;
 };
@@ -37,10 +37,10 @@ export default async function Page({
 const getUserSetting = async (userId) => {
   return await prisma.userSetting.findUnique({
     where: {
-      userId: userId
-    }
+      userId: userId,
+    },
   });
-}
+};
 
 const getVolume = async (
   seriesId: string,
@@ -64,12 +64,12 @@ const getVolume = async (
         select: {
           page: true,
           useTwoPagesOverride: true,
-          firstPageIsCoverOverride: true
+          firstPageIsCoverOverride: true,
         },
       },
       pages: {
         select: {
-          fileName: true,
+          id: true,
           ocr: true,
           number: true,
         },

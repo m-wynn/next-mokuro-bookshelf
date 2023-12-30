@@ -4,39 +4,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "auth/lucia";
 import * as context from "next/headers";
 
-export async function GET(request: NextRequest) {
-  const session = await auth.handleRequest(request.method, context).validate();
-  if (!session) {
-    return NextResponse.json({ error: "Not logged in" }, { status: 401 });
-  }
-
-  const searchParams = request.nextUrl.searchParams;
-
-  if (searchParams.has("series") && searchParams.has("volume")) {
-    const pages = await prisma.page.findMany({
-      where: {
-        volume: {
-          number: +searchParams.get("volume"),
-          seriesId: +searchParams.get("series"),
-        },
-      },
-      select: {
-        number: true,
-        ocr: true,
-        fileName: true,
-      },
-      orderBy: {
-        number: "asc",
-      },
-    });
-    return NextResponse.json(pages);
-  }
-  return NextResponse.json(
-    { error: "Missing series or volume" },
-    { status: 400 },
-  );
-}
-
 export async function POST(request: NextRequest) {
   const session = await auth.handleRequest(request.method, context).validate();
   if (!session) {

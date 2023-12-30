@@ -1,13 +1,11 @@
 import { LoginForm } from "auth";
 import { auth } from "auth/lucia";
-import prisma from "db";
 import rateLimit from "lib/rate-limit";
 import { LuciaError } from "lucia";
 import * as context from "next/headers";
 import { NextResponse } from "next/server";
 
 import type { NextRequest } from "next/server";
-import { env } from "process";
 
 const limiter = rateLimit({
   interval: 60 * 1000,

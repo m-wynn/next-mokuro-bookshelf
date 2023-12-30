@@ -6,8 +6,9 @@ export default function UserSettingsLayout({
   params: any;
 }) {
   return (
-    <div className="flex justify-center m-4 drawer-content">
-      <div className="flex flex-col max-w-4xl grow">{children}</div>
+    <div className="flex flex-col items-center w-screen max-h-screen">
+      {children}
     </div>
   );
 }
+

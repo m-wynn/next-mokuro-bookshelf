@@ -13,7 +13,7 @@ export default function Preferences({
   const [useTwoPages, setUseTwoPages] = useState(user.userSetting?.useTwoPages);
 
   return (
-    <div className="flex flex-col max-w-2xl grow">
+    <div className="flex flex-col mt-4 w-96 max-w-2xl md:w-1/2 grow">
       <div className="card bg-base-300 rounded-box">
         <div className="items-center card-body">
           <h2 className="card-title">Preferences</h2>
