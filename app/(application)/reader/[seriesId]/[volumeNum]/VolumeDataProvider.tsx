@@ -15,6 +15,7 @@ export function useVolumeContext() {
 export default function VolumeDataProvider({
   children,
   volume,
+  userSetting
 }: {
   children: React.ReactNode;
   volume: any;
@@ -24,8 +25,9 @@ export default function VolumeDataProvider({
   };
 
   const getUseTwoPages = () => {
-    const defaultSetting = !!volume.readings[0]?.user.UserSetting?.useTwoPages;
-    const override = volume.readings[0]?.useTwoPagesOverride;
+    const defaultSetting = !!userSetting?.useTwoPages;
+    const override = volume.readings[0]?.useTwoPagesOverride ?? null;
+    console.log(defaultSetting, override);
     if (override === null) {
       return defaultSetting;
     }
@@ -34,7 +36,7 @@ export default function VolumeDataProvider({
 
   const getFirstPageIsCover = () => {
     const defaultSetting = volume.firstPageIsCover;
-    const override = volume.readings[0]?.firstPageIsCoverOverride;
+    const override = volume.readings[0]?.firstPageIsCoverOverride ?? null;
     if (override === null) {
       return defaultSetting;
     }
