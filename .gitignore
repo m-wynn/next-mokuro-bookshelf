@@ -40,3 +40,4 @@ dev.db-journal
 /shared/acme.json
 
 /public/images
+/private/

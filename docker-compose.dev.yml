@@ -10,26 +10,19 @@ services:
     user: "1000"
     ports:
       - "3000:3000"
-      - "9230:9229"
+      - "9229:9229"
     environment:
       - NODE_ENV=development
       - DEBUG=engine
     env_file:
       - ./.env
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.next-mokuro-bookshelf.entrypoints=web, websecure"
-      - "traefik.http.routers.next-mokuro-bookshelf.rule=Host(`${MY_HOST}`)"
-      - "traefik.http.routers.next-mokuro-bookshelf.tls.certresolver=myresolver"
-      - "traefik.http.routers.next-mokuro-bookshelf.tls.domains[0].main=${MY_HOST}"
-      - "traefik.http.services.next-mokuro-bookshelf.loadbalancer.server.port=3000"
 
   db:
     image: postgres
     restart: always
+    env_file:
+      - ./.env
     environment:
-      POSTGRES_PASSWORD: toor
-      POSTGRES_USER: root
       POSTGRES_DB: default
     user: "1000"
     ports:
