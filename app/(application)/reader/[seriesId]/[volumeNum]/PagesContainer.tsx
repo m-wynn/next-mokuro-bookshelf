@@ -37,7 +37,11 @@ export default function PagesContainer({
 
   useEffect(() => {
     (async () => {
-      const reading = await updateReadingProgress(volumeId, currentPage);
+      let pageToSet = currentPage;
+      if (useTwoPages && currentPage != pages.length - 1) {
+        pageToSet = currentPage + 1;
+      }
+      const reading = await updateReadingProgress(volumeId, pageToSet);
       if (reading) {
         setAllReadings((prev: Reading[]) => {
           let found = false;
@@ -77,17 +81,6 @@ export default function PagesContainer({
   );
 
   useEffect(() => {
-    const getReading = async () => {
-      const res = await fetch(`/api/readingProgress/${volumeId}`);
-      const data = await res.json();
-      const { page } = data;
-      setCurrentPage(page);
-    };
-    if (volumeId != null && currentPage == 0) getReading();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [setCurrentPage, volumeId]);
-
-  useEffect(() => {
     if (
       layoutChanged.useTwoPages !== useTwoPages ||
       layoutChanged.firstPageIsCover !== firstPageIsCover
@@ -103,7 +96,7 @@ export default function PagesContainer({
   const showTwoPages = useMemo(
     () =>
       useTwoPages &&
-      currentPage < pages.length - 2 &&
+      currentPage < pages.length - 1 &&
       (!firstPageIsCover || currentPage > 0),
     [useTwoPages, currentPage, pages, firstPageIsCover],
   );
