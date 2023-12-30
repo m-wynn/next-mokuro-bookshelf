@@ -1,6 +1,17 @@
+import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-export default function Checkbox({ children, fa, value, set }) {
+export default function Checkbox({
+  children,
+  fa,
+  value,
+  set,
+}: {
+  children: React.ReactNode;
+  fa: IconProp;
+  value: boolean;
+  set: (checked: boolean) => void;
+}) {
   return (
     <div className="flex form-control">
       <label className="flex-row w-full cursor-pointer label">
@@ -17,4 +28,4 @@ export default function Checkbox({ children, fa, value, set }) {
       </label>
     </div>
   );
-};
+}
