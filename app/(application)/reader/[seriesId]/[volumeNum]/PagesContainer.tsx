@@ -205,6 +205,13 @@ export default function PagesContainer({
           }}
         >
           <div id="visiblePagesContainer" className="flex flex-row flex-nowrap">
+            {showTwoPages ? (
+              <PageContainer
+                page={pages[currentPage + 1]}
+                preloads={[]}
+                getImageUri={getImageUri}
+              />
+            ) : null}
             <PageContainer
               page={page}
               preloads={(showTwoPages ? [2, 3, 4] : [1, 2])
