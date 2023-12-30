@@ -18,10 +18,11 @@ export default async function Page({
 }) {
   const session = await auth.handleRequest("GET", context).validate();
   const volume = await getVolume(seriesId, volumeNum, session.user.userId);
+  const userSetting = await getUserSetting(session.user.userId);
   if (!volume) return <div>Volume not found</div>;
 
   return (
-    <VolumeDataProvider volume={volume}>
+    <VolumeDataProvider volume={volume} userSetting={userSetting}>
       <PagesContainer
         volumeId={volume.id}
         pages={volume.pages.map((page) => ({
@@ -55,16 +56,7 @@ const getVolume = async (
         select: {
           page: true,
           useTwoPagesOverride: true,
-          firstPageIsCoverOverride: true,
-          user: {
-            select: {
-              userSetting: {
-                select: {
-                  useTwoPages: true,
-                },
-              },
-            },
-          },
+          firstPageIsCoverOverride: true
         },
       },
       pages: {
