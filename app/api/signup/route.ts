@@ -47,7 +47,7 @@ export const POST = async (request: NextRequest) => {
       },
       attributes: {
         name: username,
-        role: userCount === 0 ? "ADMIN" : "USER", // first user is admin
+        role: userCount === 0 ? "ADMIN" : "READER", // first user is admin
       },
     });
     const session = await auth.createSession({
