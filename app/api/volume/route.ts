@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
   if (!session) {
     return NextResponse.json({ error: "Not logged in" }, { status: 401 });
   }
-  console.log(session);
+
   if (!["ADMIN", "EDITOR"].includes(session.user.role)) {
     return NextResponse.json(
       {
@@ -56,6 +56,7 @@ export async function POST(request: NextRequest) {
   let series = req.get("title") as string;
   let number = parseInt(req.get("volumeNumber") as string);
   let cover = req.get("coverImage") as Blob;
+  let firstPageIsCover = req.get('firstPageIsCover') === "true";
 
   if (!series || !number || !cover) {
     throw new Error("Missing required fields");
@@ -84,12 +85,14 @@ export async function POST(request: NextRequest) {
     },
     update: {
       cover: cover.name,
+      firstPageIsCover: firstPageIsCover
     },
     create: {
       cover: cover.name,
       number: number,
       seriesId: seriesId.id,
       uploadedById: session.user.userId,
+      firstPageIsCover: firstPageIsCover
     },
   });
 

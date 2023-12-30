@@ -5,7 +5,6 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const q = searchParams.get("q");
-  console.log(q);
 
   if (q != null) {
     const pages = await prisma.page.findMany({
@@ -24,7 +23,6 @@ export async function GET(request: NextRequest) {
     if (pages == null) {
       return NextResponse.json({ error: "No such lines" }, { status: 404 });
     }
-    console.log(pages);
 
     return NextResponse.json(pages);
   }

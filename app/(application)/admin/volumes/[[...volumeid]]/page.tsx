@@ -43,6 +43,7 @@ export default function VolumeEditor({
     formData.append("title", data.title);
     formData.append("volumeNumber", data.volumeNumber.toString());
     formData.append("coverImage", data.coverImage[0]);
+    formData.append('firstPageIsCover', data.firstPageIsCover);
 
     const response = await fetch("/api/volume", {
       method: "POST",
