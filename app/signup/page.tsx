@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import Input from "@/input";
 import { SignupForm } from "auth";
 import { useState } from "react";
+import Link from "next/link";
 
 export default function Register() {
   const {
@@ -85,6 +86,7 @@ export default function Register() {
             <button className="mt-8 max-w-xs btn btn-block" type="submit">
               Submit
             </button>
+            <Link href="/login">Already have an account? Login</Link>
           </form>
         </div>
       </div>
