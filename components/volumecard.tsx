@@ -31,7 +31,7 @@ const VolumeCard = ({
       </figure>
       {pagesRead && totalPages ? (
         <progress
-          className="absolute bottom-3 z-50 rounded-none progress progress-primary w-[13.5rem]"
+          className="absolute bottom-3 z-50 rounded progress progress-primary w-[13.5rem]"
           value={pagesRead}
           max={totalPages}
         ></progress>

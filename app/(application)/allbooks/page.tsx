@@ -1,6 +1,7 @@
 import Head from "next/head";
 import prisma from "db";
 import VolumeCard from "@/volumecard";
+import { readingSelect } from "lib/reading";
 
 const AddNew = async () => {
   const series = await prisma.series.findMany({
@@ -15,13 +16,17 @@ const AddNew = async () => {
           createdAt: true,
           readings: {
             select: {
-              page: true,
-            },
+              page: true
+            }
+          },
+          _count: {
+            select: { pages: true },
           },
         },
       },
     },
   });
+
   return (
     <div className="p-5 latte bg-crust text-text">
       <Head>
@@ -37,7 +42,8 @@ const AddNew = async () => {
                 <VolumeCard
                   key={volume.id}
                   coverUri={`/images/${volume.id}/cover/${volume.cover}`}
-                  percentComplete={8}
+                  pagesRead={volume.readings[0]?.page ?? 0}
+                  totalPages={volume._count.pages}
                   href={`/reader/${id}/${volume.number}`}
                   seriesName={name}
                   volumeNumber={volume.number}

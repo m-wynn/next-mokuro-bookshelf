@@ -50,6 +50,7 @@ export default function VolumeEditor({
       body: formData,
     });
     const volume = await response.json();
+    let uploadedPageCount = 0;
     await Promise.all(
       Array.from(data.pages as FileList).map(async (page, i) => {
         const pageFormData = new FormData();
@@ -68,7 +69,8 @@ export default function VolumeEditor({
           method: "POST",
           body: pageFormData,
         });
-        setUploadedPages(i + 1);
+        uploadedPageCount++;
+        setUploadedPages(uploadedPageCount);
       }),
     );
     alert("Done!");
