@@ -7,10 +7,6 @@ generator client {
   engineType    = "binary"
 }
 
-generator dbml {
-  provider = "prisma-dbml-generator"
-}
-
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
@@ -105,6 +101,7 @@ model Reading {
   updatedAt                DateTime      @updatedAt
   useTwoPagesOverride      Boolean?      @map("useTwoPages")
   firstPageIsCoverOverride Boolean?
+  isActive                 Boolean       @default(true)
 
   @@unique(name: "volumeUser", [userId, volumeId])
 }

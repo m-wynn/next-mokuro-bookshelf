@@ -1,8 +1,18 @@
 import React from "react";
 import Image from "next/image";
 import Textbox from "./Textbox";
+import { Page } from "./page";
+import { OcrBlock } from "app/(application)/admin/volumes/[[...volumeid]]/ocr";
 
-const PageContainer = ({ page, preloads, getImageUri }) => {
+const PageContainer = ({
+  page,
+  preloads,
+  getImageUri,
+}: {
+  page: Page;
+  preloads: Page[];
+  getImageUri: (fileName: string) => string;
+}) => {
   return page ? (
     <div className="inline-flex page">
       <div
@@ -28,8 +38,8 @@ const PageContainer = ({ page, preloads, getImageUri }) => {
           <Image
             key={getImageUri(nextPage.fileName)}
             src={getImageUri(nextPage.fileName)}
-            width={nextPage.ocr?.img_width || 0}
-            height={nextPage.ocr?.img_height || 0}
+            width={nextPage.ocr.img_width}
+            height={nextPage.ocr.img_height}
             alt={nextPage.fileName}
             unoptimized={true}
             priority={true}
