@@ -149,10 +149,7 @@ export default function PagesContainer({
 
   const page = useMemo(() => pages[currentPage], [pages, currentPage]);
 
-  const getImageUri = useCallback(
-    (filename: string) => `/images/${volumeId}/${filename}`,
-    [volumeId],
-  );
+  const getImageUri = (id: string) => `/api/page/${id}`;
 
   return (
     <div
