@@ -1,4 +1,3 @@
-import { Role } from "@prisma/client";
 import prisma from "db";
 import { getSession } from "lib/session";
 import React from "react";
@@ -19,21 +18,8 @@ export default async function UserSettings() {
     },
   });
 
-  const updateUseTwoPages = async (useTwoPages: boolean) => {
-    "use server";
-    await prisma.userSetting.upsert({
-      where: {
-        userId: session.user.userId,
-      },
-      update: {
-        useTwoPages,
-      },
-      create: {
-        userId: session.user.userId,
-        useTwoPages,
-      },
-    });
-  };
-
-  return <Preferences user={user} updateUseTwoPages={updateUseTwoPages} />;
+  if (!user) {
+    return <div>Not found</div>;
+  }
+  return <Preferences user={user} />;
 }
