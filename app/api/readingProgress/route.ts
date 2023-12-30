@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
 
   const readings = await prisma.reading.findMany({
     where: {
-      userId: session.userId,
+      userId: session.user.userId,
     },
     select: {
       id: true,

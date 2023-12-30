@@ -13,10 +13,11 @@ export default async function DashboardLayout({
   const authRequest = auth.handleRequest("GET", context);
   const session = (await authRequest.validate()) ?? null;
   if (!session) redirect("/login");
+  console.log(session.user.userId);
 
   const readings = await prisma.reading.findMany({
     where: {
-      userId: session.userId,
+      userId: session.user.userId,
       isActive: true,
     },
     select: ReadingSelectQuery,
