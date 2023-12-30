@@ -2,6 +2,7 @@
 import {
   faSun,
   faMoon,
+  faGear,
   faScrewdriverWrench,
   faBookMedical,
   faMinimize,
@@ -11,7 +12,7 @@ import Link from "next/link";
 import React from "react";
 import { useGlobalContext } from "./GlobalContext";
 
-const Navbar = ({ role }: { role: string }) => {
+const Navbar = ({ session }: { session: Object }) => {
   const { fullScreen, setFullScreen } = useGlobalContext();
   // Light/Dark theme is still handled by the theme-controller input in the navbar
   // So we have to keep it in the DOM
@@ -50,15 +51,21 @@ const Navbar = ({ role }: { role: string }) => {
           >
             <FontAwesomeIcon icon={faBookMedical} />
           </Link>
-          {role === "ADMIN" ? (
+          {session.user && (
+            <Link
+              href="/user/settings"
+              className="text-2xl normal-case btn btn-primary"
+            >
+              <FontAwesomeIcon icon={faGear} />
+            </Link>
+          )}
+          {session.user?.role === "ADMIN" && (
             <Link
               href="/admin"
               className="text-2xl normal-case btn btn-primary"
             >
               <FontAwesomeIcon icon={faScrewdriverWrench} />
             </Link>
-          ) : (
-            ""
           )}
           <label className="swap swap-rotate">
             {/* this hidden checkbox controls the state */}

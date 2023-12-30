@@ -15,7 +15,7 @@ export default async function DashboardLayout({
     <GlobalDataProvider>
       <header>
         <nav>
-          <Navbar role={session.user.role} />
+          <Navbar session={session} />
         </nav>
       </header>
 
