@@ -5,6 +5,10 @@ import React from "react";
 import UserTable from "./UserTable";
 
 const Users = async () => {
+  const get_session = await getSession("GET");
+  if (get_session.user.role !== "ADMIN") {
+    throw new Error("Unauthorized");
+  }
   const users = await prisma.user.findMany({
     select: {
       id: true,
