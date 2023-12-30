@@ -40,7 +40,7 @@ const AddNew = async () => {
               {volumes?.map((volume) => (
                 <VolumeCard
                   key={volume.id}
-                  coverUri={`/images/${volume.id}/cover/${volume.cover}`}
+                  coverUri={`/api/volume/${volume.id}/cover/`}
                   pagesRead={volume.readings[0]?.page ?? 0}
                   totalPages={volume._count.pages}
                   href={`/reader/${id}/${volume.number}`}
