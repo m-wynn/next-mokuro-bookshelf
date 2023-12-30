@@ -34,6 +34,14 @@ export default async function Page({
   );
 }
 
+const getUserSetting = async (userId) => {
+  return await prisma.userSetting.findUnique({
+    where: {
+      userId: userId
+    }
+  });
+}
+
 const getVolume = async (
   seriesId: string,
   volumeNum: string,
