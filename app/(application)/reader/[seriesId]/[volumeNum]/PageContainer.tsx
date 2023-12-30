@@ -2,7 +2,7 @@ import React from "react";
 import Image from "next/image";
 import Textbox from "./Textbox";
 import { Page } from "./page";
-import { OcrBlock } from "volume";
+import { OcrBlock } from "page";
 
 const PageContainer = ({
   page,
@@ -11,7 +11,7 @@ const PageContainer = ({
 }: {
   page: Page;
   preloads: Page[];
-  getImageUri: (id: string) => string;
+  getImageUri: (id: number) => string;
 }) => {
   return page ? (
     <div className="inline-flex relative page">

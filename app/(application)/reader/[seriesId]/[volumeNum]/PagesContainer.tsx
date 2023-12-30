@@ -16,7 +16,7 @@ import { useGlobalContext } from "app/(application)/GlobalContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMaximize } from "@fortawesome/free-solid-svg-icons";
 import { updateReadingProgress } from "./functions";
-import { Reading } from "volume";
+import { Reading } from "lib/reading";
 
 export default function PagesContainer({
   volumeId,
@@ -149,7 +149,7 @@ export default function PagesContainer({
 
   const page = useMemo(() => pages[currentPage], [pages, currentPage]);
 
-  const getImageUri = (id: string) => `/api/page/${id}`;
+  const getImageUri = (id: number) => `/api/page/${id}`;
 
   return (
     <div

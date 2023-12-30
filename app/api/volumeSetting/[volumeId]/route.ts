@@ -3,17 +3,20 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "auth/lucia";
 import * as context from "next/headers";
 
-export async function POST(request: NextRequest, { params: { volumeId } }) {
+export async function POST(
+  request: NextRequest,
+  { params: { volumeId } }: { params: { volumeId: string } },
+) {
   const session = await auth.handleRequest(request.method, context).validate();
   if (!session) {
     return NextResponse.json({ error: "Not logged in" }, { status: 401 });
   }
 
   const res = await request.json();
-  const validSettings = ['useTwoPagesOverride', 'firstPageIsCoverOverride'];
-  const toUpdate = {};
+  const validSettings = ["useTwoPagesOverride", "firstPageIsCoverOverride"];
+  const toUpdate: Record<string, any> = {};
 
-  validSettings.forEach(key => {
+  validSettings.forEach((key) => {
     if (res[key] !== null) {
       toUpdate[key] = res[key];
     }
@@ -29,7 +32,7 @@ export async function POST(request: NextRequest, { params: { volumeId } }) {
     update: {
       volumeId: parseInt(volumeId),
       userId: session.user.userId,
-      ...toUpdate
+      ...toUpdate,
     },
     create: {
       volumeId: parseInt(volumeId),

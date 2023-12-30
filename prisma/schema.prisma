@@ -7,6 +7,10 @@ generator client {
   engineType    = "binary"
 }
 
+generator json {
+  provider = "prisma-json-types-generator"
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
@@ -79,6 +83,7 @@ model Page {
   number       Int
   volume       Volume   @relation(fields: [volumeId], references: [id])
   volumeId     Int
+  /// [page.OcrPage]
   ocr          Json
   fileName     String
   createdAt    DateTime @default(now())

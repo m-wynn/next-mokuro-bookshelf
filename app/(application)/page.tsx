@@ -3,7 +3,7 @@ import * as context from "next/headers";
 import prisma from "db";
 import { ReadingStatus } from "@prisma/client";
 import Bookshelf from "./Bookshelf";
-import { readingSelect } from "lib/reading";
+import { ReadingSelectQuery } from "lib/reading";
 
 const Page = async () => {
   const updateReadingStatus = async (id: number, status: ReadingStatus) => {
@@ -15,7 +15,7 @@ const Page = async () => {
       data: {
         status,
       },
-      select: readingSelect,
+      select: ReadingSelectQuery,
     });
   };
 
@@ -28,7 +28,7 @@ const Page = async () => {
       data: {
         isActive: false,
       },
-      select: readingSelect,
+      select: ReadingSelectQuery,
     });
   }
 

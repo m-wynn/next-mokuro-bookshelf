@@ -11,8 +11,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
 import React from "react";
 import { useGlobalContext } from "./GlobalContext";
+import { Session } from "lucia";
 
-const Navbar = ({ session }: { session: Object }) => {
+const Navbar = ({ session }: { session: Session }) => {
   const { fullScreen, setFullScreen } = useGlobalContext();
   // Light/Dark theme is still handled by the theme-controller input in the navbar
   // So we have to keep it in the DOM

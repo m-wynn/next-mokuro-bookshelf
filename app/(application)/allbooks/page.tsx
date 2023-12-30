@@ -1,7 +1,6 @@
 import Head from "next/head";
 import prisma from "db";
 import VolumeCard from "@/volumecard";
-import { readingSelect } from "lib/reading";
 
 const AddNew = async () => {
   const series = await prisma.series.findMany({
@@ -16,8 +15,8 @@ const AddNew = async () => {
           createdAt: true,
           readings: {
             select: {
-              page: true
-            }
+              page: true,
+            },
           },
           _count: {
             select: { pages: true },

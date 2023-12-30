@@ -1,6 +1,8 @@
 "use client";
 
+import { UserSetting } from "@prisma/client";
 import { createContext, useContext } from "react";
+import { Volume } from "./page";
 
 const VolumeContext = createContext({
   currentPage: 0,
@@ -15,10 +17,11 @@ export function useVolumeContext() {
 export default function VolumeDataProvider({
   children,
   volume,
-  userSetting
+  userSetting,
 }: {
   children: React.ReactNode;
-  volume: any;
+  volume: Volume;
+  userSetting: UserSetting | null;
 }) {
   const getCurrentPage = () => {
     return volume.readings[0]?.page ?? 0;

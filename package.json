@@ -14,7 +14,6 @@
     "@hookform/error-message": "^2.0.1",
     "@lucia-auth/adapter-prisma": "^3.0.2",
     "@prisma/client": "^5.7.1",
-    "argon2": "^0.31.1",
     "eslint-plugin-react-hooks": "^0.0.0-experimental-c5b937576-20231219",
     "lru-cache": "^10.1.0",
     "lucia": "^2.7.6",
@@ -26,16 +25,16 @@
     "react-zoom-pan-pinch": "^3.1.0"
   },
   "devDependencies": {
-    "@catppuccin/tailwindcss": "^0.1.6",
     "@tailwindcss/typography": "^0.5.9",
     "@types/node": "20.4.5",
     "@types/react": "18.2.17",
-    "autoprefixer": "^10.4.14",
+    "autoprefixer": "^10.4.16",
     "daisyui": "^4.4.24",
-    "eslint": "8.46.0",
+    "eslint": "8.56.0",
     "eslint-config-next": "^14.0.4",
     "postcss": "^8.4.27",
     "prisma": "^5.7.1",
+    "prisma-json-types-generator": "^3.0.3",
     "tailwindcss": "^3.4.0"
   }
 }

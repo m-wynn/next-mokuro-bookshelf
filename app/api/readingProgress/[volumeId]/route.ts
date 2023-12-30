@@ -3,7 +3,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "auth/lucia";
 import * as context from "next/headers";
 
-export async function GET(request: NextRequest, { params: { volumeId } }) {
+export async function GET(
+  request: NextRequest,
+  { params: { volumeId } }: { params: { volumeId: string } },
+) {
   const session = await auth.handleRequest(request.method, context).validate();
   if (!session) {
     return NextResponse.json({ error: "Not logged in" }, { status: 401 });
@@ -28,7 +31,10 @@ export async function GET(request: NextRequest, { params: { volumeId } }) {
   return NextResponse.json(reading);
 }
 
-export async function POST(request: NextRequest, { params: { volumeId } }) {
+export async function POST(
+  request: NextRequest,
+  { params: { volumeId } }: { params: { volumeId: string } },
+) {
   const session = await auth.handleRequest(request.method, context).validate();
   if (!session) {
     return NextResponse.json({ error: "Not logged in" }, { status: 401 });

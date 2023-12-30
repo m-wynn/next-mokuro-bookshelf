@@ -9,14 +9,7 @@ module.exports = {
   theme: {
     extend: {},
   },
-  plugins: [
-    require("@tailwindcss/typography"),
-    require("@catppuccin/tailwindcss")({
-      prefix: "ctp",
-      defaultFlavour: "latte",
-    }),
-    require("daisyui"),
-  ],
+  plugins: [require("@tailwindcss/typography"), require("daisyui")],
   daisyui: {
     themes: [
       {

@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, useState } from "react";
-import { Reading } from "volume";
+import { Reading } from "lib/reading";
 
 const emptyReadings: Reading[] = [];
 

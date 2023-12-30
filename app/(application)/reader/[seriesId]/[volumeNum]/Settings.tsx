@@ -7,13 +7,18 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import Checkbox from "@/checkbox";
 
-const setVolumeSetting = (volumeId, setCallback, settingKey, value) => {
+const setVolumeSetting = (
+  volumeId: number,
+  setCallback: (value: boolean) => void,
+  settingKey: string,
+  value: boolean,
+) => {
   fetch(`/api/volumeSetting/${volumeId}`, {
     method: "POST",
     body: JSON.stringify({ [settingKey]: value }),
   });
   setCallback(value);
-}
+};
 
 export default function Settings({
   volumeId,
@@ -21,6 +26,12 @@ export default function Settings({
   setUseTwoPages,
   firstPageIsCover,
   setFirstPageIsCover,
+}: {
+  volumeId: number;
+  useTwoPages: boolean;
+  setUseTwoPages: (value: boolean) => void;
+  firstPageIsCover: boolean;
+  setFirstPageIsCover: (value: boolean) => void;
 }) {
   return (
     <details className="dropdown dropdown-end join-item">
@@ -32,7 +43,14 @@ export default function Settings({
           <Checkbox
             fa={faTableColumns}
             value={useTwoPages}
-            set={(checked) => { setVolumeSetting(volumeId, setUseTwoPages, 'useTwoPagesOverride', checked) }}
+            set={(checked) => {
+              setVolumeSetting(
+                volumeId,
+                setUseTwoPages,
+                "useTwoPagesOverride",
+                checked,
+              );
+            }}
           >
             Display Two Pages
           </Checkbox>
@@ -41,7 +59,14 @@ export default function Settings({
           <Checkbox
             fa={faBook}
             value={firstPageIsCover}
-            set={(checked) => { setVolumeSetting(volumeId, setFirstPageIsCover, 'firstPageIsCoverOverride', checked) }}
+            set={(checked) => {
+              setVolumeSetting(
+                volumeId,
+                setFirstPageIsCover,
+                "firstPageIsCoverOverride",
+                checked,
+              );
+            }}
           >
             First Page Is Cover
           </Checkbox>

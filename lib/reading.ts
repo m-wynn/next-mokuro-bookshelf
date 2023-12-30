@@ -1,5 +1,7 @@
+import { Prisma } from "@prisma/client";
+
 // Everything that updates allReadings from the database should use this select
-export const readingSelect = {
+export const ReadingSelectQuery = {
   id: true,
   page: true,
   status: true,
@@ -21,4 +23,8 @@ export const readingSelect = {
       },
     },
   },
-};
+} satisfies Prisma.ReadingSelect;
+
+export type Reading = Prisma.ReadingGetPayload<{
+  select: typeof ReadingSelectQuery;
+}>;

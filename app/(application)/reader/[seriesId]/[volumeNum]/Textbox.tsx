@@ -1,6 +1,17 @@
+import { OcrBlock } from "page";
 import React from "react";
 
-export const Textbox = ({ box, fontSize, vertical, lines }) => {
+export const Textbox = ({
+  box,
+  fontSize,
+  vertical,
+  lines,
+}: {
+  box: OcrBlock["box"];
+  fontSize: number;
+  vertical: OcrBlock["vertical"];
+  lines: OcrBlock["lines"];
+}) => {
   const minFontSize = 12;
   const maxFontSize = 64;
   return (

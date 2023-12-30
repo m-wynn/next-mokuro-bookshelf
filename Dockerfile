@@ -9,17 +9,19 @@ COPY package.json package-lock.json ./
 
 RUN npm install --frozen-lockfile
 
-USER 1000
-
 COPY . .
 
 
 FROM base as prod
 
-RUN npm run build
+RUN npx prisma generate && npm run build
+
+USER 1000
 
 CMD ["npm", "run", "start"]
 
 FROM base as dev
+
+USER 1000
 
 CMD ["npm", "run", "dev"]

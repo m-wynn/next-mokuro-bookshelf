@@ -8,7 +8,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 import VolumeCard from "@/volumecard";
-import { Reading } from "volume";
+import { Reading } from "lib/reading";
 import { ReadingStatus } from "@prisma/client";
 
 type ShelfProps = {

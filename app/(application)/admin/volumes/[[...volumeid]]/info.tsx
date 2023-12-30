@@ -1,7 +1,12 @@
 import VolumeCard from "@/volumecard";
 import { useEffect, useState } from "react";
 import Input from "@/input";
-export default function Info({ errors, register, watch }): JSX.Element {
+import { FormChild } from "./page";
+export default function Info({
+  errors,
+  register,
+  watch,
+}: FormChild): JSX.Element {
   const [coverUri, setCoverUri] = useState("");
 
   const title = watch("title");
@@ -29,7 +34,7 @@ export default function Info({ errors, register, watch }): JSX.Element {
               label="Manga Title"
               placeholder="Non Non Biyori"
               errors={errors?.title || null}
-              register={...register("title", {
+              register={register("title", {
                 required: "Title is required",
               })}
             />
@@ -38,7 +43,7 @@ export default function Info({ errors, register, watch }): JSX.Element {
               type="number"
               defaultValue="1"
               errors={errors?.volumeNumber || null}
-              register={...register("volumeNumber", {
+              register={register("volumeNumber", {
                 required: "Volume Number is required",
                 min: { value: 0, message: "Volume Number must be positive" },
               })}
@@ -51,7 +56,7 @@ export default function Info({ errors, register, watch }): JSX.Element {
                 errors?.coverImage && "file-input-error"
               }`}
               errors={errors?.coverImage || null}
-              register={...register("coverImage", {
+              register={register("coverImage", {
                 required: "Cover Image is required",
               })}
             />

@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { auth } from "auth/lucia";
 import GlobalDataProvider from "./GlobalContext";
 import prisma from "db";
-import { readingSelect } from "lib/reading";
+import { ReadingSelectQuery } from "lib/reading";
 export default async function DashboardLayout({
   children,
 }: {
@@ -19,7 +19,7 @@ export default async function DashboardLayout({
       userId: session.userId,
       isActive: true,
     },
-    select: readingSelect,
+    select: ReadingSelectQuery,
   });
   return (
     <GlobalDataProvider readings={readings}>

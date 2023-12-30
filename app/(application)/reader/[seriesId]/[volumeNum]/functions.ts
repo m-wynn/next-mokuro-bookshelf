@@ -1,5 +1,5 @@
 "use server";
-import { readingSelect } from "lib/reading";
+import { ReadingSelectQuery } from "lib/reading";
 import prisma from "db";
 import { getSession } from "lib/session";
 
@@ -59,6 +59,6 @@ const updateReadingInDb = async (
       status: "READING",
       isActive: true,
     },
-    select: readingSelect,
+    select: ReadingSelectQuery,
   });
 };

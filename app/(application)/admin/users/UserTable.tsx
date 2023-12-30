@@ -41,12 +41,9 @@ const UserTable = ({
                   updateRole(user.id, Role[e.target.value as keyof typeof Role])
                 }
               >
-                {/* <option>{user.role}</option> */}
-                {roles
-                  // .filter((role) => role != user.role)
-                  .map((role) => (
-                    <option key={role}>{role}</option>
-                  ))}
+                {roles.map((role) => (
+                  <option key={role}>{role}</option>
+                ))}
               </select>
             </td>
             <td>{user.createdAt.toUTCString()}</td>

@@ -1,9 +1,13 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import Input from "@/input";
-import Checkbox from "@/checkbox";
-import { faTableColumns } from "@fortawesome/free-solid-svg-icons";
+import { FormChild } from "./page";
+import { FieldValues } from "react-hook-form";
 
-export default function Images({ register, watch, errors }): JSX.Element {
+export default function Images({
+  register,
+  watch,
+  errors,
+}: FormChild): JSX.Element {
   const pages: FileList = watch("pages");
   const ocrText = watch("ocrText");
   useEffect(() => {}, [pages, ocrText]);
@@ -15,9 +19,13 @@ export default function Images({ register, watch, errors }): JSX.Element {
         <div className="flex flex-row justify-around w-full">
           <div className="flex flex-col justify-between items-center w-1/2">
             <div className="w-full max-w-xs">
-              <label className="label flex cursor-pointer justify-normal">
-                <span className="label-text mr-3">First page is cover</span>
-                <input type="checkbox" className="checkbox" {...register('firstPageIsCover', {})}/>
+              <label className="flex cursor-pointer label justify-normal">
+                <span className="mr-3 label-text">First page is cover</span>
+                <input
+                  type="checkbox"
+                  className="checkbox"
+                  {...register("firstPageIsCover", {})}
+                />
               </label>
             </div>
             <Input
@@ -28,19 +36,18 @@ export default function Images({ register, watch, errors }): JSX.Element {
                 errors?.pages && "file-input-error"
               }`}
               errors={errors?.pages || null}
-              register={...register("pages", {
+              register={register("pages", {
                 required: "Images are required",
                 validate: {
-                  validateNumber: (_, values) => {
+                  validateNumber: (_: any, values: FieldValues) => {
                     if (values && ocrText) {
                       // check that pages' filenames and ocrtext's keys match
                       const ocrTextKeys = Object.keys(ocrText);
-                      const pagesFilenames = Array.from(values).map((page) =>
-                        page.name.replace(/\.[^/.]+$/, ""),
+                      const pagesFilenames = Array.from(values as FileList).map(
+                        (page) => page.name.replace(/\.[^/.]+$/, ""),
                       );
-                      // it's okay if there are pages with no OCR Text
                       const mismatch = ocrTextKeys.reduce(
-                        (acc, filename) =>
+                        (acc: string[], filename) =>
                           pagesFilenames.includes(
                             filename.replace(/\.[^/.]+$/, ""),
                           )

@@ -6,7 +6,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import Shelf from "./Shelf";
 
 import { ReadingStatus } from "@prisma/client";
-import { Reading } from "volume";
+import { Reading } from "lib/reading";
 import { useGlobalContext } from "./GlobalContext";
 
 export const Bookshelf = ({
@@ -55,7 +55,7 @@ export const Bookshelf = ({
 
   const removeReadingAndState = async (id: number) => {
     await removeReading(id);
-    setAllReadings((prev) => {
+    setAllReadings((prev: Reading[]) => {
       return prev.filter((reading) => reading.id !== id);
     });
   };

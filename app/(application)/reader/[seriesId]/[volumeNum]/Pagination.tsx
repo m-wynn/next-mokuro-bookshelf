@@ -11,6 +11,12 @@ export default function Pagination({
   pageCount,
   useTwoPages,
   firstPageIsCover,
+}: {
+  currentPage: number;
+  setBoundPage: (page: number) => void;
+  pageCount: number;
+  useTwoPages: boolean;
+  firstPageIsCover: boolean;
 }) {
   const oneIndexedPage = useMemo(() => currentPage + 1, [currentPage]);
 
@@ -153,7 +159,17 @@ export default function Pagination({
   );
 }
 
-const EnterInput = ({ className, defaultValue, doublePage, onSubmit }) => {
+const EnterInput = ({
+  className,
+  defaultValue,
+  doublePage,
+  onSubmit,
+}: {
+  className: string;
+  defaultValue: number;
+  doublePage: number | null;
+  onSubmit: (value: number) => void;
+}) => {
   const [value, setValue] = useState(defaultValue);
   useEffect(() => {
     setValue(defaultValue);
@@ -161,25 +177,27 @@ const EnterInput = ({ className, defaultValue, doublePage, onSubmit }) => {
   return (
     <>
       <input
-        type="text"
+        type="number"
         pattern="[0-9]*"
         className={`${className} ${doublePage ? "h-1/2" : "h-full"}`}
         placeholder="pg"
         value={value}
-        onFocus={(e) => setValue(parseInt(value))}
+        onFocus={(_) => setValue(value)}
         onChange={(e) => {
-          setValue(e.target.validity.valid ? e.target.value : value);
+          setValue(e.target.validity.valid ? parseInt(e.target.value) : value);
         }}
         onKeyDown={(e) => {
           if (e.key === "Enter") {
             onSubmit(value);
-            document.activeElement?.blur();
+            if (document.activeElement instanceof HTMLElement) {
+              document.activeElement.blur();
+            }
           }
         }}
       />
       {doublePage && (
         <div className="p-0 m-0 w-full h-1/2 text-center text-top">
-          {parseInt(value) + 1}
+          {value + 1}
         </div>
       )}
     </>

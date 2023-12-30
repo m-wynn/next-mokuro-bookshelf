@@ -1,5 +1,4 @@
 import Sidebar from "./sidebar";
-import Link from "next/link";
 export default function AdminLayout({
   children, // will be a page or nested layout
 }: {
