@@ -6,7 +6,7 @@ export default async function AdminLayout({
   children: React.ReactNode;
 }) {
   const session = await getSession("GET");
-  if (session.user.role !== "ADMIN") {
+  if (session.user.role !== "ADMIN" && session.user.role !== "EDITOR") {
     throw new Error("Unauthorized");
   }
   return (
