@@ -2,6 +2,7 @@
 import { ReadingSelectQuery } from "lib/reading";
 import prisma from "db";
 import { getSession } from "lib/session";
+import { revalidatePath } from 'next/cache';
 
 export const updateReadingProgress = async (volumeId: number, page: number) => {
   const session = await getSession("POST");
@@ -40,7 +41,7 @@ const updateReadingInDb = async (
   page: number,
   userId: string,
 ) => {
-  return await prisma.reading.upsert({
+  const reading = await prisma.reading.upsert({
     where: {
       volumeUser: {
         userId: userId,
@@ -61,4 +62,9 @@ const updateReadingInDb = async (
     },
     select: ReadingSelectQuery,
   });
+
+  revalidatePath('/');
+  revalidatePath('/allbooks');
+
+  return reading;
 };

@@ -24,7 +24,11 @@ export default function VolumeDataProvider({
   userSetting: UserSetting | null;
 }) {
   const getCurrentPage = () => {
-    return volume.readings[0]?.page ?? 0;
+    let page = volume.readings[0]?.page ?? 0;
+    if (page > 0 && getUseTwoPages() && getFirstPageIsCover() && page % 2 == 0) {
+      return page - 1;
+    }
+    return page;
   };
 
   const getUseTwoPages = () => {
