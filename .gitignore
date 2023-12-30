@@ -35,7 +35,6 @@ yarn-error.log*
 /db
 dev.db
 dev.db-journal
-*.env*
 
 /shared/acme.json
 
