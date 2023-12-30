@@ -26,7 +26,6 @@ export async function GET(request: NextRequest) {
     if (series == null) {
       return NextResponse.json({ error: "No such series" }, { status: 404 });
     }
-    console.log(series);
 
     return NextResponse.json(series);
   }

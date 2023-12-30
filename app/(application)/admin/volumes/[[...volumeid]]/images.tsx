@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import Input from "@/input";
+import Checkbox from "@/checkbox";
+import { faTableColumns } from "@fortawesome/free-solid-svg-icons";
 
 export default function Images({ register, watch, errors }): JSX.Element {
   const pages: FileList = watch("pages");
@@ -12,6 +14,12 @@ export default function Images({ register, watch, errors }): JSX.Element {
         <h2 className="card-title">Upload Pages</h2>
         <div className="flex flex-row justify-around w-full">
           <div className="flex flex-col justify-between items-center w-1/2">
+            <div className="w-full max-w-xs">
+              <label className="label flex cursor-pointer justify-normal">
+                <span className="label-text mr-3">First page is cover</span>
+                <input type="checkbox" className="checkbox" {...register('firstPageIsCover', {})}/>
+              </label>
+            </div>
             <Input
               label="Image Files"
               type="file"

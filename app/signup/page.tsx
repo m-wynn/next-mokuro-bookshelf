@@ -21,7 +21,6 @@ export default function Register() {
       method: "POST",
       body: JSON.stringify(data),
     });
-    console.log(response);
 
     if (response.status === 201) {
       return router.push("/");

@@ -27,7 +27,6 @@ export default function VolumeDataProvider({
   const getUseTwoPages = () => {
     const defaultSetting = !!userSetting?.useTwoPages;
     const override = volume.readings[0]?.useTwoPagesOverride ?? null;
-    console.log(defaultSetting, override);
     if (override === null) {
       return defaultSetting;
     }

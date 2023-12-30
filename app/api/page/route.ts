@@ -13,11 +13,6 @@ export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
 
   if (searchParams.has("series") && searchParams.has("volume")) {
-    console.log(
-      `series: ${searchParams.get("series")}, volume: ${searchParams.get(
-        "volume",
-      )}`,
-    );
     const pages = await prisma.page.findMany({
       where: {
         volume: {
