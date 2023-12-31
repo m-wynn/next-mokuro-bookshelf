@@ -4,7 +4,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "start:migrate:prod": "prisma migrate deploy && next start"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.4.0",
