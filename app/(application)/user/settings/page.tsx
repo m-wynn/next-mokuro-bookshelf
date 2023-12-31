@@ -1,5 +1,6 @@
 import prisma from "db";
 import { getSession } from "lib/session";
+import { UserSettingSelectQuery } from "lib/userSetting";
 import React from "react";
 import Preferences from "./Preferences";
 
@@ -11,9 +12,7 @@ export default async function UserSettings() {
     },
     select: {
       userSetting: {
-        select: {
-          useTwoPages: true,
-        },
+        select: UserSettingSelectQuery,
       },
     },
   });
