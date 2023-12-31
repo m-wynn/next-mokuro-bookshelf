@@ -28,8 +28,14 @@ export async function POST(request: NextRequest) {
 
   let ocrData = ocr != null ? JSON.parse(await ocr.text()) : null;
 
+  const filePath = `${process.env.IMAGE_PATH}/${volumeId}/${number}-${file.name}`;
+
+  if (filePath.includes("..")) {
+    throw new Error ("File naming error")
+  }
+
   await fs.writeFile(
-    `${process.env.IMAGE_PATH}/${volumeId}/${number}-${file.name}`,
+    filePath,
     Buffer.from(await file.arrayBuffer()),
   );
 

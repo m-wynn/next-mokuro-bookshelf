@@ -66,6 +66,10 @@ export async function POST(request: NextRequest) {
 
   const coverPath = `${process.env.IMAGE_PATH}/${volume.id}/cover/${cover.name}`;
 
+  if (coverPath.includes("..")) {
+    throw new Error ("File naming error")
+  }
+
   await fs.mkdir(coverPath.split("/").slice(0, -1).join("/"), {
     recursive: true,
   });
