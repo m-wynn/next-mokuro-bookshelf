@@ -18,7 +18,7 @@ RUN npx prisma generate && npm run build
 
 USER 1000
 
-CMD ["./entrypoint.sh"]
+CMD ["npm", "run", "start:migrate:prod"]
 
 FROM base as dev
 
