@@ -180,6 +180,10 @@ export default function PagesContainer({
           velocityDisabled: true,
           excluded: ["leading-none", "group"],
         }}
+        wheel={{
+          smoothStep: 0.001 * volumeData.zoomSensitivity,
+          excluded: ["leading-none", "group"],
+        }}
         zoomAnimation={{
           disabled: true,
         }}

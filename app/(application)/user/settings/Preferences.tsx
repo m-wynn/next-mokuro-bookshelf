@@ -1,16 +1,20 @@
 "use client";
 import { useState } from "react";
 import React from "react";
-import { updateUseTwoPages } from "./functions";
-import { faTableColumns } from "@fortawesome/free-solid-svg-icons";
+import { updateUseTwoPages, updateZoomSensitivity } from "./functions";
+import { faTableColumns, faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Checkbox from "@/checkbox";
+import Input from "@/input";
+import { UserSetting } from "lib/userSetting";
 
 export default function Preferences({
   user,
 }: {
-  user: { userSetting: { useTwoPages: boolean } | null };
+  user: { userSetting: UserSetting | null };
 }) {
-  const [useTwoPages, setUseTwoPages] = useState(user.userSetting?.useTwoPages);
+  const [useTwoPages, setUseTwoPages] = useState(user.userSetting?.useTwoPages ?? false);
+  const [zoomSensitivity, setZoomSensitivity] = useState(user.userSetting?.zoomSensitivity ?? 1);
 
   return (
     <div className="flex flex-col mt-4 w-96 max-w-2xl md:w-1/2 grow">
@@ -28,6 +32,25 @@ export default function Preferences({
             >
               Display Two Pages
             </Checkbox>
+            <label className="flex-row w-full cursor-pointer label">
+              <span className="flex-grow label-text">
+                <FontAwesomeIcon icon={faMagnifyingGlass} className="mr-4" />
+                Zoom sensitivity
+              </span>
+              <select
+                className="select"
+                defaultValue={zoomSensitivity}
+                onChange={(e) => {
+                  const sensitivity = parseInt(e.target.value);
+                  updateZoomSensitivity(sensitivity);
+                  setZoomSensitivity(sensitivity);
+                }}
+              >
+                {[...Array(10).keys()].map((sensitivity) => (
+                  <option key={sensitivity + 1}>{sensitivity + 1}</option>
+                ))}
+              </select>
+            </label>
           </div>
         </div>
       </div>
