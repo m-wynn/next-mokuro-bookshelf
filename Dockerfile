@@ -16,6 +16,8 @@ FROM base as prod
 
 RUN npx prisma generate && npm run build
 
+RUN npx prisma migrate deploy
+
 USER 1000
 
 CMD ["npm", "run", "start"]
