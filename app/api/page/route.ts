@@ -1,3 +1,4 @@
+import crypto from 'crypto';
 import prisma from "db";
 import { promises as fs } from "fs";
 import { NextRequest, NextResponse } from "next/server";
@@ -28,9 +29,12 @@ export async function POST(request: NextRequest) {
 
   let ocrData = ocr != null ? JSON.parse(await ocr.text()) : null;
 
+  const fileData = Buffer.from(await file.arrayBuffer());
+  const fileName = getFileHash(fileData);
+
   await fs.writeFile(
-    `${process.env.IMAGE_PATH}/${volumeId}/${number}-${file.name}`,
-    Buffer.from(await file.arrayBuffer()),
+    `${process.env.IMAGE_PATH}/${volumeId}/${fileName}`,
+    fileData,
   );
 
   const page = await prisma.page.upsert({
@@ -44,17 +48,23 @@ export async function POST(request: NextRequest) {
       number: number,
       volumeId: volumeId,
       ocr: ocrData,
-      fileName: `${number}-${file.name}`,
+      fileName: fileName,
       uploadedById: session.user.userId,
     },
     create: {
       number: number,
       volumeId: volumeId,
       ocr: ocrData,
-      fileName: `${number}-${file.name}`,
+      fileName: fileName,
       uploadedById: session.user.userId,
     },
   });
 
   return NextResponse.json(page);
+}
+
+const getFileHash = (fileData: Buffer): string => {
+  const hash = crypto.createHash('sha256');
+  hash.update(fileData);
+  return hash.digest('hex');
 }

@@ -44,6 +44,7 @@ export async function POST(request: NextRequest) {
     },
   });
 
+  const coverName = 'cover';
   const volume = await prisma.volume.upsert({
     where: {
       seriesNum: {
@@ -52,11 +53,11 @@ export async function POST(request: NextRequest) {
       },
     },
     update: {
-      cover: cover.name,
+      cover: coverName,
       firstPageIsCover: firstPageIsCover,
     },
     create: {
-      cover: cover.name,
+      cover: coverName,
       number: number,
       seriesId: seriesId.id,
       uploadedById: session.user.userId,
@@ -64,7 +65,7 @@ export async function POST(request: NextRequest) {
     },
   });
 
-  const coverPath = `${process.env.IMAGE_PATH}/${volume.id}/cover/${cover.name}`;
+  const coverPath = `${process.env.IMAGE_PATH}/${volume.id}/cover/${coverName}`;
 
   await fs.mkdir(coverPath.split("/").slice(0, -1).join("/"), {
     recursive: true,
