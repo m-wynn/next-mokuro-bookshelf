@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
   if (!["ADMIN", "EDITOR"].includes(session.user.role)) {
     return NextResponse.json(
       {
-        error: `Not authorized to upload stupid ${session.user.role} is not "ADMIN"`,
+        error: `Not authorized to upload ${session.user.role} is not "ADMIN"`,
       },
       { status: 403 },
     );

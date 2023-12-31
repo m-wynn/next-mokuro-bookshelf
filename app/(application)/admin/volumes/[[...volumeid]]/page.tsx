@@ -1,15 +1,21 @@
 "use client";
-import { useEffect, useState } from "react";
-import Info from "./info";
-import Ocr from "./ocr";
-import Images from "./images";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { useEffect, useRef, useState } from "react";
 import {
   FieldErrors,
   FieldValues,
+  SubmitHandler,
   UseFormRegister,
   UseFormWatch,
+  useForm,
 } from "react-hook-form";
+import { useAdminContext } from "../../AdminContext";
+import Images from "./images";
+import Info from "./info";
+import Ocr from "./ocr";
+import NewSeriesModal from "@/NewSeriesModal";
+import { createSeries, createVolume, createPage } from "../../functions";
+import { SeriesInputs } from "series";
+import { Series } from "@prisma/client";
 
 export type FormChild = {
   errors: FieldErrors<FieldValues>;
@@ -17,16 +23,26 @@ export type FormChild = {
   watch: UseFormWatch<FieldValues>;
 };
 
+export type VolumeFields = {
+  seriesId: string;
+  volumeNumber: number;
+  coverImage: FileList;
+  firstPageIsCover: boolean;
+  pages: FileList;
+  ocrFiles: FileList;
+};
+
 export default function VolumeEditor({
   params: { volumeid },
 }: {
   params: { volumeid: string | null };
 }) {
+  const { series, setSeries } = useAdminContext();
   const [uploadedPages, setUploadedPages] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   useEffect(() => {
     if (volumeid) {
-      alert("wow there is a query");
+      alert("Editing is not supported");
     }
   }, [volumeid]);
 
@@ -35,15 +51,16 @@ export default function VolumeEditor({
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm();
+    setValue,
+  } = useForm<VolumeFields>();
 
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
     setTotalPages(data.pages.length);
     const formData = new FormData();
-    formData.append("title", data.title);
+    formData.append("seriesId", data.seriesId);
     formData.append("volumeNumber", data.volumeNumber.toString());
     formData.append("coverImage", data.coverImage[0]);
-    formData.append('firstPageIsCover', data.firstPageIsCover);
+    formData.append("firstPageIsCover", data.firstPageIsCover);
 
     const response = await fetch("/api/volume", {
       method: "POST",
@@ -75,21 +92,41 @@ export default function VolumeEditor({
     );
     alert("Done!");
   };
+  const newSeriesModalRef: React.RefObject<HTMLDialogElement> = useRef(null);
+
+  const createSeriesHandler = async (data: SeriesInputs) => {
+    const newSeries = await createSeries(data);
+    setSeries((prev: Series[]) => [...prev, newSeries]);
+    setValue("seriesId", newSeries.id);
+  };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <Info register={register} watch={watch} errors={errors} />
-      <div className="divider"></div>
-      <Ocr register={register} watch={watch} errors={errors} />
-      <div className="divider"></div>
-      <Images register={register} watch={watch} errors={errors} />
-      {totalPages > 0 && (
-        <progress
-          className="progress progress-accent"
-          value={uploadedPages}
-          max={totalPages}
-        ></progress>
-      )}
-    </form>
+    <>
+      <NewSeriesModal
+        dialogRef={newSeriesModalRef}
+        createSeries={createSeriesHandler}
+      />
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <Info
+          newSeriesModalRef={newSeriesModalRef}
+          register={register}
+          watch={watch}
+          errors={errors}
+          series={series}
+          setValue={setValue}
+        />
+        <div className="divider"></div>
+        <Ocr register={register} watch={watch} errors={errors} />
+        <div className="divider"></div>
+        <Images register={register} watch={watch} errors={errors} />
+        {totalPages > 0 && (
+          <progress
+            className="progress progress-accent"
+            value={uploadedPages}
+            max={totalPages}
+          ></progress>
+        )}
+      </form>
+    </>
   );
 }

@@ -1,15 +1,27 @@
-import VolumeCard from "@/volumecard";
-import { useEffect, useState } from "react";
+"use client";
 import Input from "@/input";
+import VolumeCard from "@/volumecard";
+import { Series } from "@prisma/client";
+import { useEffect, useState } from "react";
 import { FormChild } from "./page";
 export default function Info({
   errors,
+  setValue,
   register,
   watch,
-}: FormChild): JSX.Element {
+  series,
+  newSeriesModalRef,
+}: {
+  errors: FormChild["errors"];
+  setValue: (name: string, value: unknown, config?: Object) => void;
+  register: FormChild["register"];
+  watch: FormChild["watch"];
+  series: Series[];
+  newSeriesModalRef: React.RefObject<HTMLDialogElement>;
+}): JSX.Element {
   const [coverUri, setCoverUri] = useState("");
 
-  const title = watch("title");
+  const seriesId = watch("seriesId");
   const volumeNumber = watch("volumeNumber");
   const coverFile = watch("coverImage");
 
@@ -27,17 +39,40 @@ export default function Info({
   return (
     <div className="card bg-base-300 rounded-box">
       <div className="items-center card-body">
-        <h2 className="card-title">Basic Info</h2>
+        <h2 className="card-seriesId">Basic Info</h2>
         <div className="flex flex-row justify-around w-full">
           <div className="flex flex-col justify-between items-center w-1/2">
-            <Input
-              label="Manga Title"
-              placeholder="Non Non Biyori"
-              errors={errors?.title || null}
-              register={register("title", {
-                required: "Title is required",
-              })}
-            />
+            <div className="w-full max-w-xs">
+              <label className="label">
+                <span className="label-text">Manga Series</span>
+              </label>
+              <select
+                className="w-full max-w-xs select"
+                defaultValue="Manga Series"
+                {...register("seriesId", {
+                  required: "Manga Series is required",
+                  // TODO: don't let this be "Add New" or something
+                })}
+                onChange={(e) => {
+                  if (e.target.value == "Add New") {
+                    console.log(newSeriesModalRef);
+                    newSeriesModalRef.current?.showModal();
+                  } else {
+                    setValue("seriesId", e.target.value);
+                  }
+                }}
+              >
+                <option disabled>Manga Series</option>
+                {series.map((series) => (
+                  <option key={series.id} value={series.id}>
+                    {series.englishName}
+                  </option>
+                ))}
+                <option key="new" className="font-bold">
+                  Add New
+                </option>
+              </select>
+            </div>
             <Input
               label="Volume Number"
               type="number"
@@ -67,7 +102,12 @@ export default function Info({
                 coverUri == "" ? "https://placekitten.com/400/540" : coverUri
               }
               href="#"
-              seriesName={!title || title == "" ? "Manga Title" : title}
+              seriesName={
+                !seriesId
+                  ? "Manga Series"
+                  : series.find((s) => s.id == seriesId)?.englishName ??
+                    "Manga Series"
+              }
               volumeNumber={volumeNumber || "?"}
             />
           </div>
