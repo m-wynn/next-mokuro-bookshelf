@@ -17,7 +17,8 @@ export const ReadingSelectQuery = {
       },
       series: {
         select: {
-          name: true,
+          englishName: true,
+          japaneseName: true,
           id: true,
         },
       },

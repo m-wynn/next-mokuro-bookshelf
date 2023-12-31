@@ -53,7 +53,8 @@ model Key {
 
 model Series {
   id           Int      @id @default(autoincrement())
-  name         String   @unique
+  englishName  String   @unique
+  japaneseName String   @default("")
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
   uploadedBy   User     @relation(fields: [uploadedById], references: [id])

@@ -27,7 +27,8 @@ export async function GET(request: NextRequest) {
           series: {
             select: {
               id: true,
-              name: true,
+              englishName: true,
+              japaneseName: true,
             },
           },
         },
