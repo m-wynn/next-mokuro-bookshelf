@@ -60,7 +60,7 @@ export default function PagesContainer({
         });
       }
     })();
-  }, [currentPage, volumeId, setAllReadings]);
+  }, [currentPage, volumeId, setAllReadings, pages.length, useTwoPages]);
 
   const setBoundPage = useCallback(
     (page: number) => {

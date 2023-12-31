@@ -1,5 +1,5 @@
 "use server";
-import { ReadingSelectQuery } from "lib/reading";
+import { ReadingSelectQuery, Reading } from "lib/reading";
 import prisma from "db";
 import { getSession } from "lib/session";
 import { revalidatePath } from 'next/cache';
@@ -9,39 +9,36 @@ export const updateReadingProgress = async (volumeId: number, page: number) => {
   const userId = session.user.userId;
   // If the page is less than four, maybe the user isn't actually reading
   // TODO: Maybe prompt them if they wanna start tracking.
-  if (page < 4) {
-    const reading = await prisma.reading.findUnique({
-      where: {
-        volumeUser: {
-          userId: userId,
-          volumeId: volumeId,
-        },
-        isActive: true,
-        status: {
-          // If the user has already read this volume, don't update the reading
-          // If they're past page four, too bad I don't wanna write it tonight
-          not: "READ",
-        },
+  const reading = await prisma.reading.findUnique({
+    where: {
+      volumeUser: {
+        userId: userId,
+        volumeId: volumeId,
       },
-      select: {
-        id: true,
-      },
-    });
-    if (reading) {
-      return await updateReadingInDb(volumeId, page, userId);
-    }
-  } else {
-    return await updateReadingInDb(volumeId, page, userId);
-  }
-  return null;
+      isActive: true,
+    },
+    select: ReadingSelectQuery
+  });
+
+  return await updateReadingInDb(reading, volumeId, page, userId);
 };
 
 const updateReadingInDb = async (
+  reading: Reading | null,
   volumeId: number,
   page: number,
   userId: string,
 ) => {
-  const reading = await prisma.reading.upsert({
+  if (!reading && page < 4) {
+    return null;
+  }
+
+  let status = reading?.status ?? "READING";
+  if (reading && page === reading.volume._count.pages - 1) {
+    status = "READ";
+  }
+
+  return await prisma.reading.upsert({
     where: {
       volumeUser: {
         userId: userId,
@@ -50,21 +47,16 @@ const updateReadingInDb = async (
     },
     update: {
       page: page,
-      status: "READING",
+      status: status,
       isActive: true,
     },
     create: {
       userId: userId,
       volumeId: volumeId,
       page: page,
-      status: "READING",
+      status: status,
       isActive: true,
     },
     select: ReadingSelectQuery,
   });
-
-  revalidatePath('/');
-  revalidatePath('/allbooks');
-
-  return reading;
 };
