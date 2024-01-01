@@ -1,9 +1,9 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faChevronRight,
   faChevronLeft,
-} from "@fortawesome/free-solid-svg-icons";
-import React, { useEffect, useState, useMemo } from "react";
+} from '@fortawesome/free-solid-svg-icons';
+import React, { useEffect, useState, useMemo } from 'react';
 
 export default function Pagination({
   currentPage,
@@ -80,7 +80,7 @@ export default function Pagination({
           )}
         </>
       )}
-      <div className={currentPage < 98 ? "w-12" : "w-16"}>
+      <div className={currentPage < 98 ? 'w-12' : 'w-16'}>
         <EnterInput
           className="input join-item m-0 w-full p-0 text-middle text-center focus:outline-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
           defaultValue={oneIndexedPage}
@@ -179,7 +179,7 @@ const EnterInput = ({
       <input
         type="number"
         pattern="[0-9]*"
-        className={`${className} ${doublePage ? "h-1/2" : "h-full"}`}
+        className={`${className} ${doublePage ? 'h-1/2' : 'h-full'}`}
         placeholder="pg"
         value={value}
         onFocus={(_) => setValue(value)}
@@ -187,7 +187,7 @@ const EnterInput = ({
           setValue(e.target.validity.valid ? parseInt(e.target.value) : value);
         }}
         onKeyDown={(e) => {
-          if (e.key === "Enter") {
+          if (e.key === 'Enter') {
             onSubmit(value);
             if (document.activeElement instanceof HTMLElement) {
               document.activeElement.blur();

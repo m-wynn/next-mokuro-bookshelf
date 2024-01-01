@@ -4,7 +4,7 @@ import {
   FieldErrorsImpl,
   Merge,
   UseFormRegisterReturn,
-} from "react-hook-form";
+} from 'react-hook-form';
 export default function Input({
   label,
   errors,
@@ -13,7 +13,7 @@ export default function Input({
   defaultValue,
   extraProperties = {},
   classNameOverride,
-  type = "text",
+  type = 'text',
 }: {
   label: string;
   errors: FieldError | Merge<FieldErrors, FieldErrorsImpl<any>> | null;
@@ -38,7 +38,7 @@ export default function Input({
           classNameOverride != null
             ? classNameOverride
             : `w-full input input-bordered input-lg ${
-                errors ? "input-error" : ""
+                errors ? 'input-error' : ''
               }`
         }
         {...register}

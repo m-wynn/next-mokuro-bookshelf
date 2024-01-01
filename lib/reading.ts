@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import { Prisma } from '@prisma/client';
 
 // Everything that updates allReadings from the database should use this select
 export const ReadingSelectQuery = {

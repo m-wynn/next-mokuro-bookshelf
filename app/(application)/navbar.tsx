@@ -1,4 +1,4 @@
-"use client";
+'use client';
 import {
   faSun,
   faMoon,
@@ -6,12 +6,12 @@ import {
   faScrewdriverWrench,
   faBookMedical,
   faMinimize,
-} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Link from "next/link";
-import React from "react";
-import { useGlobalContext } from "./GlobalContext";
-import { Session } from "lucia";
+} from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import Link from 'next/link';
+import React from 'react';
+import { useGlobalContext } from './GlobalContext';
+import { Session } from 'lucia';
 
 const Navbar = ({ session }: { session: Session }) => {
   const { fullScreen, setFullScreen } = useGlobalContext();
@@ -29,7 +29,7 @@ const Navbar = ({ session }: { session: Session }) => {
       )}
       <div
         className={`shadow navbar bg-base-300 overflow-hidden ${
-          fullScreen ? "h-0 w-0 m-0 p-0 min-h-0" : "h-16"
+          fullScreen ? 'h-0 w-0 m-0 p-0 min-h-0' : 'h-16'
         }`}
       >
         <div className="flex-1">
@@ -60,7 +60,7 @@ const Navbar = ({ session }: { session: Session }) => {
               <FontAwesomeIcon icon={faGear} />
             </Link>
           )}
-          {session.user?.role === "ADMIN" && (
+          {session.user?.role === 'ADMIN' && (
             <Link
               href="/admin"
               className="text-2xl normal-case btn btn-primary"

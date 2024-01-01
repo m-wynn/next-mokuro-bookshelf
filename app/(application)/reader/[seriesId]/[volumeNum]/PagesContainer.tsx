@@ -1,22 +1,22 @@
-"use client";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+'use client';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   TransformWrapper,
   TransformComponent,
   ReactZoomPanPinchRef,
-} from "react-zoom-pan-pinch";
+} from 'react-zoom-pan-pinch';
 
-import Pagination from "./Pagination";
-import PageContainer from "./PageContainer";
-import Settings from "./Settings";
+import Pagination from './Pagination';
+import PageContainer from './PageContainer';
+import Settings from './Settings';
 
-import { Page } from "./page";
-import { useVolumeContext } from "./VolumeDataProvider";
-import { useGlobalContext } from "app/(application)/GlobalContext";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMaximize } from "@fortawesome/free-solid-svg-icons";
-import { updateReadingProgress } from "./functions";
-import { Reading } from "lib/reading";
+import { Page } from './page';
+import { useVolumeContext } from './VolumeDataProvider';
+import { useGlobalContext } from 'app/(application)/GlobalContext';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faMaximize } from '@fortawesome/free-solid-svg-icons';
+import { updateReadingProgress } from './functions';
+import { Reading } from 'lib/reading';
 
 export default function PagesContainer({
   volumeId,
@@ -104,12 +104,12 @@ export default function PagesContainer({
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
       switch (e.key) {
-        case "ArrowLeft":
+        case 'ArrowLeft':
           e.preventDefault();
           e.stopPropagation();
           setBoundPage(currentPage - (showTwoPages ? 2 : 1));
           break;
-        case "ArrowRight":
+        case 'ArrowRight':
           e.preventDefault();
           e.stopPropagation();
           setBoundPage(currentPage + (showTwoPages ? 2 : 1));
@@ -120,17 +120,17 @@ export default function PagesContainer({
   );
 
   useEffect(() => {
-    document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener('keydown', handleKeyDown);
 
     return () => {
-      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener('keydown', handleKeyDown);
     };
   }, [handleKeyDown]);
 
   const reZoom = () => {
     if (transformComponentRef.current) {
       const { zoomToElement } = transformComponentRef.current;
-      zoomToElement("visiblePagesContainer", undefined, 50);
+      zoomToElement('visiblePagesContainer', undefined, 50);
     }
   };
 
@@ -148,7 +148,7 @@ export default function PagesContainer({
     <div
       id="pagesContainer"
       className={`flex flex-col m-0 w-full h-full ${
-        fullScreen ? "fixed top-0" : ""
+        fullScreen ? 'fixed top-0' : ''
       }`}
     >
       {!fullScreen && (
@@ -178,11 +178,11 @@ export default function PagesContainer({
         minScale={0.2}
         panning={{
           velocityDisabled: true,
-          excluded: ["leading-none", "group"],
+          excluded: ['leading-none', 'group'],
         }}
         wheel={{
           smoothStep: 0.001 * volumeData.zoomSensitivity,
-          excluded: ["leading-none", "group"],
+          excluded: ['leading-none', 'group'],
         }}
         zoomAnimation={{
           disabled: true,
@@ -194,8 +194,8 @@ export default function PagesContainer({
       >
         <TransformComponent
           wrapperStyle={{
-            width: "100%",
-            height: "100%",
+            width: '100%',
+            height: '100%',
           }}
         >
           <div id="visiblePagesContainer" className="flex flex-row flex-nowrap">

@@ -1,11 +1,11 @@
-import React from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import React from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faBars,
   faBook,
   faTableColumns,
-} from "@fortawesome/free-solid-svg-icons";
-import Checkbox from "@/checkbox";
+} from '@fortawesome/free-solid-svg-icons';
+import Checkbox from '@/checkbox';
 
 const setVolumeSetting = (
   volumeId: number,
@@ -14,7 +14,7 @@ const setVolumeSetting = (
   value: boolean,
 ) => {
   fetch(`/api/volumeSetting/${volumeId}`, {
-    method: "POST",
+    method: 'POST',
     body: JSON.stringify({ [settingKey]: value }),
   });
   setCallback(value);
@@ -47,7 +47,7 @@ export default function Settings({
               setVolumeSetting(
                 volumeId,
                 setUseTwoPages,
-                "useTwoPagesOverride",
+                'useTwoPagesOverride',
                 checked,
               );
             }}
@@ -63,7 +63,7 @@ export default function Settings({
               setVolumeSetting(
                 volumeId,
                 setFirstPageIsCover,
-                "firstPageIsCoverOverride",
+                'firstPageIsCoverOverride',
                 checked,
               );
             }}

@@ -1,4 +1,4 @@
-declare module "auth" {
+declare module 'auth' {
   type SignupForm = {
     username: string;
     password: string;

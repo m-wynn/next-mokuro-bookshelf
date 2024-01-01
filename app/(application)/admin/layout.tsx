@@ -1,15 +1,15 @@
-import prisma from "db";
-import Sidebar from "./sidebar";
-import { getSession } from "lib/session";
-import AdminContext from "./AdminContext";
+import prisma from 'db';
+import Sidebar from './sidebar';
+import { getSession } from 'lib/session';
+import AdminContext from './AdminContext';
 export default async function AdminLayout({
   children, // will be a page or nested layout
 }: {
   children: React.ReactNode;
 }) {
-  const session = await getSession("GET");
-  if (session.user.role !== "ADMIN" && session.user.role !== "EDITOR") {
-    throw new Error("Unauthorized");
+  const session = await getSession('GET');
+  if (session.user.role !== 'ADMIN' && session.user.role !== 'EDITOR') {
+    throw new Error('Unauthorized');
   }
 
   const series = await prisma.series.findMany({});

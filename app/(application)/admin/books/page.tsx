@@ -1,7 +1,7 @@
-import { Prisma } from "@prisma/client";
-import prisma from "db";
-import React from "react";
-import SeriesTable from "./SeriesTable";
+import { Prisma } from '@prisma/client';
+import prisma from 'db';
+import React from 'react';
+import SeriesTable from './SeriesTable';
 
 const volumeSelect = {
   number: true,
@@ -43,7 +43,7 @@ const Users = async () => {
   const series = await prisma.series.findMany({
     select: seriesSelect,
     orderBy: {
-      id: "asc",
+      id: 'asc',
     },
   });
 

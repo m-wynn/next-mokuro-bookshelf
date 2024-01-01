@@ -1,4 +1,4 @@
-import { Role } from "@prisma/client";
+import { Role } from '@prisma/client';
 
 /// <reference types="lucia" />
 declare namespace Lucia {

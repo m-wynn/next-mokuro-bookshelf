@@ -1,5 +1,5 @@
-"use client";
-import { useEffect, useRef, useState } from "react";
+'use client';
+import { useEffect, useRef, useState } from 'react';
 import {
   FieldErrors,
   FieldValues,
@@ -7,16 +7,16 @@ import {
   UseFormRegister,
   UseFormWatch,
   useForm,
-} from "react-hook-form";
-import { useAdminContext } from "../../AdminContext";
-import Images from "./images";
-import Info from "./info";
-import Ocr from "./ocr";
-import NewSeriesModal from "@/NewSeriesModal";
-import { createSeries, createVolume, createPage } from "../../functions";
-import { SeriesInputs } from "series";
-import { Series } from "@prisma/client";
-import PromisePool from "async-promise-pool";
+} from 'react-hook-form';
+import { useAdminContext } from '../../AdminContext';
+import Images from './images';
+import Info from './info';
+import Ocr from './ocr';
+import NewSeriesModal from '@/NewSeriesModal';
+import { createSeries, createVolume, createPage } from '../../functions';
+import { SeriesInputs } from 'series';
+import { Series } from '@prisma/client';
+import PromisePool from 'async-promise-pool';
 
 export type FormChild = {
   errors: FieldErrors<VolumeFields>;
@@ -43,7 +43,7 @@ export default function VolumeEditor({
   const [totalPages, setTotalPages] = useState(0);
   useEffect(() => {
     if (volumeid) {
-      alert("Editing is not supported");
+      alert('Editing is not supported');
     }
   }, [volumeid]);
 
@@ -60,14 +60,14 @@ export default function VolumeEditor({
       (s) => s.englishName === data.seriesEnglishName,
     )?.id;
     if (!seriesId) {
-      throw new Error("Series not found");
+      throw new Error('Series not found');
     }
     setTotalPages(data.pages.length);
     const formData = new FormData();
-    formData.append("seriesId", seriesId.toString());
-    formData.append("volumeNumber", data.volumeNumber.toString());
-    formData.append("coverImage", data.coverImage[0]);
-    formData.append("firstPageIsCover", data.firstPageIsCover);
+    formData.append('seriesId', seriesId.toString());
+    formData.append('volumeNumber', data.volumeNumber.toString());
+    formData.append('coverImage', data.coverImage[0]);
+    formData.append('firstPageIsCover', data.firstPageIsCover);
 
     const volume = await createVolume(formData);
     let uploadedPageCount = 0;
@@ -75,15 +75,15 @@ export default function VolumeEditor({
     Array.from(data.pages as FileList)
       .map(async (page, i) => {
         const pageFormData = new FormData();
-        pageFormData.append("volumeId", volume.id.toString());
-        pageFormData.append("number", i.toString());
-        pageFormData.append("file", page);
+        pageFormData.append('volumeId', volume.id.toString());
+        pageFormData.append('number', i.toString());
+        pageFormData.append('file', page);
         pageFormData.append(
-          "ocr",
+          'ocr',
           Array.from(data.ocrFiles as FileList).find(
             (ocrFile) =>
               ocrFile.name ===
-              (page as File).name.replace(/\.[^/.]+$/, "") + ".json",
+              (page as File).name.replace(/\.[^/.]+$/, '') + '.json',
           ) as Blob,
         );
         await createPage(pageFormData);
@@ -92,7 +92,7 @@ export default function VolumeEditor({
       })
       .forEach((task) => pool.add(() => task));
     await pool.all();
-    alert("Done!");
+    alert('Done!');
   };
   const newSeriesModalRef: React.RefObject<HTMLDialogElement> = useRef(null);
 
@@ -102,7 +102,7 @@ export default function VolumeEditor({
     newSeriesModalRef.current?.close();
     // For some reason setting a timeout here fixes the issue where the select
     // doesn't update to the new series, but instead goes to index 0
-    setTimeout(() => setValue("seriesEnglishName", newSeries.englishName), 100);
+    setTimeout(() => setValue('seriesEnglishName', newSeries.englishName), 100);
   };
 
   return (

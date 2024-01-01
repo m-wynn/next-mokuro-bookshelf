@@ -1,8 +1,8 @@
-"use client";
-import React from "react";
-import { useForm } from "react-hook-form";
-import Input from "./input";
-import { SeriesInputs } from "series";
+'use client';
+import React from 'react';
+import { useForm } from 'react-hook-form';
+import Input from './input';
+import { SeriesInputs } from 'series';
 
 const NewSeriesModal = ({
   dialogRef,
@@ -27,8 +27,8 @@ const NewSeriesModal = ({
               type="text"
               placeholder="Non Non Biyori"
               errors={errors?.englishName || null}
-              register={register("englishName", {
-                required: "English Name is required",
+              register={register('englishName', {
+                required: 'English Name is required',
               })}
             />
             <Input
@@ -36,8 +36,8 @@ const NewSeriesModal = ({
               type="text"
               placeholder="のんのんびより"
               errors={errors?.japaneseName || null}
-              register={register("japaneseName", {
-                required: "Japanese Name is required",
+              register={register('japaneseName', {
+                required: 'Japanese Name is required',
               })}
             />
             <button type="submit" className="mt-8 w-full btn btn-primary">

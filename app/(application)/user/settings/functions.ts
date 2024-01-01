@@ -1,10 +1,10 @@
-"use server";
-import prisma from "db";
-import { getSession } from "lib/session";
-import { revalidatePath } from "next/cache";
+'use server';
+import prisma from 'db';
+import { getSession } from 'lib/session';
+import { revalidatePath } from 'next/cache';
 
 export const updateUseTwoPages = async (useTwoPages: boolean) => {
-  const session = await getSession("POST");
+  const session = await getSession('POST');
   await prisma.userSetting.upsert({
     where: {
       userId: session.user.userId,
@@ -17,11 +17,11 @@ export const updateUseTwoPages = async (useTwoPages: boolean) => {
       useTwoPages,
     },
   });
-  revalidatePath("/");
+  revalidatePath('/');
 };
 
 export const updateZoomSensitivity = async (zoomSensitivity: number) => {
-  const session = await getSession("POST");
+  const session = await getSession('POST');
   await prisma.userSetting.upsert({
     where: {
       userId: session.user.userId,
@@ -34,11 +34,11 @@ export const updateZoomSensitivity = async (zoomSensitivity: number) => {
       zoomSensitivity,
     },
   });
-  revalidatePath("/");
+  revalidatePath('/');
 };
 
 export const updateUseJapaneseTitle = async (useJapaneseTitle: boolean) => {
-  const session = await getSession("POST");
+  const session = await getSession('POST');
   await prisma.userSetting.upsert({
     where: {
       userId: session.user.userId,
@@ -51,5 +51,5 @@ export const updateUseJapaneseTitle = async (useJapaneseTitle: boolean) => {
       useJapaneseTitle,
     },
   });
-  revalidatePath("/");
+  revalidatePath('/');
 };

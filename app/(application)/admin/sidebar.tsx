@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { usePathname } from "next/navigation";
-import Link from "next/link";
+import { usePathname } from 'next/navigation';
+import Link from 'next/link';
 
 const Sidebar: React.FC = () => {
   const pathname = usePathname();
@@ -14,7 +14,7 @@ const Sidebar: React.FC = () => {
             <li>
               <Link
                 href="/admin/users"
-                className={`${pathname === "/admin/users" ? "active" : ""}`}
+                className={`${pathname === '/admin/users' ? 'active' : ''}`}
               >
                 Users
               </Link>
@@ -22,7 +22,7 @@ const Sidebar: React.FC = () => {
             <li>
               <Link
                 href="/admin/books"
-                className={`${pathname === "/admin/books" ? "active" : ""}`}
+                className={`${pathname === '/admin/books' ? 'active' : ''}`}
               >
                 Books
               </Link>
@@ -30,7 +30,7 @@ const Sidebar: React.FC = () => {
             <li>
               <Link
                 href="/admin/volumes"
-                className={`${pathname === "/admin/volumes" ? "active" : ""}`}
+                className={`${pathname === '/admin/volumes' ? 'active' : ''}`}
               >
                 New Volume
               </Link>

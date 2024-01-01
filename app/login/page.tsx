@@ -1,10 +1,10 @@
-"use client";
-import { useForm, SubmitHandler } from "react-hook-form";
-import { useRouter } from "next/navigation";
-import Input from "@/input";
-import { LoginForm } from "auth";
-import { useState } from "react";
-import Link from "next/link";
+'use client';
+import { useForm, SubmitHandler } from 'react-hook-form';
+import { useRouter } from 'next/navigation';
+import Input from '@/input';
+import { LoginForm } from 'auth';
+import { useState } from 'react';
+import Link from 'next/link';
 
 export default function Register() {
   const {
@@ -16,19 +16,19 @@ export default function Register() {
   const [error, setError] = useState<string | null>(null);
 
   const onSubmit: SubmitHandler<LoginForm> = async (data) => {
-    const response = await fetch("/api/login", {
-      method: "POST",
+    const response = await fetch('/api/login', {
+      method: 'POST',
       body: JSON.stringify(data),
     });
 
     if (response.status === 200) {
-      return router.push("/");
+      return router.push('/');
     } else {
       try {
         const data = await response.json();
         setError(data.error);
       } catch (error) {
-        setError("An error occurred");
+        setError('An error occurred');
       }
     }
   };
@@ -45,8 +45,8 @@ export default function Register() {
               label="Username"
               placeholder="renge"
               errors={errors?.username || null}
-              register={register("username", {
-                required: "Username is required",
+              register={register('username', {
+                required: 'Username is required',
               })}
             />
             <Input
@@ -54,8 +54,8 @@ export default function Register() {
               placeholder="ny@np@55u"
               type="password"
               errors={errors?.password || null}
-              register={register("password", {
-                required: "Password is required",
+              register={register('password', {
+                required: 'Password is required',
               })}
             />
             {error && <p className="mt-4 text-error">{error}</p>}

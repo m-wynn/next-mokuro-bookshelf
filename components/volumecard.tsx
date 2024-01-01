@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from 'next/link';
 
 type VolumeCardProps = {
   coverUri: string;
@@ -37,7 +37,7 @@ const VolumeCard = ({
           max={totalPages}
         ></progress>
       ) : (
-        ""
+        ''
       )}
       <div className="card-body">
         <div className="absolute top-0 right-0 z-20 card-actions">

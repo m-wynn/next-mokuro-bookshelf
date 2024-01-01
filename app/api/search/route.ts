@@ -1,6 +1,6 @@
-import prisma from "db";
-import { promises as fs } from "fs";
-import { NextRequest, NextResponse } from "next/server";
+import prisma from 'db';
+import { promises as fs } from 'fs';
+import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
   // const { searchParams } = new URL(request.url);
@@ -26,5 +26,5 @@ export async function GET(request: NextRequest) {
   //
   //   return NextResponse.json(pages);
   // }
-  return NextResponse.json({ error: "Missing query" }, { status: 400 });
+  return NextResponse.json({ error: 'Missing query' }, { status: 400 });
 }

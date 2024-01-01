@@ -1,11 +1,11 @@
-"use server";
-import { ReadingSelectQuery, Reading } from "lib/reading";
-import prisma from "db";
-import { getSession } from "lib/session";
+'use server';
+import { ReadingSelectQuery, Reading } from 'lib/reading';
+import prisma from 'db';
+import { getSession } from 'lib/session';
 import { revalidatePath } from 'next/cache';
 
 export const updateReadingProgress = async (volumeId: number, page: number) => {
-  const session = await getSession("POST");
+  const session = await getSession('POST');
   const userId = session.user.userId;
   // If the page is less than four, maybe the user isn't actually reading
   // TODO: Maybe prompt them if they wanna start tracking.
@@ -17,7 +17,7 @@ export const updateReadingProgress = async (volumeId: number, page: number) => {
       },
       isActive: true,
     },
-    select: ReadingSelectQuery
+    select: ReadingSelectQuery,
   });
 
   return await updateReadingInDb(reading, volumeId, page, userId);
@@ -33,9 +33,9 @@ const updateReadingInDb = async (
     return null;
   }
 
-  let status = reading?.status ?? "READING";
+  let status = reading?.status ?? 'READING';
   if (reading && page === reading.volume._count.pages - 1) {
-    status = "READ";
+    status = 'READ';
   }
 
   return await prisma.reading.upsert({

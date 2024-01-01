@@ -1,13 +1,13 @@
-import { Role } from "@prisma/client";
-import prisma from "db";
-import { getSession } from "lib/session";
-import React from "react";
-import UserTable from "./UserTable";
+import { Role } from '@prisma/client';
+import prisma from 'db';
+import { getSession } from 'lib/session';
+import React from 'react';
+import UserTable from './UserTable';
 
 const Users = async () => {
-  const get_session = await getSession("GET");
-  if (get_session.user.role !== "ADMIN") {
-    throw new Error("Unauthorized");
+  const get_session = await getSession('GET');
+  if (get_session.user.role !== 'ADMIN') {
+    throw new Error('Unauthorized');
   }
   const users = await prisma.user.findMany({
     select: {
@@ -18,14 +18,14 @@ const Users = async () => {
       updatedAt: true,
     },
     orderBy: {
-      createdAt: "asc",
+      createdAt: 'asc',
     },
   });
 
   const updateRole = async (id: string, role: Role) => {
-    "use server";
-    const session = await getSession("POST");
-    if (session.user.role === "ADMIN") {
+    'use server';
+    const session = await getSession('POST');
+    if (session.user.role === 'ADMIN') {
       const user = await prisma.user.update({
         where: {
           id,
@@ -36,7 +36,7 @@ const Users = async () => {
       });
       return user;
     } else {
-      throw new Error("Unauthorized");
+      throw new Error('Unauthorized');
     }
   };
 

@@ -1,13 +1,13 @@
-"use client";
-import { faTriangleExclamation } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Link from "next/link";
-import React, { useEffect, useMemo, useState } from "react";
-import Shelf from "./Shelf";
+'use client';
+import { faTriangleExclamation } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import Link from 'next/link';
+import React, { useEffect, useMemo, useState } from 'react';
+import Shelf from './Shelf';
 
-import { ReadingStatus } from "@prisma/client";
-import { Reading } from "lib/reading";
-import { useGlobalContext } from "./GlobalContext";
+import { ReadingStatus } from '@prisma/client';
+import { Reading } from 'lib/reading';
+import { useGlobalContext } from './GlobalContext';
 
 export const Bookshelf = ({
   updateReadingStatus,
@@ -21,21 +21,21 @@ export const Bookshelf = ({
   const inProgress = useMemo(
     () =>
       allReadings.filter(
-        (reading) => reading.status === "READING",
+        (reading) => reading.status === 'READING',
       ) as unknown as Reading[],
     [allReadings],
   );
   const unread = useMemo(
     () =>
       allReadings.filter(
-        (reading) => reading.status === "UNREAD",
+        (reading) => reading.status === 'UNREAD',
       ) as unknown as Reading[],
     [allReadings],
   );
   const read = useMemo(
     () =>
       allReadings.filter(
-        (reading) => reading.status === "READ",
+        (reading) => reading.status === 'READ',
       ) as unknown as Reading[],
     [allReadings],
   );

@@ -1,10 +1,10 @@
-"use client";
-import { useForm, SubmitHandler } from "react-hook-form";
-import { useRouter } from "next/navigation";
-import Input from "@/input";
-import { SignupForm } from "auth";
-import { useState } from "react";
-import Link from "next/link";
+'use client';
+import { useForm, SubmitHandler } from 'react-hook-form';
+import { useRouter } from 'next/navigation';
+import Input from '@/input';
+import { SignupForm } from 'auth';
+import { useState } from 'react';
+import Link from 'next/link';
 
 export default function Register() {
   const {
@@ -17,19 +17,19 @@ export default function Register() {
   const [error, setError] = useState<string | null>(null);
 
   const onSubmit: SubmitHandler<SignupForm> = async (data) => {
-    const response = await fetch("/api/signup", {
-      method: "POST",
+    const response = await fetch('/api/signup', {
+      method: 'POST',
       body: JSON.stringify(data),
     });
 
     if (response.status === 201) {
-      return router.push("/");
+      return router.push('/');
     } else {
       try {
         const data = await response.json();
         setError(data.error);
       } catch (error) {
-        setError("An error occurred");
+        setError('An error occurred');
       }
     }
   };
@@ -46,8 +46,8 @@ export default function Register() {
               label="Username"
               placeholder="renge"
               errors={errors?.username || null}
-              register={register("username", {
-                required: "Username is required",
+              register={register('username', {
+                required: 'Username is required',
               })}
             />
             <Input
@@ -55,11 +55,11 @@ export default function Register() {
               placeholder="ny@np@55u"
               type="password"
               errors={errors?.password || null}
-              register={register("password", {
-                required: "Password is required",
+              register={register('password', {
+                required: 'Password is required',
                 minLength: {
                   value: 8,
-                  message: "Password must be at least 8 characters",
+                  message: 'Password must be at least 8 characters',
                 },
               })}
             />
@@ -68,16 +68,16 @@ export default function Register() {
               type="password"
               placeholder="ny@np@55u"
               errors={errors?.confirmPassword || null}
-              register={register("confirmPassword", {
+              register={register('confirmPassword', {
                 validate: (value) =>
-                  value === watch("password") || "Passwords do not match",
+                  value === watch('password') || 'Passwords do not match',
               })}
             />
             <Input
               label="Invite Code"
               errors={errors?.inviteCode || null}
-              register={register("inviteCode", {
-                required: "Invite Code is required",
+              register={register('inviteCode', {
+                required: 'Invite Code is required',
               })}
             />
             {error && <p className="mt-4 text-error">{error}</p>}
