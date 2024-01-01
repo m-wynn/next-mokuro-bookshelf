@@ -36,7 +36,7 @@ const Shelf = ({
         {readings.map((reading) => (
           <VolumeCard
             key={reading.volume.id}
-            coverUri={`/api/volume/${reading.volume.id}/cover/`}
+            coverUri={`/api/volume/${reading.volume.id}/cover`}
             pagesRead={reading.page}
             totalPages={reading.volume._count.pages}
             href={`/reader/${reading.volume.series.id}/${reading.volume.number}`}

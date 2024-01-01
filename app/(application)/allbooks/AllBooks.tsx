@@ -19,7 +19,7 @@ export const AllBooks = ({ series }: { series: SeriesPayload[] }) => {
                 {volumes?.map((volume) => (
                   <VolumeCard
                     key={volume.id}
-                    coverUri={`/api/volume/${volume.id}/cover/`}
+                    coverUri={`/api/volume/${volume.id}/cover`}
                     pagesRead={volume.readings[0]?.page ?? 0}
                     totalPages={volume._count.pages}
                     href={`/reader/${id}/${volume.number}`}

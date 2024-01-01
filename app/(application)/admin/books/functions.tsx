@@ -2,6 +2,7 @@
 import { Prisma } from '@prisma/client';
 import prisma from 'db';
 import { getSession } from 'lib/session';
+import { revalidatePath } from 'next/cache';
 
 export const updateSeries = async (
   id: number,
@@ -16,6 +17,7 @@ export const updateSeries = async (
       },
       data: series,
     });
+    revalidatePath('/');
   } else {
     throw new Error('Unauthorized');
   }
