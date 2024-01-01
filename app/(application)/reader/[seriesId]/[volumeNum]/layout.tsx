@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 export default function RootLayout({
   children,
@@ -9,7 +9,7 @@ export default function RootLayout({
     <div
       className="overflow-hidden fixed w-screen t-0"
       style={{
-        height: "calc(100vh - 4rem)",
+        height: 'calc(100vh - 4rem)',
       }}
     >
       {children}

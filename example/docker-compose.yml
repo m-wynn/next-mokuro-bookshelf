@@ -1,47 +1,47 @@
 services:
-    traefik:
-        image: "traefik:v2.8"
-        container_name: "traefik"
-        command:
-            # - "--api.insecure=true"
-            - "--providers.docker=true"
-            - "--providers.docker.exposedbydefault=false"
-            - "--entrypoints.web.address=:80"
-            - "--entrypoints.websecure.address=:443"
-            - "--certificatesresolvers.myresolver.acme.httpchallenge=true"
-            - "--certificatesresolvers.myresolver.acme.httpchallenge.entrypoint=web"
-            - "--certificatesresolvers.myresolver.acme.email=${MY_EMAIL}"
-            - "--certificatesresolvers.myresolver.acme.storage=/shared/acme.json"
-        ports:
-            - "80:80"
-            - "443:443"
-            # - "8080:8080" # Traefik dashboard
-        volumes:
-            - "/var/run/docker.sock:/var/run/docker.sock:ro"
-            - "./shared:/shared"
+  traefik:
+    image: "traefik:v2.8"
+    container_name: "traefik"
+    command:
+      # - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--certificatesresolvers.myresolver.acme.httpchallenge=true"
+      - "--certificatesresolvers.myresolver.acme.httpchallenge.entrypoint=web"
+      - "--certificatesresolvers.myresolver.acme.email=${MY_EMAIL}"
+      - "--certificatesresolvers.myresolver.acme.storage=/shared/acme.json"
+    ports:
+      - "80:80"
+      - "443:443"
+      # - "8080:8080" # Traefik dashboard
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "./shared:/shared"
 
-    next-mokuro-bookshelf:
-        image: "next-mokuro-bookshelf"
-        volumes:
-            - ./mokuro/:/app/public/mokuro
-        container_name: next-mokuro-bookshelf
-        env_file:
-            - ./.env
-        ports:
-            - "3000:3000"
-        labels: ## Only add Labels if you want to use traefiks for cert stuff
-            - "traefik.enable=true"
-            - "traefik.http.routers.next-mokuro-bookshelf.entrypoints=web, websecure"
-            - "traefik.http.routers.next-mokuro-bookshelf.rule=Host(`${MY_HOST}`)" 
-            - "traefik.http.routers.next-mokuro-bookshelf.tls.certresolver=myresolver"
-            - "traefik.http.routers.next-mokuro-bookshelf.tls.domains[0].main=${MY_HOST}"
-            - "traefik.http.services.next-mokuro-bookshelf.loadbalancer.server.port=3000"
-            # Declaring the user list
-            #
-            # Note: when used in docker-compose.yml all dollar signs in the hash need to be doubled for escaping.
-            # To create user:password pair, it's possible to use this command:
-            # echo $(htpasswd -nB user) | sed -e s/\\$/\\$\\$/g
-            #
-            # Also note that dollar signs should NOT be doubled when they not evaluated (e.g. Ansible docker_container module).
-            - "traefik.http.routers.next-mokuro-bookshelf.middlewares: auth@docker"
-            - "traefik.http.middlewares.auth.basicauth.users=test:$$apr1$$H6uskkkW$$IgXLP6ewTrSuBkTrqE8wj/,test2:$$apr1$$d9hr9HBB$$4HxwgUir3HP4EsggP/QNo0"
+  next-mokuro-bookshelf:
+    image: "next-mokuro-bookshelf"
+    volumes:
+      - ./mokuro/:/app/public/mokuro
+    container_name: next-mokuro-bookshelf
+    env_file:
+      - ./.env
+    ports:
+      - "3000:3000"
+    labels: ## Only add Labels if you want to use traefiks for cert stuff
+      - "traefik.enable=true"
+      - "traefik.http.routers.next-mokuro-bookshelf.entrypoints=web, websecure"
+      - "traefik.http.routers.next-mokuro-bookshelf.rule=Host(`${MY_HOST}`)"
+      - "traefik.http.routers.next-mokuro-bookshelf.tls.certresolver=myresolver"
+      - "traefik.http.routers.next-mokuro-bookshelf.tls.domains[0].main=${MY_HOST}"
+      - "traefik.http.services.next-mokuro-bookshelf.loadbalancer.server.port=3000"
+      # Declaring the user list
+      #
+      # Note: when used in docker-compose.yml all dollar signs in the hash need to be doubled for escaping.
+      # To create user:password pair, it's possible to use this command:
+      # echo $(htpasswd -nB user) | sed -e s/\\$/\\$\\$/g
+      #
+      # Also note that dollar signs should NOT be doubled when they not evaluated (e.g. Ansible docker_container module).
+      - "traefik.http.routers.next-mokuro-bookshelf.middlewares: auth@docker"
+      - "traefik.http.middlewares.auth.basicauth.users=test:$$apr1$$H6uskkkW$$IgXLP6ewTrSuBkTrqE8wj/,test2:$$apr1$$d9hr9HBB$$4HxwgUir3HP4EsggP/QNo0"

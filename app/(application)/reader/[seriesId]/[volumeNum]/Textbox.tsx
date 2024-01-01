@@ -1,5 +1,5 @@
-import { OcrBlock } from "page";
-import React from "react";
+import { OcrBlock } from 'page';
+import React from 'react';
 
 export const Textbox = ({
   box,
@@ -7,10 +7,10 @@ export const Textbox = ({
   vertical,
   lines,
 }: {
-  box: OcrBlock["box"];
+  box: OcrBlock['box'];
   fontSize: number;
-  vertical: OcrBlock["vertical"];
-  lines: OcrBlock["lines"];
+  vertical: OcrBlock['vertical'];
+  lines: OcrBlock['lines'];
 }) => {
   const minFontSize = 12;
   const maxFontSize = 64;
@@ -25,7 +25,7 @@ export const Textbox = ({
         // assign z-index ordering from largest to smallest boxes
         // so that the smaller boxes don't get hidden underneath larger ones
         zIndex: 10000 - ((box[2] - box[0]) * (box[3] - box[1])) / 1000,
-        flexDirection: vertical ? "row-reverse" : "column",
+        flexDirection: vertical ? 'row-reverse' : 'column',
       }}
     >
       {lines.map((line: string, i: number) => (
@@ -33,14 +33,14 @@ export const Textbox = ({
           key={i}
           className="hidden mx-auto leading-none whitespace-nowrap select-text group-hover:inline-block"
           style={{
-            color: "black",
+            color: 'black',
             fontSize:
               fontSize < minFontSize
                 ? minFontSize
                 : fontSize > maxFontSize
                   ? maxFontSize
                   : fontSize,
-            writingMode: vertical ? "vertical-rl" : "horizontal-tb",
+            writingMode: vertical ? 'vertical-rl' : 'horizontal-tb',
           }}
         >
           {line}

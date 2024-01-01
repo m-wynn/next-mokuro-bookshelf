@@ -1,6 +1,6 @@
-import prisma from "db";
-import { AllBooks } from "./AllBooks";
-import { Prisma } from "@prisma/client";
+import prisma from 'db';
+import { AllBooks } from './AllBooks';
+import { Prisma } from '@prisma/client';
 
 const seriesSelect = {
   japaneseName: true,

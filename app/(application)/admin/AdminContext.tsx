@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { Series } from "@prisma/client";
-import { createContext, useContext, useState, Dispatch } from "react";
+import { Series } from '@prisma/client';
+import { createContext, useContext, useState, Dispatch } from 'react';
 
 const emptySeries: Series[] = [];
 const setSeries: Dispatch<React.SetStateAction<Series[]>> = () => {};

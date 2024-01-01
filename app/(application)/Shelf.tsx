@@ -1,16 +1,16 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faBars,
   faBook,
   faBookOpen,
   faCheck,
   faTrash,
-} from "@fortawesome/free-solid-svg-icons";
+} from '@fortawesome/free-solid-svg-icons';
 
-import VolumeCard from "@/volumecard";
-import { Reading } from "lib/reading";
-import { ReadingStatus } from "@prisma/client";
-import { useGlobalContext } from "./GlobalContext";
+import VolumeCard from '@/volumecard';
+import { Reading } from 'lib/reading';
+import { ReadingStatus } from '@prisma/client';
+import { useGlobalContext } from './GlobalContext';
 
 type ShelfProps = {
   title: string;

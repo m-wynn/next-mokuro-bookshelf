@@ -1,4 +1,4 @@
-declare module "page" {
+declare module 'page' {
   export interface OcrPage {
     version: string;
     img_width: number;

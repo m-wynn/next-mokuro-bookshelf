@@ -1,10 +1,10 @@
-"use client";
-import React from "react";
-import { useGlobalContext } from "app/(application)/GlobalContext";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMaximize } from "@fortawesome/free-solid-svg-icons";
-import Pagination from "./Pagination";
-import Settings from "./Settings";
+'use client';
+import React from 'react';
+import { useGlobalContext } from 'app/(application)/GlobalContext';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faMaximize } from '@fortawesome/free-solid-svg-icons';
+import Pagination from './Pagination';
+import Settings from './Settings';
 
 export const Loading = () => {
   const { fullScreen, setFullScreen, setAllReadings } = useGlobalContext();
@@ -12,7 +12,7 @@ export const Loading = () => {
     <div
       id="pagesContainer"
       className={`flex flex-col m-0 w-full h-full ${
-        fullScreen ? "fixed top-0" : ""
+        fullScreen ? 'fixed top-0' : ''
       }`}
     >
       {!fullScreen && (

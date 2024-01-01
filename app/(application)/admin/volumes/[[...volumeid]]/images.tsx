@@ -1,15 +1,15 @@
-import { useEffect } from "react";
-import Input from "@/input";
-import { FormChild, VolumeFields } from "./page";
-import { FieldValues } from "react-hook-form";
+import { useEffect } from 'react';
+import Input from '@/input';
+import { FormChild, VolumeFields } from './page';
+import { FieldValues } from 'react-hook-form';
 
 export default function Images({
   register,
   watch,
   errors,
 }: FormChild): JSX.Element {
-  const pages: FileList = watch("pages");
-  const ocrFiles = watch("ocrFiles");
+  const pages: FileList = watch('pages');
+  const ocrFiles = watch('ocrFiles');
   useEffect(() => {}, [pages, ocrFiles]);
 
   return (
@@ -29,29 +29,29 @@ export default function Images({
                 <input
                   type="checkbox"
                   className="checkbox"
-                  {...register("firstPageIsCover", {})}
+                  {...register('firstPageIsCover', {})}
                 />
               </label>
             </div>
             <Input
               label="Image Files"
               type="file"
-              extraProperties={{ accept: "image/*", multiple: true }}
+              extraProperties={{ accept: 'image/*', multiple: true }}
               classNameOverride={`w-full max-w-xs file-input file-input-bordered ${
-                errors?.pages && "file-input-error"
+                errors?.pages && 'file-input-error'
               }`}
               errors={errors?.pages || null}
-              register={register("pages", {
-                required: "Images are required",
+              register={register('pages', {
+                required: 'Images are required',
                 validate: {
                   validateNumber: (_: any, values: VolumeFields) => {
                     if (values.pages && values.ocrFiles) {
                       // check that pages' filenames and ocrtext's keys match
                       const ocrFilenames = Object.values(values.ocrFiles).map(
-                        (file) => file.name.replace(/\.[^/.]+$/, ""),
+                        (file) => file.name.replace(/\.[^/.]+$/, ''),
                       );
                       const pagesFilenames = Array.from(values.pages).map(
-                        (page) => page.name.replace(/\.[^/.]+$/, ""),
+                        (page) => page.name.replace(/\.[^/.]+$/, ''),
                       );
                       const mismatch = ocrFilenames.filter(
                         (ocr) => !pagesFilenames.includes(ocr),
@@ -61,7 +61,7 @@ export default function Images({
                         return `Missing OCR text for ${
                           mismatch.length > 3
                             ? `${mismatch.length} pages`
-                            : mismatch.join(", ")
+                            : mismatch.join(', ')
                         }`;
                       } else {
                         return true;

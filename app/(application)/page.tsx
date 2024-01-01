@@ -1,13 +1,13 @@
-import { auth } from "auth/lucia";
-import * as context from "next/headers";
-import prisma from "db";
-import { ReadingStatus } from "@prisma/client";
-import Bookshelf from "./Bookshelf";
-import { ReadingSelectQuery } from "lib/reading";
+import { auth } from 'auth/lucia';
+import * as context from 'next/headers';
+import prisma from 'db';
+import { ReadingStatus } from '@prisma/client';
+import Bookshelf from './Bookshelf';
+import { ReadingSelectQuery } from 'lib/reading';
 
 const Page = async () => {
   const updateReadingStatus = async (id: number, status: ReadingStatus) => {
-    "use server";
+    'use server';
     return await prisma.reading.update({
       where: {
         id,
@@ -20,7 +20,7 @@ const Page = async () => {
   };
 
   async function removeReading(id: number) {
-    "use server";
+    'use server';
     return await prisma.reading.update({
       where: {
         id,

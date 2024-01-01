@@ -1,9 +1,9 @@
-"use client";
-import React from "react";
-import { SeriesPayload } from "./page";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCheck } from "@fortawesome/free-solid-svg-icons";
-import { updateSeries } from "./functions";
+'use client';
+import React from 'react';
+import { SeriesPayload } from './page';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCheck } from '@fortawesome/free-solid-svg-icons';
+import { updateSeries } from './functions';
 
 const SeriesTable = ({ series }: { series: SeriesPayload[] }) => {
   return (
@@ -106,7 +106,7 @@ const FormInput = ({
         className="max-w-40 input input-bordered"
         defaultValue={defaultValue}
         onKeyDown={async (e) => {
-          if (e.key === "Enter") {
+          if (e.key === 'Enter') {
             if (e.target instanceof HTMLInputElement) {
               setLoadingState(LoadingState.LOADING);
               e.target.blur();

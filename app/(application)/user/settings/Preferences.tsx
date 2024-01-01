@@ -1,19 +1,19 @@
-"use client";
-import { useState } from "react";
-import React from "react";
+'use client';
+import { useState } from 'react';
+import React from 'react';
 import {
   updateUseTwoPages,
   updateZoomSensitivity,
   updateUseJapaneseTitle,
-} from "./functions";
+} from './functions';
 import {
   faTableColumns,
   faMagnifyingGlass,
   faYenSign,
-} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Checkbox from "@/checkbox";
-import { UserSetting } from "lib/userSetting";
+} from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import Checkbox from '@/checkbox';
+import { UserSetting } from 'lib/userSetting';
 
 export default function Preferences({
   user,

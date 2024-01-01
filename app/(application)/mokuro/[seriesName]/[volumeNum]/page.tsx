@@ -1,5 +1,5 @@
-import { redirect } from "next/navigation";
-import prisma from "db";
+import { redirect } from 'next/navigation';
+import prisma from 'db';
 
 // If you go to an old link, it redirects to the new reader
 export default async function Page({

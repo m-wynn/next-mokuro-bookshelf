@@ -1,17 +1,17 @@
-import PagesContainer from "./PagesContainer";
-import VolumeDataProvider from "./VolumeDataProvider";
-import prisma from "db";
-import { auth } from "auth/lucia";
-import * as context from "next/headers";
-import { OcrPage } from "page";
-import { Prisma } from "@prisma/client";
+import PagesContainer from './PagesContainer';
+import VolumeDataProvider from './VolumeDataProvider';
+import prisma from 'db';
+import { auth } from 'auth/lucia';
+import * as context from 'next/headers';
+import { OcrPage } from 'page';
+import { Prisma } from '@prisma/client';
 
 export default async function Page({
   params: { seriesId, volumeNum },
 }: {
   params: { seriesId: string; volumeNum: string };
 }) {
-  const session = await auth.handleRequest("GET", context).validate();
+  const session = await auth.handleRequest('GET', context).validate();
   const volume = await getVolume(seriesId, volumeNum, session.user.userId);
   const userSetting = await getUserSetting(session.user.userId);
   if (!volume) return <div>Volume not found</div>;
@@ -76,7 +76,7 @@ const VolumeSelectQuery = (userId: string) =>
     pages: {
       select: PageSelectQuery,
       orderBy: {
-        number: "asc",
+        number: 'asc',
       },
     },
   }) satisfies Prisma.VolumeSelect;

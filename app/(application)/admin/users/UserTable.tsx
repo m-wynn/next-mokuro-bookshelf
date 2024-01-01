@@ -1,6 +1,6 @@
-"use client";
-import React from "react";
-import { Role } from "@prisma/client";
+'use client';
+import React from 'react';
+import { Role } from '@prisma/client';
 
 const UserTable = ({
   users,

@@ -1,9 +1,9 @@
-import prisma from "db";
-import { promises as fs } from "fs";
-import { NextRequest, NextResponse } from "next/server";
+import prisma from 'db';
+import { promises as fs } from 'fs';
+import { NextRequest, NextResponse } from 'next/server';
 
-import { auth } from "auth/lucia";
-import * as context from "next/headers";
+import { auth } from 'auth/lucia';
+import * as context from 'next/headers';
 
 export async function GET(
   request: NextRequest,
@@ -11,7 +11,7 @@ export async function GET(
 ) {
   const session = await auth.handleRequest(request.method, context).validate();
   if (!session) {
-    return NextResponse.json({ error: "Not logged in" }, { status: 401 });
+    return NextResponse.json({ error: 'Not logged in' }, { status: 401 });
   }
   let volume = await prisma.volume.findUniqueOrThrow({
     where: {
@@ -28,9 +28,9 @@ export async function GET(
 
   const headers = new Headers();
 
-  headers.set("Content-Type", "image/*");
+  headers.set('Content-Type', 'image/*');
 
   // cache for a week
-  headers.set("Cache-Control", "public, max-age=604800, immutable");
-  return new NextResponse(file, { status: 200, statusText: "OK", headers });
+  headers.set('Cache-Control', 'public, max-age=604800, immutable');
+  return new NextResponse(file, { status: 200, statusText: 'OK', headers });
 }

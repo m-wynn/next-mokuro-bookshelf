@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
-import Input from "@/input";
-import { OcrPage } from "page";
-import { FormChild } from "./page";
+import { useEffect, useState } from 'react';
+import Input from '@/input';
+import { OcrPage } from 'page';
+import { FormChild } from './page';
 function readFile(file: File) {
   return new Promise((resolve, reject) => {
     var fr = new FileReader();
@@ -20,8 +20,8 @@ export default function Ocr({
 }: FormChild): JSX.Element {
   const [ocrText, setOcrText] = useState<{ string: OcrPage } | {}>({});
 
-  const volumeNumber = watch("volumeNumber");
-  const ocrFiles = watch("ocrFiles");
+  const volumeNumber = watch('volumeNumber');
+  const ocrFiles = watch('ocrFiles');
   useEffect(() => {
     const parseFiles = async (ocrFiles: FileList) => {
       const fileMap = (
@@ -48,13 +48,13 @@ export default function Ocr({
             <Input
               label="OCR Files"
               type="file"
-              extraProperties={{ accept: "application/json", multiple: true }}
+              extraProperties={{ accept: 'application/json', multiple: true }}
               classNameOverride={`w-full max-w-xs file-input file-input-bordered ${
-                errors?.ocrFiles && "file-input-error"
+                errors?.ocrFiles && 'file-input-error'
               }`}
               errors={errors?.coverImage || null}
-              register={register("ocrFiles", {
-                required: "OCR Files are required",
+              register={register('ocrFiles', {
+                required: 'OCR Files are required',
               })}
             />
             <div className="my-4 w-full max-w-xs text-center shadow stats stats-vertical lg:stats-horizontal">

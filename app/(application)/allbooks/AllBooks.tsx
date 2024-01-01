@@ -1,8 +1,8 @@
-"use client";
-import React from "react";
-import { SeriesPayload } from "./page";
-import { useGlobalContext } from "../GlobalContext";
-import VolumeCard from "@/volumecard";
+'use client';
+import React from 'react';
+import { SeriesPayload } from './page';
+import { useGlobalContext } from '../GlobalContext';
+import VolumeCard from '@/volumecard';
 
 export const AllBooks = ({ series }: { series: SeriesPayload[] }) => {
   const { useJapaneseTitle } = useGlobalContext();

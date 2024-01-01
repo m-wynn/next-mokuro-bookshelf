@@ -33,4 +33,3 @@ In addition, the postgresql database included in the docker-compose will use:
 # Alternatives
 
 - [ChristopherFritz/Mokuro-Bookshelf](https://github.com/ChristopherFritz/Mokuro-Bookshelf) is a static html page that tracks your state with localstorage
-

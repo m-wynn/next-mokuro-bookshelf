@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { UserSetting } from "lib/userSetting";
-import { createContext, useContext } from "react";
-import { Volume } from "./page";
+import { UserSetting } from 'lib/userSetting';
+import { createContext, useContext } from 'react';
+import { Volume } from './page';
 
 const VolumeContext = createContext({
   currentPage: 0,
@@ -26,11 +26,16 @@ export default function VolumeDataProvider({
 }) {
   const getZoomSensitivity = () => {
     return userSetting?.zoomSensitivity ?? 1;
-  }
+  };
 
   const getCurrentPage = () => {
     let page = volume.readings[0]?.page ?? 0;
-    if (page > 0 && getUseTwoPages() && getFirstPageIsCover() && page % 2 == 0) {
+    if (
+      page > 0 &&
+      getUseTwoPages() &&
+      getFirstPageIsCover() &&
+      page % 2 == 0
+    ) {
       return page - 1;
     }
     return page;
@@ -58,7 +63,7 @@ export default function VolumeDataProvider({
     currentPage: getCurrentPage(),
     useTwoPages: getUseTwoPages(),
     firstPageIsCover: getFirstPageIsCover(),
-    zoomSensitivity: getZoomSensitivity()
+    zoomSensitivity: getZoomSensitivity(),
   };
 
   return (
