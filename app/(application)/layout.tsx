@@ -21,8 +21,20 @@ export default async function DashboardLayout({
     },
     select: ReadingSelectQuery,
   });
+
+  const userPref = await prisma.userSetting.findUnique({
+    where: {
+      userId: session.user.userId,
+    },
+    select: {
+      useJapaneseTitle: true,
+    },
+  });
   return (
-    <GlobalDataProvider readings={readings}>
+    <GlobalDataProvider
+      readings={readings}
+      useJapaneseTitle={userPref?.useJapaneseTitle ?? false}
+    >
       <header>
         <nav>
           <Navbar session={session} />

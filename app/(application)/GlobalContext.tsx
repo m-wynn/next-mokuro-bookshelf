@@ -10,6 +10,7 @@ const GlobalContext = createContext({
   setFullScreen: (fullScreen: boolean) => {},
   allReadings: emptyReadings,
   setAllReadings: (allReadings: any) => {},
+  useJapaneseTitle: false,
 });
 
 export function useGlobalContext() {
@@ -19,9 +20,11 @@ export function useGlobalContext() {
 export default function GlobalDataProvider({
   children,
   readings,
+  useJapaneseTitle,
 }: {
   children: React.ReactNode;
   readings: Reading[];
+  useJapaneseTitle: boolean;
 }) {
   const [fullScreen, setFullScreen] = useState(false);
   const [allReadings, setAllReadings] = useState<Reading[]>(readings);
@@ -31,6 +34,7 @@ export default function GlobalDataProvider({
     setFullScreen,
     allReadings,
     setAllReadings,
+    useJapaneseTitle,
   };
 
   return (

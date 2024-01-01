@@ -10,7 +10,7 @@ export default async function Page({
   const vNum = decodeURIComponent(volumeNum);
   const series = await prisma.series.findUnique({
     where: {
-      name: decodeURIComponent(seriesName),
+      englishName: decodeURIComponent(seriesName),
     },
     select: {
       id: true,
