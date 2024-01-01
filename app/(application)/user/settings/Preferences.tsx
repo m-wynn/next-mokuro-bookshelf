@@ -46,10 +46,20 @@ export default function Preferences({
             >
               Display Two Pages
             </Checkbox>
+            <Checkbox
+              fa={faYenSign}
+              value={useJapaneseTitle || false}
+              set={(checked) => {
+                updateUseJapaneseTitle(checked);
+                setUseJapaneseTitle(checked);
+              }}
+            >
+              Show Japanese Title
+            </Checkbox>
             <label className="flex-row w-full cursor-pointer label">
               <span className="flex-grow label-text">
                 <FontAwesomeIcon icon={faMagnifyingGlass} className="mr-4" />
-                Zoom sensitivity
+                Zoom Sensitivity
               </span>
               <select
                 className="select"
@@ -65,16 +75,6 @@ export default function Preferences({
                 ))}
               </select>
             </label>
-            <Checkbox
-              fa={faYenSign}
-              value={useJapaneseTitle || false}
-              set={(checked) => {
-                updateUseJapaneseTitle(checked);
-                setUseJapaneseTitle(checked);
-              }}
-            >
-              Use Japanese Title
-            </Checkbox>
           </div>
         </div>
       </div>

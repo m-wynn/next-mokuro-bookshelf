@@ -24,7 +24,7 @@ const Sidebar: React.FC = () => {
                 href="/admin/books"
                 className={`${pathname === '/admin/books' ? 'active' : ''}`}
               >
-                Books
+                Series
               </Link>
             </li>
             <li>
