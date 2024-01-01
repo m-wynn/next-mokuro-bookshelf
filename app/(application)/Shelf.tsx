@@ -10,6 +10,7 @@ import {
 import VolumeCard from "@/volumecard";
 import { Reading } from "lib/reading";
 import { ReadingStatus } from "@prisma/client";
+import { useGlobalContext } from "./GlobalContext";
 
 type ShelfProps = {
   title: string;
@@ -27,6 +28,7 @@ const Shelf = ({
   updateReadingStatus,
   removeReading,
 }: ShelfProps) => {
+  const { useJapaneseTitle } = useGlobalContext();
   return (
     <div className="p-4 m-4 shadow-lg bg-base-200">
       <h1 className="mb-4 text-4xl font-bold text">{title}</h1>
@@ -38,7 +40,11 @@ const Shelf = ({
             pagesRead={reading.page}
             totalPages={reading.volume._count.pages}
             href={`/reader/${reading.volume.series.id}/${reading.volume.number}`}
-            seriesName={reading.volume.series.name}
+            seriesName={
+              useJapaneseTitle && reading.volume.series.japaneseName
+                ? reading.volume.series.japaneseName
+                : reading.volume.series.englishName
+            }
             volumeNumber={reading.volume.number}
           >
             <details className="dropdown dropdown-end">

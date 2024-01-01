@@ -16,15 +16,16 @@ import NewSeriesModal from "@/NewSeriesModal";
 import { createSeries, createVolume, createPage } from "../../functions";
 import { SeriesInputs } from "series";
 import { Series } from "@prisma/client";
+import PromisePool from "async-promise-pool";
 
 export type FormChild = {
-  errors: FieldErrors<FieldValues>;
-  register: UseFormRegister<FieldValues>;
-  watch: UseFormWatch<FieldValues>;
+  errors: FieldErrors<VolumeFields>;
+  register: UseFormRegister<VolumeFields>;
+  watch: UseFormWatch<VolumeFields>;
 };
 
 export type VolumeFields = {
-  seriesId: string;
+  seriesEnglishName: string;
   volumeNumber: number;
   coverImage: FileList;
   firstPageIsCover: boolean;
@@ -55,23 +56,26 @@ export default function VolumeEditor({
   } = useForm<VolumeFields>();
 
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
+    const seriesId = series.find(
+      (s) => s.englishName === data.seriesEnglishName,
+    )?.id;
+    if (!seriesId) {
+      throw new Error("Series not found");
+    }
     setTotalPages(data.pages.length);
     const formData = new FormData();
-    formData.append("seriesId", data.seriesId);
+    formData.append("seriesId", seriesId.toString());
     formData.append("volumeNumber", data.volumeNumber.toString());
     formData.append("coverImage", data.coverImage[0]);
     formData.append("firstPageIsCover", data.firstPageIsCover);
 
-    const response = await fetch("/api/volume", {
-      method: "POST",
-      body: formData,
-    });
-    const volume = await response.json();
+    const volume = await createVolume(formData);
     let uploadedPageCount = 0;
-    await Promise.all(
-      Array.from(data.pages as FileList).map(async (page, i) => {
+    const pool = new PromisePool({ concurrency: 5 });
+    Array.from(data.pages as FileList)
+      .map(async (page, i) => {
         const pageFormData = new FormData();
-        pageFormData.append("volumeId", volume.id);
+        pageFormData.append("volumeId", volume.id.toString());
         pageFormData.append("number", i.toString());
         pageFormData.append("file", page);
         pageFormData.append(
@@ -82,14 +86,12 @@ export default function VolumeEditor({
               (page as File).name.replace(/\.[^/.]+$/, "") + ".json",
           ) as Blob,
         );
-        await fetch("/api/page", {
-          method: "POST",
-          body: pageFormData,
-        });
+        await createPage(pageFormData);
         uploadedPageCount++;
         setUploadedPages(uploadedPageCount);
-      }),
-    );
+      })
+      .forEach((task) => pool.add(() => task));
+    await pool.all();
     alert("Done!");
   };
   const newSeriesModalRef: React.RefObject<HTMLDialogElement> = useRef(null);
@@ -97,7 +99,10 @@ export default function VolumeEditor({
   const createSeriesHandler = async (data: SeriesInputs) => {
     const newSeries = await createSeries(data);
     setSeries((prev: Series[]) => [...prev, newSeries]);
-    setValue("seriesId", newSeries.id);
+    newSeriesModalRef.current?.close();
+    // For some reason setting a timeout here fixes the issue where the select
+    // doesn't update to the new series, but instead goes to index 0
+    setTimeout(() => setValue("seriesEnglishName", newSeries.englishName), 100);
   };
 
   return (

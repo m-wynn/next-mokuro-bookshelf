@@ -32,7 +32,7 @@ const Sidebar: React.FC = () => {
                 href="/admin/volumes"
                 className={`${pathname === "/admin/volumes" ? "active" : ""}`}
               >
-                Volumes
+                New Volume
               </Link>
             </li>
           </ul>

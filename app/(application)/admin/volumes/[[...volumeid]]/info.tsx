@@ -3,7 +3,8 @@ import Input from "@/input";
 import VolumeCard from "@/volumecard";
 import { Series } from "@prisma/client";
 import { useEffect, useState } from "react";
-import { FormChild } from "./page";
+import { FormChild, VolumeFields } from "./page";
+import { UseFormSetValue } from "react-hook-form";
 export default function Info({
   errors,
   setValue,
@@ -13,7 +14,7 @@ export default function Info({
   newSeriesModalRef,
 }: {
   errors: FormChild["errors"];
-  setValue: (name: string, value: unknown, config?: Object) => void;
+  setValue: UseFormSetValue<VolumeFields>;
   register: FormChild["register"];
   watch: FormChild["watch"];
   series: Series[];
@@ -21,7 +22,7 @@ export default function Info({
 }): JSX.Element {
   const [coverUri, setCoverUri] = useState("");
 
-  const seriesId = watch("seriesId");
+  const seriesEnglishName = watch("seriesEnglishName");
   const volumeNumber = watch("volumeNumber");
   const coverFile = watch("coverImage");
 
@@ -49,22 +50,21 @@ export default function Info({
               <select
                 className="w-full max-w-xs select"
                 defaultValue="Manga Series"
-                {...register("seriesId", {
+                {...register("seriesEnglishName", {
                   required: "Manga Series is required",
                   // TODO: don't let this be "Add New" or something
                 })}
                 onChange={(e) => {
                   if (e.target.value == "Add New") {
-                    console.log(newSeriesModalRef);
                     newSeriesModalRef.current?.showModal();
                   } else {
-                    setValue("seriesId", e.target.value);
+                    setValue("seriesEnglishName", e.target.value);
                   }
                 }}
               >
                 <option disabled>Manga Series</option>
                 {series.map((series) => (
-                  <option key={series.id} value={series.id}>
+                  <option key={series.englishName} value={series.englishName}>
                     {series.englishName}
                   </option>
                 ))}
@@ -102,13 +102,8 @@ export default function Info({
                 coverUri == "" ? "https://placekitten.com/400/540" : coverUri
               }
               href="#"
-              seriesName={
-                !seriesId
-                  ? "Manga Series"
-                  : series.find((s) => s.id == seriesId)?.englishName ??
-                    "Manga Series"
-              }
-              volumeNumber={volumeNumber || "?"}
+              seriesName={seriesEnglishName || "Manga Series"}
+              volumeNumber={volumeNumber || 0}
             />
           </div>
         </div>

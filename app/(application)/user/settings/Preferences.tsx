@@ -1,11 +1,18 @@
 "use client";
 import { useState } from "react";
 import React from "react";
-import { updateUseTwoPages, updateZoomSensitivity } from "./functions";
-import { faTableColumns, faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
+import {
+  updateUseTwoPages,
+  updateZoomSensitivity,
+  updateUseJapaneseTitle,
+} from "./functions";
+import {
+  faTableColumns,
+  faMagnifyingGlass,
+  faYenSign,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Checkbox from "@/checkbox";
-import Input from "@/input";
 import { UserSetting } from "lib/userSetting";
 
 export default function Preferences({
@@ -13,8 +20,15 @@ export default function Preferences({
 }: {
   user: { userSetting: UserSetting | null };
 }) {
-  const [useTwoPages, setUseTwoPages] = useState(user.userSetting?.useTwoPages ?? false);
-  const [zoomSensitivity, setZoomSensitivity] = useState(user.userSetting?.zoomSensitivity ?? 1);
+  const [useTwoPages, setUseTwoPages] = useState(
+    user.userSetting?.useTwoPages ?? false,
+  );
+  const [zoomSensitivity, setZoomSensitivity] = useState(
+    user.userSetting?.zoomSensitivity ?? 1,
+  );
+  const [useJapaneseTitle, setUseJapaneseTitle] = useState(
+    user.userSetting?.useJapaneseTitle ?? false,
+  );
 
   return (
     <div className="flex flex-col mt-4 w-96 max-w-2xl md:w-1/2 grow">
@@ -51,6 +65,16 @@ export default function Preferences({
                 ))}
               </select>
             </label>
+            <Checkbox
+              fa={faYenSign}
+              value={useJapaneseTitle || false}
+              set={(checked) => {
+                updateUseJapaneseTitle(checked);
+                setUseJapaneseTitle(checked);
+              }}
+            >
+              Use Japanese Title
+            </Checkbox>
           </div>
         </div>
       </div>

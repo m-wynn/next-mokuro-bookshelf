@@ -113,11 +113,12 @@ model Reading {
 }
 
 model UserSetting {
-  id              Int     @id @default(autoincrement())
-  user            User    @relation(fields: [userId], references: [id])
-  userId          String  @unique
-  useTwoPages     Boolean @default(false)
-  zoomSensitivity Int     @default(1)
+  id               Int     @id @default(autoincrement())
+  user             User    @relation(fields: [userId], references: [id])
+  userId           String  @unique
+  useTwoPages      Boolean @default(false)
+  zoomSensitivity  Int     @default(1)
+  useJapaneseTitle Boolean @default(false)
 }
 
 enum Role {
