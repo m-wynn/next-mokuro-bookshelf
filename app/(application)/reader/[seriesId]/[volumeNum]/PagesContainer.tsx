@@ -198,6 +198,7 @@ export default function PagesContainer({
             height: '100%',
           }}
         >
+          <DummyYomichanSentenceTerminator/>
           <div id="visiblePagesContainer" className="flex flex-row flex-nowrap">
             {showTwoPages ? (
               <PageContainer
@@ -215,8 +216,18 @@ export default function PagesContainer({
               getImageUri={getImageUri}
             />
           </div>
+          <DummyYomichanSentenceTerminator/>
         </TransformComponent>
       </TransformWrapper>
     </div>
+  );
+}
+
+const DummyYomichanSentenceTerminator = () => {
+  // This element is a hack to keep Yomitan at bay. It adds one of the sentence termination characters
+  // to the DOM but keeps it invisible so that it doesn't end up including the stuff before the beginning
+  // or after the end of the page containers
+  return (
+    <p className='dummyYomichanSentenceTerminator' style={{position: 'absolute', color: 'transparent'}}>"</p>
   );
 }

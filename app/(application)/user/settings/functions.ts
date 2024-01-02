@@ -11,17 +11,17 @@ interface UserPreferences {
 
 export const updateUseTwoPages = async (useTwoPages: boolean) => {
   const session = await getSession('POST');
-  updateUserPreference(session.user.userId, { useTwoPages })
+  await updateUserPreference(session.user.userId, { useTwoPages })
 };
 
 export const updateZoomSensitivity = async (zoomSensitivity: number) => {
   const session = await getSession('POST');
-  updateUserPreference(session.user.userId, { zoomSensitivity });
+  await updateUserPreference(session.user.userId, { zoomSensitivity });
 };
 
 export const updateUseJapaneseTitle = async (useJapaneseTitle: boolean) => {
   const session = await getSession('POST');
-  updateUserPreference(session.user.userId, { useJapaneseTitle });
+  await updateUserPreference(session.user.userId, { useJapaneseTitle });
 };
 
 const updateUserPreference = async (userId: string, preferences: UserPreferences) => {
