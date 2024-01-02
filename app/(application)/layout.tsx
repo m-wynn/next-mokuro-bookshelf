@@ -5,6 +5,8 @@ import { auth } from 'auth/lucia';
 import GlobalDataProvider from './GlobalContext';
 import prisma from 'db';
 import { ReadingSelectQuery } from 'lib/reading';
+import { UserSettingSelectQuery } from 'lib/userSetting';
+
 export default async function DashboardLayout({
   children,
 }: {
@@ -22,22 +24,18 @@ export default async function DashboardLayout({
     select: ReadingSelectQuery,
   });
 
-  const userPref = await prisma.userSetting.findUnique({
+  const userSettings = await prisma.userSetting.findUnique({
     where: {
       userId: session.user.userId,
     },
-    select: {
-      useJapaneseTitle: true,
-    },
+    select: UserSettingSelectQuery
   });
+
   return (
-    <GlobalDataProvider
-      readings={readings}
-      useJapaneseTitle={userPref?.useJapaneseTitle ?? false}
-    >
+    <GlobalDataProvider readings={readings} initialUserSettings={userSettings}>
       <header>
         <nav>
-          <Navbar session={session} />
+          <Navbar session={session}/>
         </nav>
       </header>
 

@@ -29,7 +29,7 @@ export default function Images({
                 <input
                   type="checkbox"
                   className="checkbox"
-                  {...register('firstPageIsCover', {})}
+                  {...register('firstPageIsCover')}
                 />
               </label>
             </div>

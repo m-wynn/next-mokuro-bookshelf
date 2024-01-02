@@ -14,21 +14,18 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Checkbox from '@/checkbox';
 import { UserSetting } from 'lib/userSetting';
+import { useGlobalContext } from 'app/(application)/GlobalContext';
 
-export default function Preferences({
-  user,
-}: {
-  user: { userSetting: UserSetting | null };
-}) {
-  const [useTwoPages, setUseTwoPages] = useState(
-    user.userSetting?.useTwoPages ?? false,
-  );
-  const [zoomSensitivity, setZoomSensitivity] = useState(
-    user.userSetting?.zoomSensitivity ?? 1,
-  );
-  const [useJapaneseTitle, setUseJapaneseTitle] = useState(
-    user.userSetting?.useJapaneseTitle ?? false,
-  );
+export default function Preferences() {
+  const { userSettings, setUserSettings } = useGlobalContext();
+  const setUserSetting = (setting: any) => {
+    setUserSettings((original: UserSetting) => {
+      return {
+        ...original,
+        ...setting
+      };
+    });
+  }
 
   return (
     <div className="flex flex-col mt-4 w-96 max-w-2xl md:w-1/2 grow">
@@ -38,20 +35,20 @@ export default function Preferences({
           <div className="w-full">
             <Checkbox
               fa={faTableColumns}
-              value={useTwoPages || false}
+              value={userSettings?.useTwoPages || false}
               set={(checked) => {
                 updateUseTwoPages(checked);
-                setUseTwoPages(checked);
+                setUserSetting({useTwoPages: checked});
               }}
             >
               Display Two Pages
             </Checkbox>
             <Checkbox
               fa={faYenSign}
-              value={useJapaneseTitle || false}
+              value={userSettings?.useJapaneseTitle || false}
               set={(checked) => {
                 updateUseJapaneseTitle(checked);
-                setUseJapaneseTitle(checked);
+                setUserSetting({useJapaneseTitle: checked});
               }}
             >
               Show Japanese Title
@@ -63,11 +60,11 @@ export default function Preferences({
               </span>
               <select
                 className="select"
-                defaultValue={zoomSensitivity}
+                defaultValue={userSettings?.zoomSensitivity}
                 onChange={(e) => {
                   const sensitivity = parseInt(e.target.value);
                   updateZoomSensitivity(sensitivity);
-                  setZoomSensitivity(sensitivity);
+                  setUserSetting({zoomSensitivity: sensitivity});
                 }}
               >
                 {[...Array(10).keys()].map((sensitivity) => (

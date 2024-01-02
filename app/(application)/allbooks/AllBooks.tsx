@@ -5,7 +5,9 @@ import { useGlobalContext } from '../GlobalContext';
 import VolumeCard from '@/volumecard';
 
 export const AllBooks = ({ series }: { series: SeriesPayload[] }) => {
-  const { useJapaneseTitle } = useGlobalContext();
+  const { userSettings } = useGlobalContext();
+  const useJapaneseTitle = userSettings?.useJapaneseTitle ?? false;
+
   return (
     <>
       {series.map(({ japaneseName, englishName, id, volumes }) => {

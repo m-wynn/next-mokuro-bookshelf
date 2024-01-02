@@ -5,6 +5,7 @@ import { auth } from 'auth/lucia';
 import * as context from 'next/headers';
 import { OcrPage } from 'page';
 import { Prisma } from '@prisma/client';
+import { useGlobalContext } from 'app/(application)/GlobalContext';
 
 export default async function Page({
   params: { seriesId, volumeNum },
@@ -13,11 +14,10 @@ export default async function Page({
 }) {
   const session = await auth.handleRequest('GET', context).validate();
   const volume = await getVolume(seriesId, volumeNum, session.user.userId);
-  const userSetting = await getUserSetting(session.user.userId);
   if (!volume) return <div>Volume not found</div>;
 
   return (
-    <VolumeDataProvider volume={volume} userSetting={userSetting}>
+    <VolumeDataProvider volume={volume}>
       <PagesContainer
         volumeId={volume.id}
         pages={volume.pages.map((page) => ({
@@ -28,14 +28,6 @@ export default async function Page({
     </VolumeDataProvider>
   );
 }
-
-const getUserSetting = async (userId: string) => {
-  return await prisma.userSetting.findUnique({
-    where: {
-      userId: userId,
-    },
-  });
-};
 
 const getVolume = async (
   seriesId: string,
