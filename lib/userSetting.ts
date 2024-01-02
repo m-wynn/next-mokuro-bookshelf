@@ -1,5 +1,11 @@
 import { Prisma } from '@prisma/client';
 
+export const UserSettingsDefaultValues = {
+  useTwoPages: false,
+  useJapaneseTitle: false,
+  zoomSensitivity: 1,
+};
+
 export const UserSettingSelectQuery = {
   useTwoPages: true,
   zoomSensitivity: true,

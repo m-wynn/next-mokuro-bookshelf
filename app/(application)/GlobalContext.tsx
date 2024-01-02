@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useState } from 'react';
 import { Reading } from 'lib/reading';
+import { UserSetting, UserSettingsDefaultValues } from 'lib/userSetting';
 
 const emptyReadings: Reading[] = [];
 
@@ -10,7 +11,8 @@ const GlobalContext = createContext({
   setFullScreen: (fullScreen: boolean) => {},
   allReadings: emptyReadings,
   setAllReadings: (allReadings: any) => {},
-  useJapaneseTitle: false,
+  userSettings: UserSettingsDefaultValues,
+  setUserSettings: (userSettings: any) => {},
 });
 
 export function useGlobalContext() {
@@ -20,21 +22,23 @@ export function useGlobalContext() {
 export default function GlobalDataProvider({
   children,
   readings,
-  useJapaneseTitle,
+  initialUserSettings,
 }: {
   children: React.ReactNode;
   readings: Reading[];
-  useJapaneseTitle: boolean;
+  initialUserSettings: UserSetting | null;
 }) {
   const [fullScreen, setFullScreen] = useState(false);
   const [allReadings, setAllReadings] = useState<Reading[]>(readings);
+  const [userSettings, setUserSettings] = useState<UserSetting>(initialUserSettings ?? UserSettingsDefaultValues);
 
   const value = {
     fullScreen,
     setFullScreen,
     allReadings,
     setAllReadings,
-    useJapaneseTitle,
+    userSettings,
+    setUserSettings,
   };
 
   return (

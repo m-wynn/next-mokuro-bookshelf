@@ -10,7 +10,7 @@ import {
 import VolumeCard from '@/volumecard';
 import { Reading } from 'lib/reading';
 import { ReadingStatus } from '@prisma/client';
-import { useGlobalContext } from './GlobalContext';
+import { useGlobalContext } from 'app/(application)/GlobalContext';
 
 type ShelfProps = {
   title: string;
@@ -28,7 +28,9 @@ const Shelf = ({
   updateReadingStatus,
   removeReading,
 }: ShelfProps) => {
-  const { useJapaneseTitle } = useGlobalContext();
+  const { userSettings } = useGlobalContext();
+  const useJapaneseTitle = userSettings?.useJapaneseTitle ?? false;
+
   return (
     <div className="p-4 m-4 shadow-lg bg-base-200">
       <h1 className="mb-4 text-4xl font-bold text">{title}</h1>

@@ -3,6 +3,7 @@
 import { UserSetting } from 'lib/userSetting';
 import { createContext, useContext } from 'react';
 import { Volume } from './page';
+import { useGlobalContext } from 'app/(application)/GlobalContext';
 
 const VolumeContext = createContext({
   currentPage: 0,
@@ -17,15 +18,15 @@ export function useVolumeContext() {
 
 export default function VolumeDataProvider({
   children,
-  volume,
-  userSetting,
+  volume
 }: {
   children: React.ReactNode;
   volume: Volume;
-  userSetting: UserSetting | null;
 }) {
+  const { userSettings } = useGlobalContext();
+
   const getZoomSensitivity = () => {
-    return userSetting?.zoomSensitivity ?? 1;
+    return userSettings?.zoomSensitivity ?? 1;
   };
 
   const getCurrentPage = () => {
@@ -42,7 +43,7 @@ export default function VolumeDataProvider({
   };
 
   const getUseTwoPages = () => {
-    const defaultSetting = !!userSetting?.useTwoPages;
+    const defaultSetting = !!userSettings?.useTwoPages;
     const override = volume.readings[0]?.useTwoPagesOverride ?? null;
     if (override === null) {
       return defaultSetting;
