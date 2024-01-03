@@ -14,7 +14,7 @@ import { Page } from './page';
 import { useVolumeContext } from './VolumeDataProvider';
 import { useGlobalContext } from 'app/(application)/GlobalContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMaximize } from '@fortawesome/free-solid-svg-icons';
+import { faMaximize, faMinimize } from '@fortawesome/free-solid-svg-icons';
 import { updateReadingProgress } from './functions';
 import { Reading } from 'lib/reading';
 
@@ -151,7 +151,21 @@ export default function PagesContainer({
         fullScreen ? 'fixed top-0' : ''
       }`}
     >
-      {!fullScreen && (
+      {fullScreen ? (
+          <div className="fixed top-0 left-0 z-10 flex items-center bg-base-200 rounded-lg">
+            <button
+              className="btn btn-square join-item"
+              onClick={() => setFullScreen(false)}
+            >
+              <FontAwesomeIcon icon={faMinimize} />
+            </button>
+            <div
+              className="join-item pl-4 pr-4"
+            >
+              {currentPage + 1} / {pages.length}
+            </div>
+          </div>
+      ) : (
         <div className="join">
           <button className="join-item btn" onClick={() => setFullScreen(true)}>
             <FontAwesomeIcon icon={faMaximize} />

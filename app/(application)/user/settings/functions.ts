@@ -37,5 +37,4 @@ const updateUserPreference = async (userId: string, preferences: UserPreferences
       ...preferences
     },
   });
-  revalidatePath('/');
 }
