@@ -5,7 +5,6 @@ import {
   faGear,
   faScrewdriverWrench,
   faBookMedical,
-  faMinimize,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Link from 'next/link';
@@ -19,14 +18,6 @@ const Navbar = ({ session }: { session: Session }) => {
   // So we have to keep it in the DOM
   return (
     <>
-      {fullScreen && (
-        <button
-          className="fixed top-0 left-0 z-10 btn btn-square"
-          onClick={() => setFullScreen(false)}
-        >
-          <FontAwesomeIcon icon={faMinimize} />
-        </button>
-      )}
       <div
         className={`shadow navbar bg-base-300 overflow-hidden ${
           fullScreen ? 'h-0 w-0 m-0 p-0 min-h-0' : 'h-16'
