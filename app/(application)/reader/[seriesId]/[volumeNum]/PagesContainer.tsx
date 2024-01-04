@@ -10,13 +10,13 @@ import Pagination from './Pagination';
 import PageContainer from './PageContainer';
 import Settings from './Settings';
 
-import { Page } from './page';
+import type { Page } from './page';
+import type { Reading } from 'lib/reading';
 import { useVolumeContext } from './VolumeDataProvider';
 import { useGlobalContext } from 'app/(application)/GlobalContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMaximize, faMinimize } from '@fortawesome/free-solid-svg-icons';
 import { updateReadingProgress } from './functions';
-import { Reading } from 'lib/reading';
 
 export default function PagesContainer({
   volumeId,

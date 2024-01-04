@@ -2,7 +2,7 @@
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
 import Input from '@/input';
-import { SignupForm } from 'auth';
+import type { SignupForm } from 'auth';
 import { useState } from 'react';
 import Link from 'next/link';
 

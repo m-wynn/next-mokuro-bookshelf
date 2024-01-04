@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import Input from '@/input';
-import { OcrPage } from 'page';
-import { FormChild } from './page';
+import type { OcrPage } from 'page';
+import type { FormChild } from './page';
 function readFile(file: File) {
   return new Promise((resolve, reject) => {
     var fr = new FileReader();

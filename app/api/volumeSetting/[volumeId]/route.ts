@@ -1,7 +1,8 @@
 import prisma from 'db';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { auth } from 'auth/lucia';
 import * as context from 'next/headers';
+import type { NextRequest } from 'next/server';
 
 export async function POST(
   request: NextRequest,

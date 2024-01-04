@@ -6,8 +6,8 @@ import React, { useEffect, useMemo, useState } from 'react';
 import Shelf from './Shelf';
 
 import { ReadingStatus } from '@prisma/client';
-import { Reading } from 'lib/reading';
 import { useGlobalContext } from './GlobalContext';
+import type { Reading } from 'lib/reading';
 
 export const Bookshelf = ({
   updateReadingStatus,
