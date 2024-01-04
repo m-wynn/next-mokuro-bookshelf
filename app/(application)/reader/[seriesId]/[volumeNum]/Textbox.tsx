@@ -1,4 +1,4 @@
-import { OcrBlock } from 'page';
+import type { OcrBlock } from 'page';
 import React from 'react';
 
 export const Textbox = ({

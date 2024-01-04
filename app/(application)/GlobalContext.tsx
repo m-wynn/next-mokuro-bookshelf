@@ -1,8 +1,8 @@
 'use client';
 
 import { createContext, useContext, useState } from 'react';
-import { Reading } from 'lib/reading';
 import { UserSetting, UserSettingsDefaultValues } from 'lib/userSetting';
+import type { Reading } from 'lib/reading';
 
 const emptyReadings: Reading[] = [];
 

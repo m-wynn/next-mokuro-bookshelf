@@ -1,8 +1,8 @@
 import React from 'react';
 import Image from 'next/image';
 import Textbox from './Textbox';
-import { Page } from './page';
-import { OcrBlock } from 'page';
+import type { Page } from './page';
+import type { OcrBlock } from 'page';
 
 const PageContainer = ({
   page,

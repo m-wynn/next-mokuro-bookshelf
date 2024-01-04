@@ -21,7 +21,7 @@ export default async function AdminLayout({
         <AdminContext dbSeries={series}>{children}</AdminContext>
       </div>
       <div className="drawer-side">
-        <Sidebar />
+        <Sidebar/>
       </div>
     </section>
   );

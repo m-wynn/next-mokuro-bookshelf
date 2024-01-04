@@ -1,15 +1,16 @@
 'use client';
 
-import { UserSetting } from 'lib/userSetting';
+import { UserSetting, UserSettingsDefaultValues } from 'lib/userSetting';
 import { createContext, useContext } from 'react';
-import { Volume } from './page';
 import { useGlobalContext } from 'app/(application)/GlobalContext';
+import type { Volume } from './page';
 
+const { useTwoPages, zoomSensitivity } = UserSettingsDefaultValues;
 const VolumeContext = createContext({
   currentPage: 0,
-  useTwoPages: false,
   firstPageIsCover: false,
-  zoomSensitivity: 1,
+  useTwoPages,
+  zoomSensitivity
 });
 
 export function useVolumeContext() {

@@ -3,7 +3,7 @@ import Input from '@/input';
 import VolumeCard from '@/volumecard';
 import { Series } from '@prisma/client';
 import { useEffect, useState } from 'react';
-import { FormChild, VolumeFields } from './page';
+import type { FormChild, VolumeFields } from './page';
 import { UseFormSetValue } from 'react-hook-form';
 export default function Info({
   errors,

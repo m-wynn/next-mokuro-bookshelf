@@ -8,9 +8,9 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 
 import VolumeCard from '@/volumecard';
-import { Reading } from 'lib/reading';
 import { ReadingStatus } from '@prisma/client';
 import { useGlobalContext } from 'app/(application)/GlobalContext';
+import type { Reading } from 'lib/reading';
 
 type ShelfProps = {
   title: string;

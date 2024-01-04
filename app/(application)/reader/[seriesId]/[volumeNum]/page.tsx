@@ -3,7 +3,7 @@ import VolumeDataProvider from './VolumeDataProvider';
 import prisma from 'db';
 import { auth } from 'auth/lucia';
 import * as context from 'next/headers';
-import { OcrPage } from 'page';
+import type { OcrPage } from 'page';
 import { Prisma } from '@prisma/client';
 import { useGlobalContext } from 'app/(application)/GlobalContext';
 

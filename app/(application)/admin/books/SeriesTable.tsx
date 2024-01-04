@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import { SeriesPayload } from './page';
+import type { SeriesPayload } from './page';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
 import { updateSeries } from './functions';
