@@ -1,9 +1,10 @@
 import crypto from 'crypto';
 import prisma from 'db';
 import { promises as fs } from 'fs';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { auth } from 'auth/lucia';
 import * as context from 'next/headers';
+import type { NextRequest } from 'next/server';
 
 export async function POST(request: NextRequest) {
   const session = await auth.handleRequest(request.method, context).validate();

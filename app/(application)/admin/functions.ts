@@ -3,7 +3,7 @@ import crypto from 'crypto';
 import prisma from 'db';
 import { promises as fs } from 'fs';
 import { getSession } from 'lib/session';
-import { SeriesInputs } from 'series';
+import type { SeriesInputs } from 'series';
 
 export const createSeries = async (data: SeriesInputs) => {
   const session = await getSession('POST');

@@ -13,7 +13,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Checkbox from '@/checkbox';
-import { UserSetting } from 'lib/userSetting';
+import type { UserSetting } from 'lib/userSetting';
 import { useGlobalContext } from 'app/(application)/GlobalContext';
 
 export default function Preferences() {

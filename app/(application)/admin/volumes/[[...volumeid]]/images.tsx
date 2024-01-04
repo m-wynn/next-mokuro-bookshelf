@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import Input from '@/input';
-import { FormChild, VolumeFields } from './page';
-import { FieldValues } from 'react-hook-form';
+import type { FormChild, VolumeFields } from './page';
 
 export default function Images({
   register,

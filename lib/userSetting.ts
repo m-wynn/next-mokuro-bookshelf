@@ -1,6 +1,6 @@
 import { Prisma } from '@prisma/client';
 
-export const UserSettingsDefaultValues = {
+export const UserSettingsDefaultValues: UserSetting = {
   useTwoPages: false,
   useJapaneseTitle: false,
   zoomSensitivity: 1,

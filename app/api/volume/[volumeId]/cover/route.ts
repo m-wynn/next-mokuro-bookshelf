@@ -1,6 +1,7 @@
 import prisma from 'db';
 import { promises as fs } from 'fs';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
 
 import { auth } from 'auth/lucia';
 import * as context from 'next/headers';
