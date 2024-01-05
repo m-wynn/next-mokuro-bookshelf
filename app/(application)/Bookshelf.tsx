@@ -1,42 +1,35 @@
 'use client';
+
 import { faTriangleExclamation } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Link from 'next/link';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
+import { ReadingStatus } from '@prisma/client';
+import type { Reading } from 'lib/reading';
 import Shelf from './Shelf';
 
-import { ReadingStatus } from '@prisma/client';
 import { useGlobalContext } from './GlobalContext';
-import type { Reading } from 'lib/reading';
+import { updateReadingStatus, removeReading } from './functions';
 
-export const Bookshelf = ({
-  updateReadingStatus,
-  removeReading,
-}: {
-  updateReadingStatus: (id: number, status: ReadingStatus) => Promise<Reading>;
-  removeReading: (id: number) => Promise<Reading>;
-}) => {
+function Bookshelf() {
   const { allReadings, setAllReadings } = useGlobalContext();
 
   const inProgress = useMemo(
-    () =>
-      allReadings.filter(
-        (reading) => reading.status === 'READING',
-      ) as unknown as Reading[],
+    () => allReadings.filter(
+      (reading) => reading.status === 'READING',
+    ) as unknown as Reading[],
     [allReadings],
   );
   const unread = useMemo(
-    () =>
-      allReadings.filter(
-        (reading) => reading.status === 'UNREAD',
-      ) as unknown as Reading[],
+    () => allReadings.filter(
+      (reading) => reading.status === 'UNREAD',
+    ) as unknown as Reading[],
     [allReadings],
   );
   const read = useMemo(
-    () =>
-      allReadings.filter(
-        (reading) => reading.status === 'READ',
-      ) as unknown as Reading[],
+    () => allReadings.filter(
+      (reading) => reading.status === 'READ',
+    ) as unknown as Reading[],
     [allReadings],
   );
 
@@ -46,18 +39,14 @@ export const Bookshelf = ({
   ) => {
     const newReading = await updateReadingStatus(id, status);
     setAllReadings((prev: Reading[]) => {
-      const newReadings = prev.map((reading) =>
-        reading.id === id ? newReading : reading,
-      );
+      const newReadings = prev.map((reading) => (reading.id === id ? newReading : reading));
       return newReadings;
     });
   };
 
   const removeReadingAndState = async (id: number) => {
     await removeReading(id);
-    setAllReadings((prev: Reading[]) => {
-      return prev.filter((reading) => reading.id !== id);
-    });
+    setAllReadings((prev: Reading[]) => prev.filter((reading) => reading.id !== id));
   };
 
   return (
@@ -68,7 +57,7 @@ export const Bookshelf = ({
           <span>You don't have any volumes yet.</span>
           <div>
             <Link href="/allbooks">
-              <button className="btn btn-sm btn-primary">Add Some</button>
+              <button type="button" className="btn btn-sm btn-primary">Add Some</button>
             </Link>
           </div>
         </div>
@@ -99,5 +88,5 @@ export const Bookshelf = ({
       )}
     </div>
   );
-};
+}
 export default Bookshelf;

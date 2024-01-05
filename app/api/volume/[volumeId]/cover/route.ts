@@ -14,9 +14,9 @@ export async function GET(
   if (!session) {
     return NextResponse.json({ error: 'Not logged in' }, { status: 401 });
   }
-  let volume = await prisma.volume.findUniqueOrThrow({
+  const volume = await prisma.volume.findUniqueOrThrow({
     where: {
-      id: parseInt(volumeId),
+      id: +volumeId,
     },
     select: {
       cover: true,

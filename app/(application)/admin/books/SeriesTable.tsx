@@ -1,88 +1,18 @@
 'use client';
+
 import React from 'react';
-import type { SeriesPayload } from './page';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
+import type { SeriesPayload } from './page';
 import { updateSeries } from './functions';
 
-const SeriesTable = ({ series }: { series: SeriesPayload[] }) => {
-  return (
-    <table className="table bg-base-200">
-      <thead>
-        <tr>
-          <th></th>
-          <th>English Name</th>
-          <th>Japanese Name</th>
-          <th>Created At</th>
-          <th>Updated At</th>
-        </tr>
-      </thead>
-      <tbody>
-        {series.map((series) => (
-          <React.Fragment key={series.id}>
-            <tr>
-              <th>{series.id}</th>
-              <th>
-                <FormInput
-                  defaultValue={series.englishName}
-                  onEnter={async (value) => {
-                    await updateSeries(series.id, { englishName: value });
-                  }}
-                />
-              </th>
-              <th>
-                <FormInput
-                  defaultValue={series.japaneseName}
-                  onEnter={async (value) => {
-                    await updateSeries(series.id, { japaneseName: value });
-                  }}
-                />
-              </th>
-              <th>{series.createdAt.toUTCString()}</th>
-              <th>{series.updatedAt.toUTCString()}</th>
-            </tr>
-            {series.volumes.length > 0 && (
-              <tr>
-                <td colSpan={5}>
-                  <table className="table bg-base-200">
-                    <thead>
-                      <tr>
-                        <th>Vol</th>
-                        <th>Created At</th>
-                        <th>Updated At</th>
-                        <th>Uploaded By</th>
-                        <th>Readings</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {series.volumes.map((volume) => (
-                        <tr key={volume.number}>
-                          <td>{volume.number}</td>
-                          <td>{volume.createdAt.toUTCString()}</td>
-                          <td>{volume.updatedAt.toUTCString()}</td>
-                          <td>{volume.uploadedBy.name}</td>
-                          <td>{volume._count.readings}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </td>
-              </tr>
-            )}
-          </React.Fragment>
-        ))}
-      </tbody>
-    </table>
-  );
-};
-
-const FormInput = ({
+function FormInput({
   defaultValue,
   onEnter,
 }: {
   defaultValue: string;
-  onEnter: (value: string) => Promise<void>;
-}) => {
+  onEnter: (_value: string) => Promise<void>;
+}) {
   enum LoadingState {
     NORMAL,
     LOADING,
@@ -91,10 +21,10 @@ const FormInput = ({
   const [loadingState, setLoadingState] = React.useState(LoadingState.NORMAL);
   return (
     <div className="indicator">
-      {loadingState != LoadingState.NORMAL &&
-        (loadingState == LoadingState.LOADING ? (
+      {loadingState !== LoadingState.NORMAL
+        && (loadingState === LoadingState.LOADING ? (
           <span className="indicator-item badge badge-secondary">
-            <span className="loading loading-ball loading-xs"></span>
+            <span className="loading loading-ball loading-xs" />
           </span>
         ) : (
           <span className="indicator-item badge badge-success">
@@ -121,6 +51,77 @@ const FormInput = ({
       />
     </div>
   );
-};
+}
+
+function SeriesTable({ series }: { series: SeriesPayload[] }) {
+  return (
+    <table className="table bg-base-200">
+      <thead>
+        <tr>
+          <th aria-label="ID"></th>
+          <th>English Name</th>
+          <th>Japanese Name</th>
+          <th>Created At</th>
+          <th>Updated At</th>
+        </tr>
+      </thead>
+      <tbody>
+        {series.map((each) => (
+          <React.Fragment key={each.id}>
+            <tr>
+              <th>{each.id}</th>
+              <th>
+                <FormInput
+                  defaultValue={each.englishName}
+                  onEnter={async (value) => {
+                    await updateSeries(each.id, { englishName: value });
+                  }}
+                />
+              </th>
+              <th>
+                <FormInput
+                  defaultValue={each.japaneseName}
+                  onEnter={async (value) => {
+                    await updateSeries(each.id, { japaneseName: value });
+                  }}
+                />
+              </th>
+              <th>{each.createdAt.toUTCString()}</th>
+              <th>{each.updatedAt.toUTCString()}</th>
+            </tr>
+            {each.volumes.length > 0 && (
+              <tr>
+                <td colSpan={5}>
+                  <table className="table bg-base-200">
+                    <thead>
+                      <tr>
+                        <th>Vol</th>
+                        <th>Created At</th>
+                        <th>Updated At</th>
+                        <th>Uploaded By</th>
+                        <th>Readings</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {each.volumes.map((volume) => (
+                        <tr key={volume.number}>
+                          <td>{volume.number}</td>
+                          <td>{volume.createdAt.toUTCString()}</td>
+                          <td>{volume.updatedAt.toUTCString()}</td>
+                          <td>{volume.uploadedBy.name}</td>
+                          <td>{volume._count.readings}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </td>
+              </tr>
+            )}
+          </React.Fragment>
+        ))}
+      </tbody>
+    </table>
+  );
+}
 
 export default SeriesTable;

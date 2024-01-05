@@ -1,13 +1,14 @@
 'use client';
-import React from 'react';
-import { useGlobalContext } from 'app/(application)/GlobalContext';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
 import { faMaximize } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useGlobalContext } from 'app/(application)/GlobalContext';
+import React from 'react';
 import Pagination from './Pagination';
 import Settings from './Settings';
 
-export const Loading = () => {
-  const { fullScreen, setFullScreen, setAllReadings } = useGlobalContext();
+export function Loading() {
+  const { fullScreen, setFullScreen } = useGlobalContext();
   return (
     <div
       id="pagesContainer"
@@ -17,7 +18,7 @@ export const Loading = () => {
     >
       {!fullScreen && (
         <div className="join">
-          <button className="join-item btn" onClick={() => setFullScreen(true)}>
+          <button type="button" className="join-item btn" onClick={() => setFullScreen(true)}>
             <FontAwesomeIcon icon={faMaximize} />
           </button>
           <Pagination
@@ -50,6 +51,6 @@ export const Loading = () => {
       </div>
     </div>
   );
-};
+}
 
 export default Loading;

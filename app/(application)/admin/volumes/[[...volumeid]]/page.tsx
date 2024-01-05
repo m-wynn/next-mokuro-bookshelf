@@ -1,4 +1,5 @@
 'use client';
+
 import { useEffect, useRef, useState } from 'react';
 import {
   FieldErrors,
@@ -8,15 +9,15 @@ import {
   UseFormWatch,
   useForm,
 } from 'react-hook-form';
+import NewSeriesModal from '@/NewSeriesModal';
+import { SeriesInputs } from 'series';
+import { Series } from '@prisma/client';
+import PromisePool from 'async-promise-pool';
 import { useAdminContext } from '../../AdminContext';
 import Images from './images';
 import Info from './info';
 import Ocr from './ocr';
-import NewSeriesModal from '@/NewSeriesModal';
 import { createSeries, createVolume, createPage } from '../../functions';
-import { SeriesInputs } from 'series';
-import { Series } from '@prisma/client';
-import PromisePool from 'async-promise-pool';
 
 export type FormChild = {
   errors: FieldErrors<VolumeFields>;
@@ -43,7 +44,9 @@ export default function VolumeEditor({
   const [totalPages, setTotalPages] = useState(0);
   useEffect(() => {
     if (volumeid) {
-      alert('Editing is not supported');
+      // TODO: Move this file if we're not gonna support editing
+      // eslint-disable-next-line no-console
+      console.log('volumeid', volumeid);
     }
   }, [volumeid]);
 
@@ -81,17 +84,18 @@ export default function VolumeEditor({
         pageFormData.append(
           'ocr',
           Array.from(data.ocrFiles as FileList).find(
-            (ocrFile) =>
-              ocrFile.name ===
-              (page as File).name.replace(/\.[^/.]+$/, '') + '.json',
+            (ocrFile) => ocrFile.name
+              === `${(page as File).name.replace(/\.[^/.]+$/, '')}.json`,
           ) as Blob,
         );
         await createPage(pageFormData);
-        uploadedPageCount++;
+        uploadedPageCount += 1;
         setUploadedPages(uploadedPageCount);
       })
       .forEach((task) => pool.add(() => task));
     await pool.all();
+    // TODO: Make it pretty
+    // eslint-disable-next-line no-alert
     alert('Done!');
   };
   const newSeriesModalRef: React.RefObject<HTMLDialogElement> = useRef(null);
@@ -120,16 +124,16 @@ export default function VolumeEditor({
           series={series}
           setValue={setValue}
         />
-        <div className="divider"></div>
+        <div className="divider" />
         <Ocr register={register} watch={watch} errors={errors} />
-        <div className="divider"></div>
+        <div className="divider" />
         <Images register={register} watch={watch} errors={errors} />
         {totalPages > 0 && (
           <progress
             className="progress progress-accent"
             value={uploadedPages}
             max={totalPages}
-          ></progress>
+          />
         )}
       </form>
     </>

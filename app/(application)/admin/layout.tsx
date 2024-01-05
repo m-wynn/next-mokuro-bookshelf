@@ -1,7 +1,8 @@
 import prisma from 'db';
-import Sidebar from './sidebar';
 import { getSession } from 'lib/session';
+import Sidebar from './sidebar';
 import AdminContext from './AdminContext';
+
 export default async function AdminLayout({
   children, // will be a page or nested layout
 }: {
@@ -21,7 +22,7 @@ export default async function AdminLayout({
         <AdminContext dbSeries={series}>{children}</AdminContext>
       </div>
       <div className="drawer-side">
-        <Sidebar/>
+        <Sidebar />
       </div>
     </section>
   );

@@ -1,4 +1,5 @@
 'use client';
+
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
 import Input from '@/input';
@@ -24,14 +25,14 @@ export default function Register() {
 
     if (response.status === 201) {
       return router.push('/');
-    } else {
-      try {
-        const data = await response.json();
-        setError(data.error);
-      } catch (error) {
-        setError('An error occurred');
-      }
     }
+    try {
+      const json = await response.json();
+      setError(json.error);
+    } catch (e) {
+      setError('An error occurred');
+    }
+    return null;
   };
   return (
     <div className="flex justify-center items-center w-screen h-screen">
@@ -69,8 +70,7 @@ export default function Register() {
               placeholder="ny@np@55u"
               errors={errors?.confirmPassword || null}
               register={register('confirmPassword', {
-                validate: (value) =>
-                  value === watch('password') || 'Passwords do not match',
+                validate: (value) => value === watch('password') || 'Passwords do not match',
               })}
             />
             <Input

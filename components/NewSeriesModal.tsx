@@ -1,16 +1,17 @@
 'use client';
+
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import Input from './input';
 import { SeriesInputs } from 'series';
+import Input from './input';
 
-const NewSeriesModal = ({
+function NewSeriesModal({
   dialogRef,
   createSeries,
 }: {
   dialogRef: React.RefObject<HTMLDialogElement>;
   createSeries: (data: SeriesInputs) => void;
-}) => {
+}) {
   const {
     register,
     handleSubmit,
@@ -48,6 +49,6 @@ const NewSeriesModal = ({
       </div>
     </dialog>
   );
-};
+}
 
 export default NewSeriesModal;

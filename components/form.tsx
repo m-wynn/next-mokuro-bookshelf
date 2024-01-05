@@ -1,14 +1,15 @@
 'use client';
 
+import React from 'react';
 import { useRouter } from 'next/navigation';
 
-const Form = ({
+function Form({
   children,
   action,
 }: {
   children: React.ReactNode;
   action: string;
-}) => {
+}) {
   const router = useRouter();
   return (
     <form
@@ -28,11 +29,12 @@ const Form = ({
           // when using `redirect: "manual"`, response status 0 is returned
           return router.refresh();
         }
+        return null;
       }}
     >
       {children}
     </form>
   );
-};
+}
 
 export default Form;

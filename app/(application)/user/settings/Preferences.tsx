@@ -1,11 +1,6 @@
 'use client';
-import { useState } from 'react';
+
 import React from 'react';
-import {
-  updateUseTwoPages,
-  updateZoomSensitivity,
-  updateUseJapaneseTitle,
-} from './functions';
 import {
   faTableColumns,
   faMagnifyingGlass,
@@ -15,17 +10,20 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Checkbox from '@/checkbox';
 import type { UserSetting } from 'lib/userSetting';
 import { useGlobalContext } from 'app/(application)/GlobalContext';
+import {
+  updateUseTwoPages,
+  updateZoomSensitivity,
+  updateUseJapaneseTitle,
+} from './functions';
 
 export default function Preferences() {
   const { userSettings, setUserSettings } = useGlobalContext();
   const setUserSetting = (setting: any) => {
-    setUserSettings((original: UserSetting) => {
-      return {
-        ...original,
-        ...setting
-      };
-    });
-  }
+    setUserSettings((original: UserSetting) => ({
+      ...original,
+      ...setting,
+    }));
+  };
 
   return (
     <div className="flex flex-col mt-4 w-96 max-w-2xl md:w-1/2 grow">
@@ -38,7 +36,7 @@ export default function Preferences() {
               value={userSettings?.useTwoPages || false}
               set={(checked) => {
                 updateUseTwoPages(checked);
-                setUserSetting({useTwoPages: checked});
+                setUserSetting({ useTwoPages: checked });
               }}
             >
               Display Two Pages
@@ -48,7 +46,7 @@ export default function Preferences() {
               value={userSettings?.useJapaneseTitle || false}
               set={(checked) => {
                 updateUseJapaneseTitle(checked);
-                setUserSetting({useJapaneseTitle: checked});
+                setUserSetting({ useJapaneseTitle: checked });
               }}
             >
               Show Japanese Title
@@ -62,9 +60,9 @@ export default function Preferences() {
                 className="select"
                 defaultValue={userSettings?.zoomSensitivity}
                 onChange={(e) => {
-                  const sensitivity = parseInt(e.target.value);
+                  const sensitivity = +e.target.value;
                   updateZoomSensitivity(sensitivity);
-                  setUserSetting({zoomSensitivity: sensitivity});
+                  setUserSetting({ zoomSensitivity: sensitivity });
                 }}
               >
                 {[...Array(10).keys()].map((sensitivity) => (

@@ -26,17 +26,17 @@ export async function POST(
   const reading = await prisma.reading.upsert({
     where: {
       volumeUser: {
-        volumeId: parseInt(volumeId),
+        volumeId: +volumeId,
         userId: session.user.userId,
       },
     },
     update: {
-      volumeId: parseInt(volumeId),
+      volumeId: +volumeId,
       userId: session.user.userId,
       ...toUpdate,
     },
     create: {
-      volumeId: parseInt(volumeId),
+      volumeId: +volumeId,
       userId: session.user.userId,
       ...toUpdate,
       status: 'READING',

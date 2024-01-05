@@ -1,7 +1,7 @@
 import type { OcrBlock } from 'page';
 import React from 'react';
 
-export const Textbox = ({
+function Textbox({
   box,
   fontSize,
   vertical,
@@ -11,7 +11,7 @@ export const Textbox = ({
   fontSize: number;
   vertical: OcrBlock['vertical'];
   lines: OcrBlock['lines'];
-}) => {
+}) {
   const minFontSize = 12;
   const maxFontSize = 64;
   return (
@@ -28,18 +28,13 @@ export const Textbox = ({
         flexDirection: vertical ? 'row-reverse' : 'column',
       }}
     >
-      {lines.map((line: string, i: number) => (
+      {lines.map((line: string) => (
         <div
-          key={i}
+          key={line}
           className="hidden mx-auto leading-none whitespace-nowrap select-text group-hover:inline-block"
           style={{
             color: 'black',
-            fontSize:
-              fontSize < minFontSize
-                ? minFontSize
-                : fontSize > maxFontSize
-                  ? maxFontSize
-                  : fontSize,
+            fontSize: Math.min(Math.max(fontSize, minFontSize), maxFontSize),
             writingMode: vertical ? 'vertical-rl' : 'horizontal-tb',
           }}
         >
@@ -48,6 +43,6 @@ export const Textbox = ({
       ))}
     </div>
   );
-};
+}
 
 export default Textbox;

@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 import { UserSetting, UserSettingsDefaultValues } from 'lib/userSetting';
 import type { Reading } from 'lib/reading';
 
@@ -8,11 +8,11 @@ const emptyReadings: Reading[] = [];
 
 const GlobalContext = createContext({
   fullScreen: false,
-  setFullScreen: (fullScreen: boolean) => {},
+  setFullScreen: (_fullScreen: boolean) => {},
   allReadings: emptyReadings,
-  setAllReadings: (allReadings: any) => {},
+  setAllReadings: (_allReadings: any) => {},
   userSettings: UserSettingsDefaultValues,
-  setUserSettings: (userSettings: any) => {},
+  setUserSettings: (_userSettings: any) => {},
 });
 
 export function useGlobalContext() {
@@ -30,8 +30,12 @@ export default function GlobalDataProvider({
 }) {
   const [fullScreen, setFullScreen] = useState(false);
   const [allReadings, setAllReadings] = useState<Reading[]>(readings);
-  const [userSettings, setUserSettings] = useState<UserSetting>(initialUserSettings ?? UserSettingsDefaultValues);
+  const [userSettings, setUserSettings] = useState<UserSetting>(
+    initialUserSettings ?? UserSettingsDefaultValues,
+  );
 
+  // This won't get a performance benefit from useMemo
+  // eslint-disable-next-line react/jsx-no-constructed-context-values
   const value = {
     fullScreen,
     setFullScreen,

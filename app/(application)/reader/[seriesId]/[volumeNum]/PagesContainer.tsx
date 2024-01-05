@@ -1,22 +1,35 @@
 'use client';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+
+import {
+  useCallback, useEffect, useMemo, useRef, useState,
+} from 'react';
 import {
   TransformWrapper,
   TransformComponent,
   ReactZoomPanPinchRef,
 } from 'react-zoom-pan-pinch';
 
+import type { Reading } from 'lib/reading';
+import { useGlobalContext } from 'app/(application)/GlobalContext';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faMaximize, faMinimize } from '@fortawesome/free-solid-svg-icons';
 import Pagination from './Pagination';
 import PageContainer from './PageContainer';
 import Settings from './Settings';
 
 import type { Page } from './page';
-import type { Reading } from 'lib/reading';
 import { useVolumeContext } from './VolumeDataProvider';
-import { useGlobalContext } from 'app/(application)/GlobalContext';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMaximize, faMinimize } from '@fortawesome/free-solid-svg-icons';
 import { updateReadingProgress } from './functions';
+
+function DummyYomichanSentenceTerminator() {
+  // This element is a hack to keep Yomitan at bay.
+  // It adds one of the sentence termination characters to the DOM
+  // but keeps it invisible so that it doesn't end up including the stuff
+  // before the beginning or after the end of the page containers
+  return (
+    <p className="dummyYomichanSentenceTerminator" style={{ position: 'absolute', color: 'transparent' }}>"</p>
+  );
+}
 
 export default function PagesContainer({
   volumeId,
@@ -38,7 +51,7 @@ export default function PagesContainer({
   useEffect(() => {
     (async () => {
       let pageToSet = currentPage;
-      if (useTwoPages && currentPage != pages.length - 1) {
+      if (useTwoPages && currentPage !== pages.length - 1) {
         pageToSet = currentPage + 1;
       }
       const reading = await updateReadingProgress(volumeId, pageToSet);
@@ -49,9 +62,8 @@ export default function PagesContainer({
             if (r.id === reading.id) {
               found = true;
               return reading;
-            } else {
-              return r;
             }
+            return r;
           });
           if (!found) {
             edited.push(reading);
@@ -64,16 +76,15 @@ export default function PagesContainer({
 
   const setBoundPage = useCallback(
     (page: number) => {
-      const boundPage = (page: number) => {
-        const boundedPage = Math.min(pages.length - 1, Math.max(0, page));
-        if (boundedPage == 0) return 0;
+      const boundPage = (pageNum: number) => {
+        const boundedPage = Math.min(pages.length - 1, Math.max(0, pageNum));
+        if (boundedPage === 0) return 0;
         if (useTwoPages && !firstPageIsCover && boundedPage % 2 === 1) {
           return boundedPage - 1;
-        } else if (useTwoPages && firstPageIsCover && boundedPage % 2 === 0) {
+        } if (useTwoPages && firstPageIsCover && boundedPage % 2 === 0) {
           return boundedPage - 1;
-        } else {
-          return boundedPage;
         }
+        return boundedPage;
       };
       setCurrentPage(boundPage(page));
     },
@@ -82,8 +93,8 @@ export default function PagesContainer({
 
   useEffect(() => {
     if (
-      layoutChanged.useTwoPages !== useTwoPages ||
-      layoutChanged.firstPageIsCover !== firstPageIsCover
+      layoutChanged.useTwoPages !== useTwoPages
+      || layoutChanged.firstPageIsCover !== firstPageIsCover
     ) {
       layoutChanged.useTwoPages = useTwoPages;
       layoutChanged.firstPageIsCover = firstPageIsCover;
@@ -94,15 +105,16 @@ export default function PagesContainer({
   const transformComponentRef = useRef<ReactZoomPanPinchRef | null>(null);
 
   const showTwoPages = useMemo(
-    () =>
-      useTwoPages &&
-      currentPage < pages.length - 1 &&
-      (!firstPageIsCover || currentPage > 0),
+    () => useTwoPages
+      && currentPage < pages.length - 1
+      && (!firstPageIsCover || currentPage > 0),
     [useTwoPages, currentPage, pages, firstPageIsCover],
   );
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
+      // We only care about keys we specifically define
+      // eslint-disable-next-line default-case
       switch (e.key) {
         case 'ArrowLeft':
           e.preventDefault();
@@ -152,22 +164,26 @@ export default function PagesContainer({
       }`}
     >
       {fullScreen ? (
-          <div className="fixed top-0 left-0 z-10 flex items-center bg-base-200 rounded-lg">
-            <button
-              className="btn btn-square join-item"
-              onClick={() => setFullScreen(false)}
-            >
-              <FontAwesomeIcon icon={faMinimize} />
-            </button>
-            <div
-              className="join-item pl-4 pr-4"
-            >
-              {currentPage + 1} / {pages.length}
-            </div>
+        <div className="flex fixed top-0 left-0 z-10 items-center rounded-lg bg-base-200">
+          <button
+            type="button"
+            className="btn btn-square join-item"
+            onClick={() => setFullScreen(false)}
+          >
+            <FontAwesomeIcon icon={faMinimize} />
+          </button>
+          <div
+            className="pr-4 pl-4 join-item"
+          >
+            {currentPage + 1}
+            {' '}
+            /
+            {pages.length}
           </div>
+        </div>
       ) : (
         <div className="join">
-          <button className="join-item btn" onClick={() => setFullScreen(true)}>
+          <button type="button" className="join-item btn" onClick={() => setFullScreen(true)}>
             <FontAwesomeIcon icon={faMaximize} />
           </button>
           <Pagination
@@ -188,7 +204,7 @@ export default function PagesContainer({
       )}
       <TransformWrapper
         limitToBounds={false}
-        centerOnInit={true}
+        centerOnInit
         minScale={0.2}
         panning={{
           velocityDisabled: true,
@@ -212,7 +228,7 @@ export default function PagesContainer({
             height: '100%',
           }}
         >
-          <DummyYomichanSentenceTerminator/>
+          <DummyYomichanSentenceTerminator />
           <div id="visiblePagesContainer" className="flex flex-row flex-nowrap">
             {showTwoPages ? (
               <PageContainer
@@ -230,18 +246,9 @@ export default function PagesContainer({
               getImageUri={getImageUri}
             />
           </div>
-          <DummyYomichanSentenceTerminator/>
+          <DummyYomichanSentenceTerminator />
         </TransformComponent>
       </TransformWrapper>
     </div>
-  );
-}
-
-const DummyYomichanSentenceTerminator = () => {
-  // This element is a hack to keep Yomitan at bay. It adds one of the sentence termination characters
-  // to the DOM but keeps it invisible so that it doesn't end up including the stuff before the beginning
-  // or after the end of the page containers
-  return (
-    <p className='dummyYomichanSentenceTerminator' style={{position: 'absolute', color: 'transparent'}}>"</p>
   );
 }

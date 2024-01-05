@@ -3,7 +3,7 @@
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 
-const Sidebar: React.FC = () => {
+function Sidebar() {
   const pathname = usePathname();
   return (
     <nav>
@@ -40,6 +40,6 @@ const Sidebar: React.FC = () => {
       </ul>
     </nav>
   );
-};
+}
 
 export default Sidebar;

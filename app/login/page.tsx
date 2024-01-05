@@ -1,9 +1,10 @@
 'use client';
+
+import React, { useState } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
 import Input from '@/input';
 import { LoginForm } from 'auth';
-import { useState } from 'react';
 import Link from 'next/link';
 
 export default function Register() {
@@ -23,14 +24,14 @@ export default function Register() {
 
     if (response.status === 200) {
       return router.push('/');
-    } else {
-      try {
-        const data = await response.json();
-        setError(data.error);
-      } catch (error) {
-        setError('An error occurred');
-      }
     }
+    try {
+      const json = await response.json();
+      setError(json.error);
+    } catch (e) {
+      setError('An error occurred');
+    }
+    return null;
   };
   return (
     <div className="flex justify-center items-center w-screen h-screen">

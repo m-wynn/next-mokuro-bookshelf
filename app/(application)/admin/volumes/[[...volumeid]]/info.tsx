@@ -1,10 +1,12 @@
 'use client';
+
 import Input from '@/input';
 import VolumeCard from '@/volumecard';
 import { Series } from '@prisma/client';
 import { useEffect, useState } from 'react';
-import type { FormChild, VolumeFields } from './page';
 import { UseFormSetValue } from 'react-hook-form';
+import type { FormChild, VolumeFields } from './page';
+
 export default function Info({
   errors,
   setValue,
@@ -55,7 +57,7 @@ export default function Info({
                   // TODO: don't let this be "Add New" or something
                 })}
                 onChange={(e) => {
-                  if (e.target.value == 'Add New') {
+                  if (e.target.value === 'Add New') {
                     newSeriesModalRef.current?.showModal();
                   } else {
                     setValue('seriesEnglishName', e.target.value);
@@ -63,9 +65,9 @@ export default function Info({
                 }}
               >
                 <option disabled>Manga Series</option>
-                {series.map((series) => (
-                  <option key={series.englishName} value={series.englishName}>
-                    {series.englishName}
+                {series.map((each) => (
+                  <option key={each.englishName} value={each.englishName}>
+                    {each.englishName}
                   </option>
                 ))}
                 <option key="new" className="font-bold">
@@ -99,7 +101,7 @@ export default function Info({
           <div className="flex flex-col items-center w-1/2">
             <VolumeCard
               coverUri={
-                coverUri == '' ? 'https://placekitten.com/400/540' : coverUri
+                coverUri === '' ? 'https://placekitten.com/400/540' : coverUri
               }
               href="#"
               seriesName={seriesEnglishName || 'Manga Series'}

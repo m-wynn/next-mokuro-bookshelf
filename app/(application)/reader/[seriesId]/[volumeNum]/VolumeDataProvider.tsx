@@ -1,6 +1,6 @@
 'use client';
 
-import { UserSetting, UserSettingsDefaultValues } from 'lib/userSetting';
+import { UserSettingsDefaultValues } from 'lib/userSetting';
 import { createContext, useContext } from 'react';
 import { useGlobalContext } from 'app/(application)/GlobalContext';
 import type { Volume } from './page';
@@ -10,7 +10,7 @@ const VolumeContext = createContext({
   currentPage: 0,
   firstPageIsCover: false,
   useTwoPages,
-  zoomSensitivity
+  zoomSensitivity,
 });
 
 export function useVolumeContext() {
@@ -19,29 +19,14 @@ export function useVolumeContext() {
 
 export default function VolumeDataProvider({
   children,
-  volume
+  volume,
 }: {
   children: React.ReactNode;
   volume: Volume;
 }) {
   const { userSettings } = useGlobalContext();
 
-  const getZoomSensitivity = () => {
-    return userSettings?.zoomSensitivity ?? 1;
-  };
-
-  const getCurrentPage = () => {
-    let page = volume.readings[0]?.page ?? 0;
-    if (
-      page > 0 &&
-      getUseTwoPages() &&
-      getFirstPageIsCover() &&
-      page % 2 == 0
-    ) {
-      return page - 1;
-    }
-    return page;
-  };
+  const getZoomSensitivity = () => userSettings?.zoomSensitivity ?? 1;
 
   const getUseTwoPages = () => {
     const defaultSetting = !!userSettings?.useTwoPages;
@@ -61,6 +46,20 @@ export default function VolumeDataProvider({
     return override;
   };
 
+  const getCurrentPage = () => {
+    const page = volume.readings[0]?.page ?? 0;
+    if (
+      page > 0
+      && getUseTwoPages()
+      && getFirstPageIsCover()
+      && page % 2 === 0
+    ) {
+      return page - 1;
+    }
+    return page;
+  };
+
+  // eslint-disable-next-line react/jsx-no-constructed-context-values
   const value = {
     currentPage: getCurrentPage(),
     useTwoPages: getUseTwoPages(),
