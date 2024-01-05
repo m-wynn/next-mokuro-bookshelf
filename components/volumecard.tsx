@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import React from 'react';
 
 type VolumeCardProps = {
   coverUri: string;
@@ -10,7 +11,7 @@ type VolumeCardProps = {
   children?: React.ReactNode;
 };
 
-const VolumeCard = ({
+function VolumeCard({
   coverUri,
   pagesRead,
   totalPages,
@@ -18,7 +19,7 @@ const VolumeCard = ({
   seriesName,
   href,
   children,
-}: VolumeCardProps) => {
+}: VolumeCardProps) {
   return (
     <div className="flex-initial m-2 shadow hover:shadow-lg w-[13.5rem] h-[20.25rem] readingcard card card-compact image-full bg-base-300">
       <figure className="overflow-hidden">
@@ -35,7 +36,7 @@ const VolumeCard = ({
           className="absolute bottom-3 z-50 rounded progress progress-primary w-[13.5rem]"
           value={pagesRead}
           max={totalPages}
-        ></progress>
+        />
       ) : (
         ''
       )}
@@ -48,12 +49,14 @@ const VolumeCard = ({
             {seriesName}
           </h2>
           <h2 className="card-title drop-shadow-[0_3px_4px_rgba(0,0,0,0.5)]  text-white">
-            Volume {volumeNumber}
+            Volume
+            {' '}
+            {volumeNumber}
           </h2>
         </Link>
       </div>
     </div>
   );
-};
+}
 
 export default VolumeCard;

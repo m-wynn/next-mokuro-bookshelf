@@ -1,7 +1,7 @@
 import prisma from 'db';
-import { AllBooks } from './AllBooks';
 import { Prisma } from '@prisma/client';
 import { getSession } from 'lib/session';
+import { AllBooks } from './AllBooks';
 
 const seriesSelect = (userId: string) => ({
   japaneseName: true,
@@ -15,11 +15,11 @@ const seriesSelect = (userId: string) => ({
       createdAt: true,
       readings: {
         where: {
-          userId
+          userId,
         },
         select: {
           page: true,
-        }
+        },
       },
       _count: {
         select: { pages: true },

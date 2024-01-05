@@ -1,3 +1,4 @@
+import React from 'react';
 import {
   FieldError,
   FieldErrors,
@@ -5,7 +6,8 @@ import {
   Merge,
   UseFormRegisterReturn,
 } from 'react-hook-form';
-export default function Input({
+
+function Input({
   label,
   errors,
   register,
@@ -23,7 +25,7 @@ export default function Input({
   defaultValue?: string;
   classNameOverride?: string;
   type?: string;
-}): JSX.Element {
+}) {
   return (
     <div className="w-full max-w-xs">
       <label className="label">
@@ -38,16 +40,18 @@ export default function Input({
           classNameOverride != null
             ? classNameOverride
             : `w-full input input-bordered input-lg ${
-                errors ? 'input-error' : ''
-              }`
+              errors ? 'input-error' : ''
+            }`
         }
         {...register}
       />
       {errors && (
-        <label className="label label-text-alt text-error">
-          {errors?.message as string}
-        </label>
+      <label className="label label-text-alt text-error">
+        {errors?.message as string}
+      </label>
       )}
     </div>
   );
 }
+
+export default Input;

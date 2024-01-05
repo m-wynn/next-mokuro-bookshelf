@@ -1,6 +1,7 @@
 import '@fortawesome/fontawesome-svg-core/styles.css';
-import '../styles/tailwind.css';
 import type { Metadata } from 'next';
+import React from 'react';
+import '../styles/tailwind.css';
 
 export const metadata: Metadata = {
   title: {

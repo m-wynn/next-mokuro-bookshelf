@@ -20,5 +20,5 @@ export default async function UserSettings() {
   if (!user) {
     return <div>Not found</div>;
   }
-  return <Preferences/>;
+  return <Preferences />;
 }

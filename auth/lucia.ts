@@ -1,6 +1,6 @@
 import { lucia } from 'lucia';
 import { prisma } from '@lucia-auth/adapter-prisma';
-import { nextjs_future } from 'lucia/middleware';
+import { nextjs_future as nextjsFuture } from 'lucia/middleware';
 import { PrismaClient } from '@prisma/client';
 
 import { cache } from 'react';
@@ -15,16 +15,14 @@ export const auth = lucia({
     session: 'session', // model Session {}
   }),
   env: process.env.NODE_ENV === 'development' ? 'DEV' : 'PROD',
-  middleware: nextjs_future(),
+  middleware: nextjsFuture(),
   sessionCookie: {
     expires: false,
   },
-  getUserAttributes: (data) => {
-    return {
-      name: data.name,
-      role: data.role,
-    };
-  },
+  getUserAttributes: (data) => ({
+    name: data.name,
+    role: data.role,
+  }),
 });
 
 export type Auth = typeof auth;

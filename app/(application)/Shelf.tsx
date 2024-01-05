@@ -12,22 +12,24 @@ import { ReadingStatus } from '@prisma/client';
 import { useGlobalContext } from 'app/(application)/GlobalContext';
 import type { Reading } from 'lib/reading';
 
+import React from 'react';
+
 type ShelfProps = {
   title: string;
   readings: Reading[];
   updateReadingStatus: (
-    readingId: number,
-    status: ReadingStatus,
+    _readingId: number,
+    _status: ReadingStatus,
   ) => Promise<void>;
-  removeReading: (readingId: number) => Promise<void>;
+  removeReading: (_readingId: number) => Promise<void>;
 };
 
-const Shelf = ({
+function Shelf({
   title,
   readings,
   updateReadingStatus,
   removeReading,
-}: ShelfProps) => {
+}: ShelfProps) {
   const { userSettings } = useGlobalContext();
   const useJapaneseTitle = userSettings?.useJapaneseTitle ?? false;
 
@@ -57,39 +59,47 @@ const Shelf = ({
                 {reading.status !== ReadingStatus.UNREAD && (
                   <li>
                     <button
-                      onClick={() =>
-                        updateReadingStatus(reading.id, ReadingStatus.UNREAD)
-                      }
+                      type="button"
+                      onClick={() => updateReadingStatus(reading.id, ReadingStatus.UNREAD)}
                     >
-                      <FontAwesomeIcon icon={faBook} /> Mark as Unread
+                      <FontAwesomeIcon icon={faBook} />
+                      {' '}
+                      Mark as Unread
                     </button>
                   </li>
                 )}
                 {reading.status !== ReadingStatus.READING && (
                   <li>
                     <button
-                      onClick={() =>
-                        updateReadingStatus(reading.id, ReadingStatus.READING)
-                      }
+                      type="button"
+                      onClick={() => updateReadingStatus(reading.id, ReadingStatus.READING)}
                     >
-                      <FontAwesomeIcon icon={faBookOpen} /> Mark as Reading
+                      <FontAwesomeIcon icon={faBookOpen} />
+                      {' '}
+                      Mark as Reading
                     </button>
                   </li>
                 )}
                 {reading.status !== ReadingStatus.READ && (
                   <li>
                     <button
-                      onClick={() =>
-                        updateReadingStatus(reading.id, ReadingStatus.READ)
-                      }
+                      type="button"
+                      onClick={() => updateReadingStatus(reading.id, ReadingStatus.READ)}
                     >
-                      <FontAwesomeIcon icon={faCheck} /> Mark as Read
+                      <FontAwesomeIcon icon={faCheck} />
+                      {' '}
+                      Mark as Read
                     </button>
                   </li>
                 )}
                 <li>
-                  <button onClick={() => removeReading(reading.id)}>
-                    <FontAwesomeIcon icon={faTrash} /> Remove
+                  <button
+                    type="button"
+                    onClick={() => removeReading(reading.id)}
+                  >
+                    <FontAwesomeIcon icon={faTrash} />
+                    {' '}
+                    Remove
                   </button>
                 </li>
               </ul>
@@ -99,5 +109,5 @@ const Shelf = ({
       </div>
     </div>
   );
-};
+}
 export default Shelf;

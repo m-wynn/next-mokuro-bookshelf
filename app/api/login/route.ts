@@ -33,9 +33,9 @@ export const POST = async (request: NextRequest) => {
     });
   } catch (e) {
     if (
-      e instanceof LuciaError &&
-      (e.message === 'AUTH_INVALID_KEY_ID' ||
-        e.message === 'AUTH_INVALID_PASSWORD')
+      e instanceof LuciaError
+      && (e.message === 'AUTH_INVALID_KEY_ID'
+        || e.message === 'AUTH_INVALID_PASSWORD')
     ) {
       return NextResponse.json(
         { error: 'Incorrect username or password' },

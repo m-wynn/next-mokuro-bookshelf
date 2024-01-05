@@ -1,13 +1,15 @@
 'use client';
 
 import { Series } from '@prisma/client';
-import { createContext, useContext, useState, Dispatch } from 'react';
+import React, {
+  createContext, useContext, useState, Dispatch,
+} from 'react';
 
 const emptySeries: Series[] = [];
 const setSeries: Dispatch<React.SetStateAction<Series[]>> = () => {};
 const AdminContext = createContext({
   series: emptySeries,
-  setSeries: setSeries,
+  setSeries,
 });
 
 export function useAdminContext() {
@@ -21,11 +23,13 @@ export default function AdminDataProvider({
   children: React.ReactNode;
   dbSeries: Series[];
 }) {
-  const [series, setSeries] = useState<Series[]>(dbSeries);
+  const [series, setStateSeries] = useState<Series[]>(dbSeries);
 
+  // This doesn't benefit from useMemo
+  // eslint-disable-next-line react/jsx-no-constructed-context-values
   const value = {
     series,
-    setSeries,
+    setSeries: setStateSeries,
   };
 
   return (

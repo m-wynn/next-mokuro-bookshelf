@@ -1,11 +1,11 @@
-import Navbar from './navbar';
 import * as context from 'next/headers';
 import { redirect } from 'next/navigation';
 import { auth } from 'auth/lucia';
-import GlobalDataProvider from './GlobalContext';
 import prisma from 'db';
 import { ReadingSelectQuery } from 'lib/reading';
 import { UserSettingSelectQuery } from 'lib/userSetting';
+import GlobalDataProvider from './GlobalContext';
+import Navbar from './navbar';
 
 export default async function DashboardLayout({
   children,
@@ -28,14 +28,14 @@ export default async function DashboardLayout({
     where: {
       userId: session.user.userId,
     },
-    select: UserSettingSelectQuery
+    select: UserSettingSelectQuery,
   });
 
   return (
     <GlobalDataProvider readings={readings} initialUserSettings={userSettings}>
       <header>
         <nav>
-          <Navbar session={session}/>
+          <Navbar session={session} />
         </nav>
       </header>
 

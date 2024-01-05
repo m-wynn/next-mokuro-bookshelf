@@ -16,7 +16,7 @@ export async function GET(
   const reading = await prisma.reading.findUnique({
     where: {
       volumeUser: {
-        volumeId: parseInt(volumeId),
+        volumeId: +volumeId,
         userId: session.user.userId,
       },
     },
@@ -47,21 +47,21 @@ export async function POST(
   const reading = await prisma.reading.upsert({
     where: {
       volumeUser: {
-        volumeId: parseInt(volumeId),
+        volumeId: +volumeId,
         userId: session.user.userId,
       },
     },
     update: {
-      volumeId: parseInt(volumeId),
+      volumeId: +volumeId,
       userId: session.user.userId,
-      page: page,
+      page,
       status: 'READING',
       isActive: true,
     },
     create: {
-      volumeId: parseInt(volumeId),
+      volumeId: +volumeId,
       userId: session.user.userId,
-      page: page,
+      page,
       status: 'READING',
       isActive: true,
     },

@@ -16,7 +16,7 @@ export async function GET(
 
   const page = await prisma.page.findUnique({
     where: {
-      id: parseInt(pageId),
+      id: +pageId,
     },
     select: {
       volumeId: true,

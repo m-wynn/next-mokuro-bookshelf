@@ -1,11 +1,5 @@
 import { Prisma } from '@prisma/client';
 
-export const UserSettingsDefaultValues: UserSetting = {
-  useTwoPages: false,
-  useJapaneseTitle: false,
-  zoomSensitivity: 1,
-};
-
 export const UserSettingSelectQuery = {
   useTwoPages: true,
   zoomSensitivity: true,
@@ -15,3 +9,9 @@ export const UserSettingSelectQuery = {
 export type UserSetting = Prisma.UserSettingGetPayload<{
   select: typeof UserSettingSelectQuery;
 }>;
+
+export const UserSettingsDefaultValues: UserSetting = {
+  useTwoPages: false,
+  useJapaneseTitle: false,
+  zoomSensitivity: 1,
+};

@@ -1,8 +1,9 @@
 'use client';
+
 import React from 'react';
 import { Role } from '@prisma/client';
 
-const UserTable = ({
+function UserTable({
   users,
   updateRole,
 }: {
@@ -14,13 +15,13 @@ const UserTable = ({
     updatedAt: Date;
   }[];
   updateRole: (id: string, role: Role) => void;
-}) => {
+}) {
   const roles = Object.values(Role);
   return (
     <table className="table bg-base-200">
       <thead>
         <tr>
-          <th></th>
+          <th aria-label="Index"></th>
           <th>Name</th>
           <th>Role</th>
           <th>Created At</th>
@@ -35,11 +36,9 @@ const UserTable = ({
             <td>
               <select
                 className="w-full max-w-xs select select-ghost"
-                disabled={i == 0}
+                disabled={i === 0}
                 defaultValue={user.role}
-                onChange={(e) =>
-                  updateRole(user.id, Role[e.target.value as keyof typeof Role])
-                }
+                onChange={(e) => updateRole(user.id, Role[e.target.value as keyof typeof Role])}
               >
                 {roles.map((role) => (
                   <option key={role}>{role}</option>
@@ -53,6 +52,6 @@ const UserTable = ({
       </tbody>
     </table>
   );
-};
+}
 
 export default UserTable;

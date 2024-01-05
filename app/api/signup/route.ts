@@ -20,8 +20,9 @@ export const POST = async (request: NextRequest) => {
   } catch (e) {
     return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
   }
-  const { username, password, confirmPassword, inviteCode }: SignupForm =
-    await request.json();
+  const {
+    username, password, confirmPassword, inviteCode,
+  }: SignupForm = await request.json();
 
   if (password.length < 8) {
     return NextResponse.json({ error: 'Invalid password' }, { status: 400 });
@@ -59,15 +60,14 @@ export const POST = async (request: NextRequest) => {
     return NextResponse.json('User Created', { status: 201 });
   } catch (e) {
     if (
-      e instanceof PrismaClientKnownRequestError &&
-      e.code === 'P2002' // Unique constraint failed
+      e instanceof PrismaClientKnownRequestError
+      && e.code === 'P2002' // Unique constraint failed
     ) {
       return NextResponse.json(
         { error: 'Username already taken' },
         { status: 400 },
       );
     }
-    console.error(e);
 
     return NextResponse.json(
       { error: 'An unknown error occurred' },

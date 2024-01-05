@@ -1,18 +1,20 @@
 'use client';
+
 import React from 'react';
+import VolumeCard from '@/volumecard';
 import type { SeriesPayload } from './page';
 import { useGlobalContext } from '../GlobalContext';
-import VolumeCard from '@/volumecard';
 
-export const AllBooks = ({ series }: { series: SeriesPayload[] }) => {
+export function AllBooks({ series }: { series: SeriesPayload[] }) {
   const { userSettings } = useGlobalContext();
   const useJapaneseTitle = userSettings?.useJapaneseTitle ?? false;
 
   return (
     <>
-      {series.map(({ japaneseName, englishName, id, volumes }) => {
-        const name =
-          useJapaneseTitle && japaneseName ? japaneseName : englishName;
+      {series.map(({
+        japaneseName, englishName, id, volumes,
+      }) => {
+        const name = useJapaneseTitle && japaneseName ? japaneseName : englishName;
         return (
           <div key={name} className="mb-4 w-full">
             <div className="flex-initial p-4 w-full shadow-md bg-base-200">
@@ -36,4 +38,4 @@ export const AllBooks = ({ series }: { series: SeriesPayload[] }) => {
       })}
     </>
   );
-};
+}

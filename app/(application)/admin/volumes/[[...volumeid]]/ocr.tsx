@@ -2,9 +2,10 @@ import { useEffect, useState } from 'react';
 import Input from '@/input';
 import type { OcrPage } from 'page';
 import type { FormChild } from './page';
+
 function readFile(file: File) {
   return new Promise((resolve, reject) => {
-    var fr = new FileReader();
+    const fr = new FileReader();
     fr.onload = () => {
       resolve(fr.result);
     };
@@ -23,14 +24,12 @@ export default function Ocr({
   const volumeNumber = watch('volumeNumber');
   const ocrFiles = watch('ocrFiles');
   useEffect(() => {
-    const parseFiles = async (ocrFiles: FileList) => {
+    const parseFiles = async (files: FileList) => {
       const fileMap = (
         await Promise.all(
-          Array.from(ocrFiles).map(async (ocrFile) => {
-            return {
-              [ocrFile.name]: JSON.parse((await readFile(ocrFile)) as string),
-            };
-          }),
+          Array.from(files).map(async (ocrFile) => ({
+            [ocrFile.name]: JSON.parse((await readFile(ocrFile)) as string),
+          })),
         )
       ).reduce((acc, currentFile) => ({ ...acc, ...currentFile }), {});
       setOcrText(fileMap as { string: OcrPage });
@@ -79,10 +78,18 @@ export default function Ocr({
                 <code>pip3 install mokuro</code>
               </pre>
               <pre data-prefix="$">
-                <code>mokuro &quot;./Volume {volumeNumber}&quot;</code>
+                <code>
+                  mokuro &quot;./Volume
+                  {volumeNumber}
+                  &quot;
+                </code>
               </pre>
               <pre data-prefix="$">
-                <code>ls &quot;_ocr/Volume {volumeNumber}&quot;</code>
+                <code>
+                  ls &quot;_ocr/Volume
+                  {volumeNumber}
+                  &quot;
+                </code>
               </pre>
               <pre className="text-warning">
                 <code>./001.json ./002.json ...</code>

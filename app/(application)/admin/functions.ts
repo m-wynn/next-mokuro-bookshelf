@@ -1,4 +1,5 @@
 'use server';
+
 import crypto from 'crypto';
 import prisma from 'db';
 import { promises as fs } from 'fs';
@@ -26,6 +27,12 @@ export const createSeries = async (data: SeriesInputs) => {
   return series;
 };
 
+const getFileHash = (fileData: Buffer): string => {
+  const hash = crypto.createHash('sha256');
+  hash.update(fileData);
+  return hash.digest('hex');
+};
+
 export const createVolume = async (formData: FormData) => {
   const session = await getSession('POST');
   if (!session) {
@@ -50,20 +57,20 @@ export const createVolume = async (formData: FormData) => {
   const volume = await prisma.volume.upsert({
     where: {
       seriesNum: {
-        number: parseInt(volumeNumber),
-        seriesId: parseInt(seriesId),
+        number: +volumeNumber,
+        seriesId: +seriesId,
       },
     },
     update: {
       cover: coverName,
-      firstPageIsCover: firstPageIsCover,
+      firstPageIsCover,
     },
     create: {
       cover: coverName,
-      number: parseInt(volumeNumber),
-      seriesId: parseInt(seriesId),
+      number: +volumeNumber,
+      seriesId: +seriesId,
       uploadedById: session.user.userId,
-      firstPageIsCover: firstPageIsCover,
+      firstPageIsCover,
     },
   });
 
@@ -87,16 +94,16 @@ export const createPage = async (formData: FormData) => {
     throw new Error('Not authorized to do that');
   }
 
-  let volumeId = parseInt(formData.get('volumeId') as string);
-  let number = parseInt(formData.get('number') as string);
-  let ocr = formData.get('ocr') as Blob | null;
-  let file = formData.get('file') as Blob;
+  const volumeId = +(formData.get('volumeId') as string);
+  const number = +(formData.get('number') as string);
+  const ocr = formData.get('ocr') as Blob | null;
+  const file = formData.get('file') as Blob;
 
   if (volumeId == null || number == null || file == null) {
     throw new Error('Missing required fields');
   }
 
-  let ocrData = ocr != null ? JSON.parse(await ocr.text()) : null;
+  const ocrData = ocr != null ? JSON.parse(await ocr.text()) : null;
 
   const fileData = Buffer.from(await file.arrayBuffer());
   const fileName = getFileHash(fileData);
@@ -109,30 +116,24 @@ export const createPage = async (formData: FormData) => {
   const page = await prisma.page.upsert({
     where: {
       volumeNum: {
-        number: number,
-        volumeId: volumeId,
+        number,
+        volumeId,
       },
     },
     update: {
-      number: number,
-      volumeId: volumeId,
+      number,
+      volumeId,
       ocr: ocrData,
-      fileName: fileName,
+      fileName,
       uploadedById: session.user.userId,
     },
     create: {
-      number: number,
-      volumeId: volumeId,
+      number,
+      volumeId,
       ocr: ocrData,
-      fileName: fileName,
+      fileName,
       uploadedById: session.user.userId,
     },
   });
   return page;
-};
-
-const getFileHash = (fileData: Buffer): string => {
-  const hash = crypto.createHash('sha256');
-  hash.update(fileData);
-  return hash.digest('hex');
 };

@@ -5,8 +5,8 @@ import React from 'react';
 import UserTable from './UserTable';
 
 const Users = async () => {
-  const get_session = await getSession('GET');
-  if (get_session.user.role !== 'ADMIN') {
+  const session = await getSession('GET');
+  if (session.user.role !== 'ADMIN') {
     throw new Error('Unauthorized');
   }
   const users = await prisma.user.findMany({
@@ -24,20 +24,19 @@ const Users = async () => {
 
   const updateRole = async (id: string, role: Role) => {
     'use server';
-    const session = await getSession('POST');
+
     if (session.user.role === 'ADMIN') {
       const user = await prisma.user.update({
         where: {
           id,
         },
         data: {
-          role: role,
+          role,
         },
       });
       return user;
-    } else {
-      throw new Error('Unauthorized');
     }
+    throw new Error('Unauthorized');
   };
 
   return (

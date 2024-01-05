@@ -1,13 +1,61 @@
-import PagesContainer from './PagesContainer';
-import VolumeDataProvider from './VolumeDataProvider';
 import prisma from 'db';
 import { auth } from 'auth/lucia';
 import * as context from 'next/headers';
 import type { OcrPage } from 'page';
 import { Prisma } from '@prisma/client';
-import { useGlobalContext } from 'app/(application)/GlobalContext';
+import VolumeDataProvider from './VolumeDataProvider';
+import PagesContainer from './PagesContainer';
 
-export default async function Page({
+const PageSelectQuery = {
+  id: true,
+  ocr: true,
+  number: true,
+};
+
+const VolumeSelectQuery = (userId: string) => ({
+  id: true,
+  firstPageIsCover: true,
+  readings: {
+    where: {
+      userId,
+    },
+    select: {
+      page: true,
+      useTwoPagesOverride: true,
+      firstPageIsCoverOverride: true,
+    },
+  },
+  pages: {
+    select: PageSelectQuery,
+    orderBy: {
+      number: 'asc',
+    },
+  },
+}) satisfies Prisma.VolumeSelect;
+
+export type Volume = Prisma.VolumeGetPayload<{
+  select: ReturnType<typeof VolumeSelectQuery>;
+}>;
+
+export type Page = Prisma.PageGetPayload<{
+  select: typeof PageSelectQuery;
+}>;
+
+const getVolume = async (
+  seriesId: string,
+  volumeNum: string,
+  userId: string,
+) => prisma.volume.findUnique({
+  where: {
+    seriesNum: {
+      number: parseInt(volumeNum, 10),
+      seriesId: parseInt(seriesId, 10),
+    },
+  },
+  select: VolumeSelectQuery(userId),
+});
+
+export default async function PageComponent({
   params: { seriesId, volumeNum },
 }: {
   params: { seriesId: string; volumeNum: string };
@@ -20,7 +68,7 @@ export default async function Page({
     <VolumeDataProvider volume={volume}>
       <PagesContainer
         volumeId={volume.id}
-        pages={volume.pages.map((page) => ({
+        pages={volume.pages.map((page: Page) => ({
           ...page,
           ocr: page.ocr as unknown as OcrPage,
         }))}
@@ -28,55 +76,3 @@ export default async function Page({
     </VolumeDataProvider>
   );
 }
-
-const getVolume = async (
-  seriesId: string,
-  volumeNum: string,
-  userId: string,
-) => {
-  return await prisma.volume.findUnique({
-    where: {
-      seriesNum: {
-        number: parseInt(volumeNum),
-        seriesId: parseInt(seriesId),
-      },
-    },
-    select: VolumeSelectQuery(userId),
-  });
-};
-
-const PageSelectQuery = {
-  id: true,
-  ocr: true,
-  number: true,
-};
-
-const VolumeSelectQuery = (userId: string) =>
-  ({
-    id: true,
-    firstPageIsCover: true,
-    readings: {
-      where: {
-        userId: userId,
-      },
-      select: {
-        page: true,
-        useTwoPagesOverride: true,
-        firstPageIsCoverOverride: true,
-      },
-    },
-    pages: {
-      select: PageSelectQuery,
-      orderBy: {
-        number: 'asc',
-      },
-    },
-  }) satisfies Prisma.VolumeSelect;
-
-export type Volume = Prisma.VolumeGetPayload<{
-  select: ReturnType<typeof VolumeSelectQuery>;
-}>;
-
-export type Page = Prisma.PageGetPayload<{
-  select: typeof PageSelectQuery;
-}>;

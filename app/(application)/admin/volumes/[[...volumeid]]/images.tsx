@@ -43,6 +43,7 @@ export default function Images({
               register={register('pages', {
                 required: 'Images are required',
                 validate: {
+                  // eslint-disable-next-line consistent-return
                   validateNumber: (_: any, values: VolumeFields) => {
                     if (values.pages && values.ocrFiles) {
                       // check that pages' filenames and ocrtext's keys match
@@ -62,9 +63,8 @@ export default function Images({
                             ? `${mismatch.length} pages`
                             : mismatch.join(', ')
                         }`;
-                      } else {
-                        return true;
                       }
+                      return true;
                     }
                   },
                 },
