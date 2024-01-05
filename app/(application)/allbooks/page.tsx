@@ -1,8 +1,9 @@
 import prisma from 'db';
 import { AllBooks } from './AllBooks';
 import { Prisma } from '@prisma/client';
+import { getSession } from 'lib/session';
 
-const seriesSelect = {
+const seriesSelect = (userId: string) => ({
   japaneseName: true,
   englishName: true,
   id: true,
@@ -13,24 +14,28 @@ const seriesSelect = {
       cover: true,
       createdAt: true,
       readings: {
+        where: {
+          userId
+        },
         select: {
           page: true,
-        },
+        }
       },
       _count: {
         select: { pages: true },
       },
     },
   },
-} satisfies Prisma.SeriesSelect;
+}) satisfies Prisma.SeriesSelect;
 
 export type SeriesPayload = Prisma.SeriesGetPayload<{
-  select: typeof seriesSelect;
+  select: ReturnType<typeof seriesSelect>;
 }>;
 
 const AddNew = async () => {
+  const session = await getSession('GET');
   const series = await prisma.series.findMany({
-    select: seriesSelect,
+    select: seriesSelect(session.user.userId),
   });
 
   return (
