@@ -6,7 +6,7 @@ import '../styles/tailwind.css';
 export const metadata: Metadata = {
   title: {
     default: '本棚',
-    template: '%s',
+    template: '%s | 本棚',
   },
 };
 

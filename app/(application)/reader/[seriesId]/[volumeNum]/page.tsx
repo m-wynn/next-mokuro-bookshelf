@@ -1,10 +1,10 @@
-import prisma from 'db';
+import { Prisma } from '@prisma/client';
 import { auth } from 'auth/lucia';
+import prisma from 'db';
 import * as context from 'next/headers';
 import type { OcrPage } from 'page';
-import { Prisma } from '@prisma/client';
-import VolumeDataProvider from './VolumeDataProvider';
 import PagesContainer from './PagesContainer';
+import VolumeDataProvider from './VolumeDataProvider';
 
 const PageSelectQuery = {
   id: true,
@@ -14,6 +14,7 @@ const PageSelectQuery = {
 
 const VolumeSelectQuery = (userId: string) => ({
   id: true,
+  number: true,
   firstPageIsCover: true,
   readings: {
     where: {
@@ -23,6 +24,12 @@ const VolumeSelectQuery = (userId: string) => ({
       page: true,
       useTwoPagesOverride: true,
       firstPageIsCoverOverride: true,
+    },
+  },
+  series: {
+    select: {
+      englishName: true,
+      japaneseName: true,
     },
   },
   pages: {
