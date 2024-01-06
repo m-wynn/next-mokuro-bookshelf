@@ -11,6 +11,8 @@ const VolumeContext = createContext({
   firstPageIsCover: false,
   useTwoPages,
   zoomSensitivity,
+  seriesTitle: '',
+  volumeNumber: 0,
 });
 
 export function useVolumeContext() {
@@ -59,12 +61,18 @@ export default function VolumeDataProvider({
     return page;
   };
 
+  const useJapaneseTitle = userSettings?.useJapaneseTitle ?? false;
+  const { japaneseName, englishName } = volume.series;
+  const seriesTitle = useJapaneseTitle && japaneseName ? japaneseName : englishName;
+
   // eslint-disable-next-line react/jsx-no-constructed-context-values
   const value = {
     currentPage: getCurrentPage(),
     useTwoPages: getUseTwoPages(),
     firstPageIsCover: getFirstPageIsCover(),
     zoomSensitivity: getZoomSensitivity(),
+    seriesTitle,
+    volumeNumber: volume.number,
   };
 
   return (

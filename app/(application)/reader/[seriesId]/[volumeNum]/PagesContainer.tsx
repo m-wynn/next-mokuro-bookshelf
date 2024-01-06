@@ -4,22 +4,22 @@ import {
   useCallback, useEffect, useMemo, useRef, useState,
 } from 'react';
 import {
-  TransformWrapper,
-  TransformComponent,
   ReactZoomPanPinchRef,
+  TransformComponent,
+  TransformWrapper,
 } from 'react-zoom-pan-pinch';
 
-import type { Reading } from 'lib/reading';
-import { useGlobalContext } from 'app/(application)/GlobalContext';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMaximize, faMinimize } from '@fortawesome/free-solid-svg-icons';
-import Pagination from './Pagination';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useGlobalContext } from 'app/(application)/GlobalContext';
+import type { Reading } from 'lib/reading';
 import PageContainer from './PageContainer';
+import Pagination from './Pagination';
 import Settings from './Settings';
 
-import type { Page } from './page';
 import { useVolumeContext } from './VolumeDataProvider';
 import { updateReadingProgress } from './functions';
+import type { Page } from './page';
 
 function DummyYomichanSentenceTerminator() {
   // This element is a hack to keep Yomitan at bay.
@@ -47,6 +47,20 @@ export default function PagesContainer({
 
   const layoutChanged = useRef({ useTwoPages, firstPageIsCover }).current;
   const { fullScreen, setFullScreen, setAllReadings } = useGlobalContext();
+  const { userSettings } = useGlobalContext();
+
+  const showTwoPages = useMemo(
+    () => useTwoPages
+      && currentPage < pages.length - 1
+      && (!firstPageIsCover || currentPage > 0),
+    [useTwoPages, currentPage, pages, firstPageIsCover],
+  );
+
+  useEffect(() => {
+    const { seriesTitle, volumeNumber } = volumeData;
+    const localizedVolumeNumber = userSettings?.useJapaneseTitle ? `${volumeNumber}巻` : `Vol ${volumeNumber}`;
+    document.title = `${seriesTitle} — ${localizedVolumeNumber} — ${currentPage}${showTwoPages ? `,${currentPage + 1}` : ''}`;
+  }, [currentPage, showTwoPages, userSettings?.useJapaneseTitle, volumeData]);
 
   useEffect(() => {
     (async () => {
@@ -103,13 +117,6 @@ export default function PagesContainer({
   }, [firstPageIsCover, useTwoPages, currentPage, setBoundPage, layoutChanged]);
 
   const transformComponentRef = useRef<ReactZoomPanPinchRef | null>(null);
-
-  const showTwoPages = useMemo(
-    () => useTwoPages
-      && currentPage < pages.length - 1
-      && (!firstPageIsCover || currentPage > 0),
-    [useTwoPages, currentPage, pages, firstPageIsCover],
-  );
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
