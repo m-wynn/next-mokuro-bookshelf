@@ -16,6 +16,7 @@ import { PromisePool } from '@supercharge/promise-pool';
 import { useAdminContext } from '../../AdminContext';
 import Images from './images';
 import Info from './info';
+import DirectoryInfo from './directoryInfo';
 import Ocr from './ocr';
 import { createSeries, createVolume } from '../../functions';
 
@@ -53,6 +54,8 @@ export default function VolumeEditor({
   const { series, setSeries } = useAdminContext();
   const [uploadedPages, setUploadedPages] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
+  const [isDirectoryUpload, setIsDirectoryUpload] = useState(true);
+
   useEffect(() => {
     if (volumeid) {
       // TODO: Move this file if we're not gonna support editing
@@ -163,6 +166,10 @@ export default function VolumeEditor({
     // eslint-disable-next-line no-alert
     alert('Done!');
   };
+  const onDirectorySubmit: SubmitHandler<FieldValues> = async (data) => {
+    console.log(data);
+  };
+
   const newSeriesModalRef: React.RefObject<HTMLDialogElement> = useRef(null);
 
   const createSeriesHandler = async (data: SeriesInputs) => {
@@ -174,7 +181,31 @@ export default function VolumeEditor({
     setTimeout(() => setValue('seriesEnglishName', newSeries.englishName), 100);
   };
 
-  return (
+  return (isDirectoryUpload ? (
+    <>
+      <NewSeriesModal
+        dialogRef={newSeriesModalRef}
+        createSeries={createSeriesHandler}
+      />
+      <form onSubmit={handleSubmit(onDirectorySubmit)}>
+        <DirectoryInfo
+          newSeriesModalRef={newSeriesModalRef}
+          register={register}
+          watch={watch}
+          errors={errors}
+          series={series}
+          setValue={setValue}
+        />
+        {totalPages > 0 && (
+          <progress
+            className="progress progress-accent"
+            value={uploadedPages}
+            max={totalPages}
+          />
+        )}
+      </form>
+    </>
+  ) : (
     <>
       <NewSeriesModal
         dialogRef={newSeriesModalRef}
@@ -202,5 +233,7 @@ export default function VolumeEditor({
         )}
       </form>
     </>
-  );
+  )
+);
+
 }
