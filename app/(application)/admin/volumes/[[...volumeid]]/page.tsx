@@ -19,6 +19,17 @@ import Info from './info';
 import Ocr from './ocr';
 import { createSeries, createVolume } from '../../functions';
 
+type PageData = {
+  page: Blob;
+  ocr: Blob;
+  index: number;
+};
+
+type PageUploadData = {
+  pagesToUpload: PageData[];
+  uploadsSoFar: number;
+};
+
 export type FormChild = {
   errors: FieldErrors<VolumeFields>;
   register: UseFormRegister<VolumeFields>;
@@ -58,6 +69,57 @@ export default function VolumeEditor({
     setValue,
   } = useForm<VolumeFields>();
 
+  const fetchWithTimeout = async (uri: string, timeout: number, data: any) => {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeout);
+    return fetch(uri, {
+      signal: controller.signal,
+      ...data,
+    }).then((response) => {
+      clearTimeout(timeoutId);
+      return response;
+    });
+  };
+
+  const uploadPages: (
+    pageUploadData: PageUploadData,
+    volumeId: number
+  ) => Promise<PageUploadData> = async (pageUploadData, volumeId) => {
+    const failedPages: PageData[] = [];
+    let { uploadsSoFar } = pageUploadData;
+    const { pagesToUpload } = pageUploadData;
+
+    await PromisePool
+      .withConcurrency(5)
+      .for(pagesToUpload)
+      .process(async (pageData: PageData) => {
+        const { page, ocr, index } = pageData;
+        const pageFormData = new FormData();
+        pageFormData.append('volumeId', volumeId.toString());
+        pageFormData.append('number', index.toString());
+        pageFormData.append('file', page);
+        pageFormData.append('ocr', ocr);
+
+        await fetchWithTimeout('/api/page', 5000, {
+          method: 'POST',
+          body: pageFormData,
+        }).then((response) => {
+          if (!response.ok) {
+            throw new Error('page upload failed');
+          }
+          uploadsSoFar += 1;
+          setUploadedPages(uploadsSoFar);
+        }).catch(() => {
+          failedPages.push(pageData);
+        });
+      });
+
+    return {
+      pagesToUpload: failedPages,
+      uploadsSoFar,
+    };
+  };
+
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
     const seriesId = series.find(
       (s) => s.englishName === data.seriesEnglishName,
@@ -65,37 +127,39 @@ export default function VolumeEditor({
     if (!seriesId) {
       throw new Error('Series not found');
     }
+
+    setUploadedPages(0);
     setTotalPages(data.pages.length);
+
     const formData = new FormData();
     formData.append('seriesId', seriesId.toString());
     formData.append('volumeNumber', data.volumeNumber.toString());
     formData.append('coverImage', data.coverImage[0]);
     formData.append('firstPageIsCover', data.firstPageIsCover);
-
     const volume = await createVolume(formData);
-    let uploadedPageCount = 0;
-    await PromisePool
-      .withConcurrency(5)
-      .for(data.pages as FileList)
-      .process(async (page: Blob, i: number, _pool) => {
-        const pageFormData = new FormData();
-        pageFormData.append('volumeId', volume.id.toString());
-        pageFormData.append('number', i.toString());
-        pageFormData.append('file', page);
-        pageFormData.append(
-          'ocr',
-          Array.from(data.ocrFiles as FileList).find(
-            (ocrFile) => ocrFile.name
-              === `${(page as File).name.replace(/\.[^/.]+$/, '')}.json`,
-          ) as Blob,
-        );
-        await fetch('/api/page', {
-          method: 'POST',
-          body: pageFormData,
-        });
-        uploadedPageCount += 1;
-        setUploadedPages(uploadedPageCount);
-      });
+
+    const pagesToUpload: PageData[] = Array.from(data.pages).map((page, index) => {
+      const ocr = Array.from(data.ocrFiles as FileList).find(
+        (ocrFile) => ocrFile.name === `${(page as File).name.replace(/\.[^/.]+$/, '')}.json`,
+      ) as Blob;
+
+      return {
+        index,
+        page,
+        ocr,
+      } as PageData;
+    });
+
+    let pageUploadData = {
+      pagesToUpload,
+      uploadsSoFar: 0,
+    };
+
+    while (pageUploadData.pagesToUpload.length > 0) {
+      // eslint-disable-next-line no-await-in-loop
+      pageUploadData = await uploadPages(pageUploadData, volume.id);
+    }
+
     // eslint-disable-next-line no-alert
     alert('Done!');
   };
