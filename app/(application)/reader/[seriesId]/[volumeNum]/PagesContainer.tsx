@@ -182,10 +182,7 @@ export default function PagesContainer({
           <div
             className="pr-4 pl-4 join-item"
           >
-            {currentPage + 1}
-            {' '}
-            /
-            {pages.length}
+            {currentPage + 1} / {pages.length}
           </div>
         </div>
       ) : (
