@@ -1,6 +1,5 @@
 'use server';
 
-import crypto from 'crypto';
 import prisma from 'db';
 import { promises as fs } from 'fs';
 import { getSession } from 'lib/session';
@@ -25,12 +24,6 @@ export const createSeries = async (data: SeriesInputs) => {
   });
 
   return series;
-};
-
-const getFileHash = (fileData: Buffer): string => {
-  const hash = crypto.createHash('sha256');
-  hash.update(fileData);
-  return hash.digest('hex');
 };
 
 export const createVolume = async (formData: FormData) => {
@@ -82,58 +75,4 @@ export const createVolume = async (formData: FormData) => {
 
   await fs.writeFile(coverPath, Buffer.from(await coverImage.arrayBuffer()));
   return volume;
-};
-
-export const createPage = async (formData: FormData) => {
-  const session = await getSession('POST');
-  if (!session) {
-    throw new Error('Not logged in');
-  }
-
-  if (!['ADMIN', 'EDITOR'].includes(session.user.role)) {
-    throw new Error('Not authorized to do that');
-  }
-
-  const volumeId = +(formData.get('volumeId') as string);
-  const number = +(formData.get('number') as string);
-  const ocr = formData.get('ocr') as Blob | null;
-  const file = formData.get('file') as Blob;
-
-  if (volumeId == null || number == null || file == null) {
-    throw new Error('Missing required fields');
-  }
-
-  const ocrData = ocr != null ? JSON.parse(await ocr.text()) : null;
-
-  const fileData = Buffer.from(await file.arrayBuffer());
-  const fileName = getFileHash(fileData);
-
-  await fs.writeFile(
-    `${process.env.IMAGE_PATH}/${volumeId}/${fileName}`,
-    fileData,
-  );
-
-  const page = await prisma.page.upsert({
-    where: {
-      volumeNum: {
-        number,
-        volumeId,
-      },
-    },
-    update: {
-      number,
-      volumeId,
-      ocr: ocrData,
-      fileName,
-      uploadedById: session.user.userId,
-    },
-    create: {
-      number,
-      volumeId,
-      ocr: ocrData,
-      fileName,
-      uploadedById: session.user.userId,
-    },
-  });
-  return page;
 };
