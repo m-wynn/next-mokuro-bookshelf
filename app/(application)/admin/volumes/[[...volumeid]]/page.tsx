@@ -12,12 +12,12 @@ import {
 import NewSeriesModal from '@/NewSeriesModal';
 import { SeriesInputs } from 'series';
 import { Series } from '@prisma/client';
-import PromisePool from 'async-promise-pool';
+import { PromisePool } from '@supercharge/promise-pool';
 import { useAdminContext } from '../../AdminContext';
 import Images from './images';
 import Info from './info';
 import Ocr from './ocr';
-import { createSeries, createVolume, createPage } from '../../functions';
+import { createSeries, createVolume } from '../../functions';
 
 export type FormChild = {
   errors: FieldErrors<VolumeFields>;
@@ -74,9 +74,10 @@ export default function VolumeEditor({
 
     const volume = await createVolume(formData);
     let uploadedPageCount = 0;
-    const pool = new PromisePool({ concurrency: 5 });
-    Array.from(data.pages as FileList)
-      .map(async (page, i) => {
+    await PromisePool
+      .withConcurrency(5)
+      .for(data.pages as FileList)
+      .process(async (page: Blob, i: number, _pool) => {
         const pageFormData = new FormData();
         pageFormData.append('volumeId', volume.id.toString());
         pageFormData.append('number', i.toString());
@@ -88,13 +89,13 @@ export default function VolumeEditor({
               === `${(page as File).name.replace(/\.[^/.]+$/, '')}.json`,
           ) as Blob,
         );
-        await createPage(pageFormData);
+        await fetch('/api/page', {
+          method: 'POST',
+          body: pageFormData,
+        });
         uploadedPageCount += 1;
         setUploadedPages(uploadedPageCount);
-      })
-      .forEach((task) => pool.add(() => task));
-    await pool.all();
-    // TODO: Make it pretty
+      });
     // eslint-disable-next-line no-alert
     alert('Done!');
   };
