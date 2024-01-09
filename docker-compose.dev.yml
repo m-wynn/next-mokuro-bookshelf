@@ -18,7 +18,7 @@ services:
       - ./.env
 
   db:
-    image: postgres
+    image: groonga/pgroonga:latest-debian-16
     restart: always
     env_file:
       - ./.env

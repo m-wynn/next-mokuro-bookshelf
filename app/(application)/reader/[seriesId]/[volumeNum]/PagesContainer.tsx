@@ -9,7 +9,9 @@ import {
   TransformWrapper,
 } from 'react-zoom-pan-pinch';
 
-import { faMaximize, faMinimize } from '@fortawesome/free-solid-svg-icons';
+import {
+  faEye, faMask, faMaximize, faMinimize,
+} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useGlobalContext } from 'app/(application)/GlobalContext';
 import type { Reading } from 'lib/reading';
@@ -43,7 +45,9 @@ export default function PagesContainer({
   const [firstPageIsCover, setFirstPageIsCover] = useState(
     volumeData.firstPageIsCover,
   );
-  const [currentPage, setCurrentPage] = useState(volumeData.currentPage);
+  const {
+    currentPage, setCurrentPage, useTracking, setUseTrackingAndReturn,
+  } = volumeData;
 
   const layoutChanged = useRef({ useTwoPages, firstPageIsCover }).current;
   const { fullScreen, setFullScreen, setAllReadings } = useGlobalContext();
@@ -64,6 +68,7 @@ export default function PagesContainer({
 
   useEffect(() => {
     (async () => {
+      if (!useTracking) return;
       let pageToSet = currentPage;
       if (useTwoPages && currentPage !== pages.length - 1) {
         pageToSet = currentPage + 1;
@@ -86,7 +91,7 @@ export default function PagesContainer({
         });
       }
     })();
-  }, [currentPage, volumeId, setAllReadings, pages.length, useTwoPages]);
+  }, [currentPage, volumeId, setAllReadings, pages.length, useTwoPages, useTracking]);
 
   const setBoundPage = useCallback(
     (page: number) => {
@@ -102,7 +107,7 @@ export default function PagesContainer({
       };
       setCurrentPage(boundPage(page));
     },
-    [pages.length, firstPageIsCover, useTwoPages],
+    [pages.length, firstPageIsCover, useTwoPages, setCurrentPage],
   );
 
   useEffect(() => {
@@ -204,6 +209,15 @@ export default function PagesContainer({
             firstPageIsCover={firstPageIsCover}
             setFirstPageIsCover={setFirstPageIsCover}
           />
+          {useTracking ? (
+            <button type="button" className="join-item btn tooltip tooltip-bottom" data-tip="Saving your reading progress" onClick={() => setUseTrackingAndReturn(!useTracking, false)}>
+              <FontAwesomeIcon icon={faEye} />
+            </button>
+          ) : (
+            <button type="button" className="join-item btn btn-warning tooltip tooltip-bottom tooltip-warning" data-tip="Not saving your reading progress. Click to go back to where you left off" onClick={() => setUseTrackingAndReturn(!useTracking, true)}>
+              <FontAwesomeIcon icon={faMask} />
+            </button>
+          )}
         </div>
       )}
       <TransformWrapper
