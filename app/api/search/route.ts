@@ -3,6 +3,7 @@ import prisma from 'db';
 import * as context from 'next/headers';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
+import { SearchResult } from 'search';
 
 export async function GET(request: NextRequest) {
   const session = await auth.handleRequest(request.method, context).validate();
@@ -13,18 +14,43 @@ export async function GET(request: NextRequest) {
   const q = searchParams.get('q');
 
   if (q != null) {
-    const pages = await prisma.page.findMany({
-      where: {
-        ocr: {
-          path: ['blocks', 'lines'],
-          string_contains: q,
-        },
-      },
-      select: {
-        volumeId: true,
-        number: true,
-      },
-    });
+    const pages: SearchResult[] = await prisma.$queryRaw`
+    SELECT 
+      page.number,
+      page."volumeId",
+      "Volume".number AS "volumeNumber",
+      "Series".id as "seriesId",
+      "Series"."japaneseName" AS "japaneseName",
+      "Series"."englishName" AS "englishName",
+      text,
+      score,
+      CASE WHEN "Reading".id IS NULL THEN false ELSE true END AS is_reading
+    FROM (
+      SELECT
+        number,
+        "volumeId",
+        score,
+        string_agg(line, '') text
+      FROM (
+        SELECT 
+          id,
+          number,
+          "volumeId",
+          ocr ->> 'blocks' blocks,
+          pgroonga_score(tableoid, ctid) AS score
+        FROM "Page"
+        WHERE ocr ->> 'blocks' &@ ${q}
+      ),
+      jsonb_array_elements(blocks::jsonb) as block,
+      jsonb_array_elements_text(block -> 'lines') as line
+      WHERE block &@ ${q}
+      GROUP BY id, number, "volumeId", block, score
+    ) page
+    JOIN "Volume" ON "Volume".id = "volumeId"
+    JOIN "Series" ON "Series".id = "Volume"."seriesId"
+    LEFT JOIN "Reading" ON "Reading"."volumeId" = "Volume"."id" AND "Reading"."userId" = ${session.user.userId}
+    ORDER BY is_reading DESC, score, number ASC
+`;
 
     if (pages == null) {
       return NextResponse.json({ error: 'No such lines' }, { status: 404 });

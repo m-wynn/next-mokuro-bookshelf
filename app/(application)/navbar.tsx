@@ -11,6 +11,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Link from 'next/link';
 import React from 'react';
 import { Session } from 'lucia';
+import { SearchBar } from '@/SearchBar';
 import { useGlobalContext } from './GlobalContext';
 
 function Navbar({ session }: { session: Session }) {
@@ -19,7 +20,7 @@ function Navbar({ session }: { session: Session }) {
   // So we have to keep it in the DOM
   return (
     <div
-      className={`shadow navbar bg-base-300 overflow-hidden ${
+      className={`shadow navbar bg-base-300 ${
         fullScreen ? 'h-0 w-0 m-0 p-0 min-h-0' : 'h-16'
       }`}
     >
@@ -30,11 +31,7 @@ function Navbar({ session }: { session: Session }) {
       </div>
       <div className="flex-none gap-2">
         <div className="form-control">
-          <input
-            type="text"
-            placeholder="Search"
-            className="w-24 md:w-auto input input-bordered"
-          />
+          <SearchBar />
         </div>
         <Link
           href="/allbooks"

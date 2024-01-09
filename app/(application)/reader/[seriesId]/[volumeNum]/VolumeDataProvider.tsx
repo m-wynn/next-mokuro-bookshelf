@@ -1,18 +1,26 @@
 'use client';
 
-import { UserSettingsDefaultValues } from 'lib/userSetting';
-import { createContext, useContext } from 'react';
 import { useGlobalContext } from 'app/(application)/GlobalContext';
+import { UserSettingsDefaultValues } from 'lib/userSetting';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
+import {
+  createContext, useContext, useEffect, useState,
+} from 'react';
 import type { Volume } from './page';
 
 const { useTwoPages, zoomSensitivity } = UserSettingsDefaultValues;
+
 const VolumeContext = createContext({
   currentPage: 0,
+  setCurrentPage: (_page: number) => {},
+  useTracking: true,
+  setUseTrackingAndReturn: (_useTracking: boolean, _returnToReadingPage: boolean) => {},
   firstPageIsCover: false,
   useTwoPages,
   zoomSensitivity,
   seriesTitle: '',
   volumeNumber: 0,
+
 });
 
 export function useVolumeContext() {
@@ -48,8 +56,10 @@ export default function VolumeDataProvider({
     return override;
   };
 
+  const initialPageNum = parseInt(useSearchParams().get('page') ?? '', 10) || null;
+
   const getCurrentPage = () => {
-    const page = volume.readings[0]?.page ?? 0;
+    const page = initialPageNum || (volume.readings[0]?.page ?? 0);
     if (
       page > 0
       && getUseTwoPages()
@@ -61,18 +71,43 @@ export default function VolumeDataProvider({
     return page;
   };
 
+  const [currentPage, setCurrentPage] = useState(getCurrentPage());
+
   const useJapaneseTitle = userSettings?.useJapaneseTitle ?? false;
   const { japaneseName, englishName } = volume.series;
   const seriesTitle = useJapaneseTitle && japaneseName ? japaneseName : englishName;
 
+  const router = useRouter();
+  const { volumeNum, seriesId } = useParams();
+  const [useTracking, setUseTracking] = useState(initialPageNum === null);
+
+  const setUseTrackingAndReturn = (value: boolean, returnToReadingPage: boolean) => {
+    if (returnToReadingPage) {
+      setCurrentPage(getCurrentPage());
+    }
+    setUseTracking(value);
+  };
+
+  useEffect(() => {
+    if (initialPageNum) {
+      setCurrentPage(getCurrentPage());
+      setUseTracking(false);
+      router.replace(`/reader/${seriesId}/${volumeNum}`);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialPageNum]);
+
   // eslint-disable-next-line react/jsx-no-constructed-context-values
   const value = {
-    currentPage: getCurrentPage(),
+    currentPage,
+    setCurrentPage,
     useTwoPages: getUseTwoPages(),
     firstPageIsCover: getFirstPageIsCover(),
     zoomSensitivity: getZoomSensitivity(),
     seriesTitle,
     volumeNumber: volume.number,
+    useTracking,
+    setUseTrackingAndReturn,
   };
 
   return (

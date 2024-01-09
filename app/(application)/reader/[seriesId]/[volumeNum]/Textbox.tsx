@@ -28,9 +28,10 @@ function Textbox({
         flexDirection: vertical ? 'row-reverse' : 'column',
       }}
     >
-      {lines.map((line: string) => (
+      {lines.map((line: string, index) => (
         <div
-          key={line}
+          // eslint-disable-next-line react/no-array-index-key
+          key={`${box[0]}-${box[1]}-${index}`}
           className="hidden mx-auto leading-none whitespace-nowrap select-text group-hover:inline-block"
           style={{
             color: 'black',
