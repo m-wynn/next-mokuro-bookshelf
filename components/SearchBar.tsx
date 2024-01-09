@@ -8,10 +8,22 @@ export function SearchBar() {
   const [search, setSearch] = useState('');
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const ref = useRef<HTMLDivElement>(null);
+  const [searchAbortController, setSearchAbortController] = useState(null);
+
   useEffect(() => {
     (async () => {
-      const results = await fetch(`/api/search?q=${search}`);
-      setSearchResults(await results.json() as SearchResult[]);
+      if (searchAbortController) {
+        // Abort previous request when we get new input
+        searchAbortController.abort();
+      }
+      const newSearchAbortController = new AbortController();
+      setSearchAbortController(newSearchAbortController);
+      const searchAbortSignal = newSearchAbortController.signal;
+      await fetch(`/api/search?q=${search}`, { signal: searchAbortSignal })
+        .then(async (results) => {
+          setSearchAbortController(null);
+          setSearchResults(await results.json() as SearchResult[]);
+        }).catch(() => {});
     })();
   }, [search]);
 
