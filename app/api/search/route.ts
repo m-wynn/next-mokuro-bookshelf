@@ -11,7 +11,11 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'Not logged in' }, { status: 401 });
   }
   const { searchParams } = new URL(request.url);
-  const q = searchParams.get('q');
+  const q = searchParams.get('q')?.trim();
+
+  if (q === '') {
+    return NextResponse.json([]);
+  }
 
   if (q != null) {
     const pages: SearchResult[] = await prisma.$queryRaw`
