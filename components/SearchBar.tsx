@@ -8,23 +8,31 @@ export function SearchBar() {
   const [search, setSearch] = useState('');
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const ref = useRef<HTMLDivElement>(null);
-  const [searchAbortController, setSearchAbortController] = useState(null);
+  const [searchTimeoutId, setSearchTimeoutId] = useState<ReturnType<typeof setTimeout> | null>(null);
+  const [searchAbortController, setSearchAbortController] = useState<AbortController | null>(null);
 
   useEffect(() => {
     (async () => {
-      if (searchAbortController) {
-        // Abort previous request when we get new input
-        searchAbortController.abort();
+      if (searchTimeoutId) {
+        clearTimeout(searchTimeoutId);
       }
-      const newSearchAbortController = new AbortController();
-      setSearchAbortController(newSearchAbortController);
-      const searchAbortSignal = newSearchAbortController.signal;
-      await fetch(`/api/search?q=${search}`, { signal: searchAbortSignal })
-        .then(async (results) => {
-          setSearchAbortController(null);
-          setSearchResults(await results.json() as SearchResult[]);
-        }).catch(() => {});
+
+      const newTimeoutId = setTimeout(async () => {
+        if (searchAbortController && !searchAbortController.signal.aborted) {
+          searchAbortController.abort();
+        }
+        const newAbortController = new AbortController();
+        setSearchAbortController(newAbortController);
+        await fetch(`/api/search?q=${search}`, { signal: newAbortController.signal })
+          .then(async (results) => {
+            setSearchAbortController(null);
+            setSearchResults(await results.json() as SearchResult[]);
+          })
+          .catch(() => {});
+      }, 200);
+      setSearchTimeoutId(newTimeoutId);
     })();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search]);
 
   return (
