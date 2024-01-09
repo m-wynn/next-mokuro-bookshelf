@@ -8,7 +8,9 @@ export function SearchBar() {
   const [search, setSearch] = useState('');
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const ref = useRef<HTMLDivElement>(null);
-  const [searchTimeoutId, setSearchTimeoutId] = useState<ReturnType<typeof setTimeout> | null>(null);
+  const [
+    searchTimeoutId, setSearchTimeoutId,
+  ] = useState<ReturnType<typeof setTimeout> | null>(null);
   const [searchAbortController, setSearchAbortController] = useState<AbortController | null>(null);
 
   useEffect(() => {
