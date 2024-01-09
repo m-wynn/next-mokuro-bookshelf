@@ -31,7 +31,7 @@ export function SearchBar() {
             setSearchResults(await results.json() as SearchResult[]);
           })
           .catch(() => {});
-      }, 200);
+      }, 300);
       setSearchTimeoutId(newTimeoutId);
     })();
   // eslint-disable-next-line react-hooks/exhaustive-deps
