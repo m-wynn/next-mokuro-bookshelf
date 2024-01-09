@@ -45,6 +45,7 @@ export async function GET(request: NextRequest) {
       jsonb_array_elements_text(block -> 'lines') as line
       WHERE block &@ ${q}
       GROUP BY id, number, "volumeId", block, score
+      LIMIT 20
     ) page
     JOIN "Volume" ON "Volume".id = "volumeId"
     JOIN "Series" ON "Series".id = "Volume"."seriesId"
