@@ -22,26 +22,29 @@ const getVolumeNumberFromFilePath = (name: string): number | null => {
   return null;
 };
 
-const isCoverFile = (name: string): boolean => {
-  const parts = name.split('.');
-  return parts.length === 2 && parts[0] === 'cover';
+const isCoverFile = (file: File): boolean => {
+  const isImage = !!file.type.match(/image.*/);
+  const parts = file.name.split('.');
+  return isImage && parts.length === 2 && parts[0] === 'cover';
 };
 
-const isPageFile = (path: string): boolean => {
-  const parts = path.split('/');
+const isPageFile = (file: File): boolean => {
+  const isImage = !!file.type.match(/image.*/);
+  const parts = file.webkitRelativePath.split('/');
   if (parts.length >= 2) {
     const volumePart = parts[parts.length - 2];
-    return /^Volume \d+$/.test(volumePart);
+    return isImage && /^Volume \d+$/.test(volumePart);
   }
   return false;
 };
 
-const isOcrFile = (path: string): boolean => {
-  const parts = path.split('/');
+const isOcrFile = (file: File): boolean => {
+  const isJsonFile = file.type === 'application/json' || !!file.name.match(/\*.json/);
+  const parts = file.webkitRelativePath.split('/');
   if (parts.length >= 3) {
     const volumePart = parts[parts.length - 2];
     const ocrPart = parts[parts.length - 3];
-    return /^Volume \d+$/.test(volumePart) && /^_ocr$/.test(ocrPart);
+    return isJsonFile && /^Volume \d+$/.test(volumePart) && /^_ocr$/.test(ocrPart);
   }
   return false;
 };
@@ -76,7 +79,6 @@ export const getVolumeData = (seriesId: number, files: FileList): VolumeData[] =
   const volumeDatas: VolumeDataMap = {};
   Array.from(files).forEach((file) => {
     const filePath = file.webkitRelativePath;
-    const fileName = file.name;
     const volumeNum = getVolumeNumberFromFilePath(filePath);
     if (volumeNum === null) {
       return;
@@ -93,11 +95,11 @@ export const getVolumeData = (seriesId: number, files: FileList): VolumeData[] =
       } as RawVolumeData;
     }
 
-    if (isOcrFile(filePath)) {
+    if (isOcrFile(file)) {
       volumeDatas[volumeNum].ocrFiles.push(file);
-    } else if (isCoverFile(fileName)) {
+    } else if (isCoverFile(file)) {
       volumeDatas[volumeNum].coverFile = file;
-    } else if (isPageFile(filePath)) {
+    } else if (isPageFile(file)) {
       volumeDatas[volumeNum].pageFiles.push(file);
     }
   });
