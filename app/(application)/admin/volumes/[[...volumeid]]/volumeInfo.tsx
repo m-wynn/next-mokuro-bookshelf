@@ -1,6 +1,11 @@
+import type { UseFormSetValue } from 'react-hook-form';
+import { Series } from '@prisma/client';
+import React from 'react';
 import Info from './info';
 import Ocr from './ocr';
 import Images from './images';
+import UploadButton from './uploadButton';
+import type { FormChild, VolumeFields } from './types';
 
 export default function VolumeInfo({
   errors,
@@ -8,7 +13,7 @@ export default function VolumeInfo({
   register,
   watch,
   series,
-  newSeriesModalRef
+  newSeriesModalRef,
 }: {
   errors: FormChild['errors'];
   setValue: UseFormSetValue<VolumeFields>;
@@ -31,11 +36,8 @@ export default function VolumeInfo({
       <Ocr register={register} watch={watch} errors={errors} />
       <div className="divider" />
       <Images register={register} watch={watch} errors={errors} />
-      <div className="flex flex-col-reverse items-center w-1/2">
-        <button type="submit" className="w-full btn btn-primary">
-          Upload Volume
-        </button>
-      </div>
+      <div className="divider" />
+      <UploadButton>Upload Volume</UploadButton>
     </>
   );
-};
+}

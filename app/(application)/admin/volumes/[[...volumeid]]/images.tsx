@@ -71,6 +71,7 @@ export default function Images({
               })}
             />
           </div>
+          <div className="flex flex-col-reverse items-center w-1/2"></div>
         </div>
       </div>
     </div>

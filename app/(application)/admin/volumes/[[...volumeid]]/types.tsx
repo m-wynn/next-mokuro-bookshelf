@@ -1,3 +1,5 @@
+import type { FieldErrors, UseFormRegister, UseFormWatch } from 'react-hook-form';
+
 export type VolumeData = {
   number: number;
   coverPage: File;
@@ -30,4 +32,5 @@ export type VolumeFields = {
   firstPageIsCover: boolean;
   pages: FileList;
   ocrFiles: FileList;
+  directory: FileList;
 };
