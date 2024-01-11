@@ -1,12 +1,9 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import {
-  FieldErrors,
   FieldValues,
   SubmitHandler,
-  UseFormRegister,
-  UseFormWatch,
   useForm,
 } from 'react-hook-form';
 import NewSeriesModal from '@/NewSeriesModal';
@@ -14,20 +11,18 @@ import { SeriesInputs } from 'series';
 import { Series } from '@prisma/client';
 import { PromisePool } from '@supercharge/promise-pool';
 import { useAdminContext } from '../../AdminContext';
-import Images from './images';
-import Info from './info';
 import DirectoryInfo from './directoryInfo';
 import VolumeInfo from './volumeInfo';
-import Ocr from './ocr';
 import { createSeries, createVolume } from '../../functions';
-import { SeriesSelect } from './seriesselect';
-import { VolumeData, PageData, PageUploadData, VolumeFields } from './types';
+import {
+  VolumeData, PageData, PageUploadData, VolumeFields,
+} from './types';
 import { getOcrFileForPage, getVolumeData } from './utils';
 
 export default function VolumeEditor({
-  params: { volumeid },
+  params: { _volumeid },
 }: {
-  params: { volumeid: string | null };
+  params: { _volumeid: string | null };
 }) {
   const { series, setSeries } = useAdminContext();
   const [uploadedPages, setUploadedPages] = useState(0);
@@ -70,8 +65,8 @@ export default function VolumeEditor({
         const pageFormData = new FormData();
         pageFormData.append('volumeId', volumeId.toString());
         pageFormData.append('number', index.toString());
-        pageFormData.append('file', page);
-        pageFormData.append('ocr', ocr);
+        pageFormData.append('file', page as Blob);
+        pageFormData.append('ocr', ocr as Blob);
 
         await fetchWithTimeout('/api/page', 5000, {
           method: 'POST',
@@ -97,8 +92,8 @@ export default function VolumeEditor({
     const formData = new FormData();
     formData.append('seriesId', volumeData.seriesId.toString());
     formData.append('volumeNumber', volumeData.number.toString());
-    formData.append('coverImage', volumeData.coverPage);
-    formData.append('firstPageIsCover', volumeData.firstPageIsCover);
+    formData.append('coverImage', volumeData.coverPage as Blob);
+    formData.append('firstPageIsCover', volumeData.firstPageIsCover ? 'true' : 'false');
     const volume = await createVolume(formData);
 
     let pageUploadData = {
@@ -110,21 +105,21 @@ export default function VolumeEditor({
       // eslint-disable-next-line no-await-in-loop
       pageUploadData = await uploadPages(pageUploadData, volume.id);
     }
-  }
+  };
 
-  const getSeriesId: string = (englishName) => {
+  const getSeriesId = (englishName: string): number => {
     const seriesId = series.find((s) => s.englishName === englishName)?.id;
     if (!seriesId) {
       throw new Error('Series not found');
     }
     return seriesId;
-  }
+  };
 
   const onVolumeSubmit: SubmitHandler<FieldValues> = async (data) => {
-    const seriesId = getSeriesId(data);
-    const ocrFiles = Array.from(data.ocrFiles);
+    const seriesId = getSeriesId(data.seriesEnglishName);
+    const ocrFiles = Array.from(data.ocrFiles) as File[];
     const pagesToUpload: PageData[] = Array.from(data.pages).map((page, index) => {
-      const ocr = getOcrFileForPage(page, ocrFiles);
+      const ocr = getOcrFileForPage(page as File, ocrFiles);
       return {
         index,
         page,
@@ -137,7 +132,7 @@ export default function VolumeEditor({
       coverPage: data.coverImage[0],
       pages: pagesToUpload,
       firstPageIsCover: data.firstPageIsCover,
-      seriesId: seriesId,
+      seriesId,
     } as VolumeData;
 
     setUploadedPages(0);
@@ -153,11 +148,12 @@ export default function VolumeEditor({
     const volumes = getVolumeData(seriesId, data.directory);
     const totalPagesForAllVolumes = volumes.reduce((acc, volume) => acc + volume.pages.length, 0);
     let uploadsSoFar = 0;
-    
+
     setUploadedPages(0);
     setTotalPages(totalPagesForAllVolumes);
-    for (const index in volumes) {
-      const volume = volumes[index];
+    for (let i = 0; i < volumes.length; i += 1) {
+      const volume = volumes[i];
+      // eslint-disable-next-line no-await-in-loop
       await uploadVolume(volume, uploadsSoFar);
       uploadsSoFar += volume.pages.length;
     }
@@ -183,30 +179,34 @@ export default function VolumeEditor({
         dialogRef={newSeriesModalRef}
         createSeries={createSeriesHandler}
       />
-      <input
-        type="checkbox"
-        className="toggle"
-        checked={isDirectoryUpload}
-        onChange={(e) => { setIsDirectoryUpload(!isDirectoryUpload); }}
-      />
+      <label className="label cursor-pointer">
+        <span className="label-text">Directory Upload</span>
+        <input
+          type="checkbox"
+          className="toggle"
+          checked={isDirectoryUpload}
+          onChange={(_e) => { setIsDirectoryUpload(!isDirectoryUpload); }}
+        />
+      </label>
       <form onSubmit={handleSubmit(isDirectoryUpload ? onDirectorySubmit : onVolumeSubmit)}>
-        { isDirectoryUpload ?
-          <DirectoryInfo
-            newSeriesModalRef={newSeriesModalRef}
-            register={register}
-            watch={watch}
-            errors={errors}
-            series={series}
-            setValue={setValue}
-          /> : <VolumeInfo
-            newSeriesModalRef={newSeriesModalRef}
-            register={register}
-            watch={watch}
-            errors={errors}
-            series={series}
-            setValue={setValue}
-          />
-        }
+        { isDirectoryUpload
+          ? (
+            <DirectoryInfo
+              newSeriesModalRef={newSeriesModalRef}
+              register={register}
+              series={series}
+              setValue={setValue}
+            />
+          ) : (
+            <VolumeInfo
+              newSeriesModalRef={newSeriesModalRef}
+              register={register}
+              watch={watch}
+              errors={errors}
+              series={series}
+              setValue={setValue}
+            />
+          )}
       </form>
       {totalPages > 0 && (
         <progress
@@ -217,4 +217,4 @@ export default function VolumeEditor({
       )}
     </>
   );
-};
+}

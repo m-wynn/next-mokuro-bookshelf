@@ -18,7 +18,7 @@ function Input({
   type = 'text',
 }: {
   label: string;
-  errors: FieldError | Merge<FieldErrors, FieldErrorsImpl<any>> | null;
+  errors?: FieldError | Merge<FieldErrors, FieldErrorsImpl<any>> | null;
   register: UseFormRegisterReturn<string>;
   placeholder?: string;
   extraProperties?: { [key: string]: string | boolean };

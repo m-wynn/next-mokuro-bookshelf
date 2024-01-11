@@ -1,10 +1,8 @@
 'use client';
 
-import Input from '@/input';
 import { Series } from '@prisma/client';
-import { useEffect, useState } from 'react';
 import { UseFormSetValue } from 'react-hook-form';
-import type { FormChild, VolumeFields } from './page';
+import type { FormChild, VolumeFields } from './types';
 
 export default function SeriesSelect({
   setValue,
@@ -49,4 +47,4 @@ export default function SeriesSelect({
       </select>
     </div>
   );
-};
+}
