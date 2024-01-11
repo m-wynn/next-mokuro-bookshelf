@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import Input from '@/input';
 import type { OcrPage } from 'page';
-import type { FormChild } from './page';
+import type { FormChild } from './types';
 
 function readFile(file: File) {
   return new Promise((resolve, reject) => {
@@ -23,6 +23,7 @@ export default function Ocr({
 
   const volumeNumber = watch('volumeNumber');
   const ocrFiles = watch('ocrFiles');
+
   useEffect(() => {
     const parseFiles = async (files: FileList) => {
       const fileMap = (
@@ -38,6 +39,7 @@ export default function Ocr({
       parseFiles(ocrFiles);
     }
   }, [ocrFiles]);
+
   return (
     <div className="card bg-base-300 rounded-box">
       <div className="items-center card-body">

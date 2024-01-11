@@ -5,7 +5,8 @@ import VolumeCard from '@/volumecard';
 import { Series } from '@prisma/client';
 import { useEffect, useState } from 'react';
 import { UseFormSetValue } from 'react-hook-form';
-import type { FormChild, VolumeFields } from './page';
+import type { FormChild, VolumeFields } from './types';
+import SeriesSelect from './seriesselect';
 
 export default function Info({
   errors,
@@ -39,42 +40,19 @@ export default function Info({
       reader.readAsDataURL(coverFile[0]);
     }
   }, [coverFile]);
+
   return (
     <div className="card bg-base-300 rounded-box">
       <div className="items-center card-body">
         <h2 className="card-seriesId">Basic Info</h2>
         <div className="flex flex-row justify-around w-full">
           <div className="flex flex-col justify-between items-center w-1/2">
-            <div className="w-full max-w-xs">
-              <label className="label">
-                <span className="label-text">Manga Series</span>
-              </label>
-              <select
-                className="w-full max-w-xs select"
-                defaultValue="Manga Series"
-                {...register('seriesEnglishName', {
-                  required: 'Manga Series is required',
-                  // TODO: don't let this be "Add New" or something
-                })}
-                onChange={(e) => {
-                  if (e.target.value === 'Add New') {
-                    newSeriesModalRef.current?.showModal();
-                  } else {
-                    setValue('seriesEnglishName', e.target.value);
-                  }
-                }}
-              >
-                <option disabled>Manga Series</option>
-                {series.map((each) => (
-                  <option key={each.englishName} value={each.englishName}>
-                    {each.englishName}
-                  </option>
-                ))}
-                <option key="new" className="font-bold">
-                  Add New
-                </option>
-              </select>
-            </div>
+            <SeriesSelect
+              setValue={setValue}
+              register={register}
+              series={series}
+              newSeriesModalRef={newSeriesModalRef}
+            />
             <Input
               label="Volume Number"
               type="number"
