@@ -17,34 +17,12 @@ import { useAdminContext } from '../../AdminContext';
 import Images from './images';
 import Info from './info';
 import DirectoryInfo from './directoryInfo';
+import VolumeInfo from './volumeInfo';
 import Ocr from './ocr';
 import { createSeries, createVolume } from '../../functions';
-
-type PageData = {
-  page: Blob;
-  ocr: Blob;
-  index: number;
-};
-
-type PageUploadData = {
-  pagesToUpload: PageData[];
-  uploadsSoFar: number;
-};
-
-export type FormChild = {
-  errors: FieldErrors<VolumeFields>;
-  register: UseFormRegister<VolumeFields>;
-  watch: UseFormWatch<VolumeFields>;
-};
-
-export type VolumeFields = {
-  seriesEnglishName: string;
-  volumeNumber: number;
-  coverImage: FileList;
-  firstPageIsCover: boolean;
-  pages: FileList;
-  ocrFiles: FileList;
-};
+import { SeriesSelect } from './seriesselect';
+import { VolumeData, PageData, PageUploadData, VolumeFields } from './types';
+import { getOcrFileForPage, getVolumeData } from './utils';
 
 export default function VolumeEditor({
   params: { volumeid },
@@ -55,14 +33,6 @@ export default function VolumeEditor({
   const [uploadedPages, setUploadedPages] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [isDirectoryUpload, setIsDirectoryUpload] = useState(true);
-
-  useEffect(() => {
-    if (volumeid) {
-      // TODO: Move this file if we're not gonna support editing
-      // eslint-disable-next-line no-console
-      console.log('volumeid', volumeid);
-    }
-  }, [volumeid]);
 
   const {
     watch,
@@ -123,29 +93,38 @@ export default function VolumeEditor({
     };
   };
 
-  const onSubmit: SubmitHandler<FieldValues> = async (data) => {
-    const seriesId = series.find(
-      (s) => s.englishName === data.seriesEnglishName,
-    )?.id;
+  const uploadVolume = async (volumeData: VolumeData, uploadsSoFar: number = 0) => {
+    const formData = new FormData();
+    formData.append('seriesId', volumeData.seriesId.toString());
+    formData.append('volumeNumber', volumeData.number.toString());
+    formData.append('coverImage', volumeData.coverPage);
+    formData.append('firstPageIsCover', volumeData.firstPageIsCover);
+    const volume = await createVolume(formData);
+
+    let pageUploadData = {
+      pagesToUpload: volumeData.pages,
+      uploadsSoFar,
+    };
+
+    while (pageUploadData.pagesToUpload.length > 0) {
+      // eslint-disable-next-line no-await-in-loop
+      pageUploadData = await uploadPages(pageUploadData, volume.id);
+    }
+  }
+
+  const getSeriesId: string = (englishName) => {
+    const seriesId = series.find((s) => s.englishName === englishName)?.id;
     if (!seriesId) {
       throw new Error('Series not found');
     }
+    return seriesId;
+  }
 
-    setUploadedPages(0);
-    setTotalPages(data.pages.length);
-
-    const formData = new FormData();
-    formData.append('seriesId', seriesId.toString());
-    formData.append('volumeNumber', data.volumeNumber.toString());
-    formData.append('coverImage', data.coverImage[0]);
-    formData.append('firstPageIsCover', data.firstPageIsCover);
-    const volume = await createVolume(formData);
-
+  const onVolumeSubmit: SubmitHandler<FieldValues> = async (data) => {
+    const seriesId = getSeriesId(data);
+    const ocrFiles = Array.from(data.ocrFiles);
     const pagesToUpload: PageData[] = Array.from(data.pages).map((page, index) => {
-      const ocr = Array.from(data.ocrFiles as FileList).find(
-        (ocrFile) => ocrFile.name === `${(page as File).name.replace(/\.[^/.]+$/, '')}.json`,
-      ) as Blob;
-
+      const ocr = getOcrFileForPage(page, ocrFiles);
       return {
         index,
         page,
@@ -153,21 +132,38 @@ export default function VolumeEditor({
       } as PageData;
     });
 
-    let pageUploadData = {
-      pagesToUpload,
-      uploadsSoFar: 0,
-    };
+    const volumeData = {
+      number: data.volumeNumber,
+      coverPage: data.coverImage[0],
+      pages: pagesToUpload,
+      firstPageIsCover: data.firstPageIsCover,
+      seriesId: seriesId,
+    } as VolumeData;
 
-    while (pageUploadData.pagesToUpload.length > 0) {
-      // eslint-disable-next-line no-await-in-loop
-      pageUploadData = await uploadPages(pageUploadData, volume.id);
-    }
+    setUploadedPages(0);
+    setTotalPages(data.pages.length);
+    await uploadVolume(volumeData);
 
     // eslint-disable-next-line no-alert
     alert('Done!');
   };
+
   const onDirectorySubmit: SubmitHandler<FieldValues> = async (data) => {
-    console.log(data);
+    const seriesId = getSeriesId(data.seriesEnglishName);
+    const volumes = getVolumeData(seriesId, data.directory);
+    const totalPagesForAllVolumes = volumes.reduce((acc, volume) => acc + volume.pages.length, 0);
+    let uploadsSoFar = 0;
+    
+    setUploadedPages(0);
+    setTotalPages(totalPagesForAllVolumes);
+    for (const index in volumes) {
+      const volume = volumes[index];
+      await uploadVolume(volume, uploadsSoFar);
+      uploadsSoFar += volume.pages.length;
+    }
+
+    // eslint-disable-next-line no-alert
+    alert('Done!');
   };
 
   const newSeriesModalRef: React.RefObject<HTMLDialogElement> = useRef(null);
@@ -181,59 +177,44 @@ export default function VolumeEditor({
     setTimeout(() => setValue('seriesEnglishName', newSeries.englishName), 100);
   };
 
-  return (isDirectoryUpload ? (
+  return (
     <>
       <NewSeriesModal
         dialogRef={newSeriesModalRef}
         createSeries={createSeriesHandler}
       />
-      <form onSubmit={handleSubmit(onDirectorySubmit)}>
-        <DirectoryInfo
-          newSeriesModalRef={newSeriesModalRef}
-          register={register}
-          watch={watch}
-          errors={errors}
-          series={series}
-          setValue={setValue}
-        />
-        {totalPages > 0 && (
-          <progress
-            className="progress progress-accent"
-            value={uploadedPages}
-            max={totalPages}
-          />
-        )}
-      </form>
-    </>
-  ) : (
-    <>
-      <NewSeriesModal
-        dialogRef={newSeriesModalRef}
-        createSeries={createSeriesHandler}
+      <input
+        type="checkbox"
+        className="toggle"
+        checked={isDirectoryUpload}
+        onChange={(e) => { setIsDirectoryUpload(!isDirectoryUpload); }}
       />
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <Info
-          newSeriesModalRef={newSeriesModalRef}
-          register={register}
-          watch={watch}
-          errors={errors}
-          series={series}
-          setValue={setValue}
-        />
-        <div className="divider" />
-        <Ocr register={register} watch={watch} errors={errors} />
-        <div className="divider" />
-        <Images register={register} watch={watch} errors={errors} />
-        {totalPages > 0 && (
-          <progress
-            className="progress progress-accent"
-            value={uploadedPages}
-            max={totalPages}
+      <form onSubmit={handleSubmit(isDirectoryUpload ? onDirectorySubmit : onVolumeSubmit)}>
+        { isDirectoryUpload ?
+          <DirectoryInfo
+            newSeriesModalRef={newSeriesModalRef}
+            register={register}
+            watch={watch}
+            errors={errors}
+            series={series}
+            setValue={setValue}
+          /> : <VolumeInfo
+            newSeriesModalRef={newSeriesModalRef}
+            register={register}
+            watch={watch}
+            errors={errors}
+            series={series}
+            setValue={setValue}
           />
-        )}
+        }
       </form>
+      {totalPages > 0 && (
+        <progress
+          className="progress progress-accent"
+          value={uploadedPages}
+          max={totalPages}
+        />
+      )}
     </>
-  )
-);
-
-}
+  );
+};

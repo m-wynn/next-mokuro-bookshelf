@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import Input from '@/input';
-import type { FormChild, VolumeFields } from './page';
+import type { FormChild, VolumeFields } from './types';
 
 export default function Images({
   register,
@@ -70,11 +70,6 @@ export default function Images({
                 },
               })}
             />
-          </div>
-          <div className="flex flex-col-reverse items-center w-1/2">
-            <button type="submit" className="w-full btn btn-primary">
-              Upload Volume
-            </button>
           </div>
         </div>
       </div>
