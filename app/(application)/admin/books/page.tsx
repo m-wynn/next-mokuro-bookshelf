@@ -32,6 +32,9 @@ const seriesSelect = {
   updatedAt: true,
   volumes: {
     select: volumeSelect,
+    orderBy: {
+      number: 'asc',
+    },
   },
 } satisfies Prisma.SeriesSelect;
 

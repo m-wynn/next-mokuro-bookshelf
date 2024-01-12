@@ -1,6 +1,8 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import {
+  useCallback, useMemo, useRef, useState,
+} from 'react';
 import {
   FieldValues,
   SubmitHandler,
@@ -27,7 +29,7 @@ export default function VolumeEditor({
   const { series, setSeries } = useAdminContext();
   const [uploadedPages, setUploadedPages] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
-  const [isDirectoryUpload, setIsDirectoryUpload] = useState(true);
+  const [isDirectoryUpload, setIsDirectoryUpload] = useState(false);
 
   const {
     watch,
@@ -36,6 +38,28 @@ export default function VolumeEditor({
     formState: { errors },
     setValue,
   } = useForm<VolumeFields>();
+
+  const getSeriesId = useCallback(
+    (englishName: string): number => {
+      const seriesId = series.find((s) => s.englishName === englishName)?.id;
+      if (!seriesId) {
+        throw new Error('Series not found');
+      }
+      return seriesId;
+    },
+    [series],
+  );
+
+  const seriesEnglishName = watch('seriesEnglishName');
+  const directory = watch('directory');
+
+  const volumeDataForPreview = useMemo(() => {
+    if (seriesEnglishName !== 'Manga Series' && directory) {
+      const seriesId = getSeriesId(seriesEnglishName);
+      return getVolumeData(seriesId, directory);
+    }
+    return [];
+  }, [getSeriesId, seriesEnglishName, directory]);
 
   const fetchWithTimeout = async (uri: string, timeout: number, data: any) => {
     const controller = new AbortController();
@@ -107,14 +131,6 @@ export default function VolumeEditor({
     }
   };
 
-  const getSeriesId = (englishName: string): number => {
-    const seriesId = series.find((s) => s.englishName === englishName)?.id;
-    if (!seriesId) {
-      throw new Error('Series not found');
-    }
-    return seriesId;
-  };
-
   const onVolumeSubmit: SubmitHandler<FieldValues> = async (data) => {
     const seriesId = getSeriesId(data.seriesEnglishName);
     const ocrFiles = Array.from(data.ocrFiles) as File[];
@@ -179,7 +195,7 @@ export default function VolumeEditor({
         dialogRef={newSeriesModalRef}
         createSeries={createSeriesHandler}
       />
-      <label className="label cursor-pointer">
+      <label className="cursor-pointer label">
         <span className="label-text">Directory Upload</span>
         <input
           type="checkbox"
@@ -196,6 +212,7 @@ export default function VolumeEditor({
               register={register}
               series={series}
               setValue={setValue}
+              volumeData={volumeDataForPreview}
             />
           ) : (
             <VolumeInfo

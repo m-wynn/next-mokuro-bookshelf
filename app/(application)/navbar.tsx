@@ -21,7 +21,7 @@ function Navbar({ session }: { session: Session }) {
   return (
     <div
       className={`shadow navbar bg-base-300 ${
-        fullScreen ? 'h-0 w-0 m-0 p-0 min-h-0' : 'h-16'
+        fullScreen ? 'h-0 w-0 m-0 p-0 min-h-0 overflow-hidden' : 'h-16'
       }`}
     >
       <div className="flex-1">
@@ -33,27 +33,33 @@ function Navbar({ session }: { session: Session }) {
         <div className="form-control">
           <SearchBar />
         </div>
-        <Link
-          href="/allbooks"
-          className="text-2xl normal-case btn btn-primary"
-        >
-          <FontAwesomeIcon icon={faBookMedical} />
-        </Link>
+        <div className="tooltip tooltip-bottom" data-tip="Browse All Books">
+          <Link
+            href="/allbooks"
+            className="text-2xl normal-case btn btn-primary"
+          >
+            <FontAwesomeIcon icon={faBookMedical} />
+          </Link>
+        </div>
         {session.user && (
-        <Link
-          href="/user/settings"
-          className="text-2xl normal-case btn btn-primary"
-        >
-          <FontAwesomeIcon icon={faGear} />
-        </Link>
+          <div className="tooltip tooltip-bottom" data-tip="User Settings">
+            <Link
+              href="/user/settings"
+              className="text-2xl normal-case btn btn-primary"
+            >
+              <FontAwesomeIcon icon={faGear} />
+            </Link>
+          </div>
         )}
         {session.user?.role === 'ADMIN' && (
-        <Link
-          href="/admin"
-          className="text-2xl normal-case btn btn-primary"
-        >
-          <FontAwesomeIcon icon={faScrewdriverWrench} />
-        </Link>
+          <div className="tooltip tooltip-bottom" data-tip="Admin Panel">
+            <Link
+              href="/admin"
+              className="text-2xl normal-case btn btn-primary"
+            >
+              <FontAwesomeIcon icon={faScrewdriverWrench} />
+            </Link>
+          </div>
         )}
         <label className="swap swap-rotate">
           {/* this hidden checkbox controls the state */}
