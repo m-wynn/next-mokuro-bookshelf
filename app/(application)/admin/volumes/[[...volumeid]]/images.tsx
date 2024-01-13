@@ -23,7 +23,7 @@ export default function Images({
                   className="mr-3 label-text"
                   data-tip="Use this if the last wide page is an odd number"
                 >
-                  First page is cover
+                  First Page Is Cover
                 </span>
                 <input
                   type="checkbox"

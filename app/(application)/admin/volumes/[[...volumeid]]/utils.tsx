@@ -75,7 +75,7 @@ const rawVolumeDataToVolumeData = (rawData: RawVolumeData): VolumeData => {
   return volumeData;
 };
 
-export const getVolumeData = (seriesId: number, files: FileList): VolumeData[] => {
+export const getVolumeData = (seriesId: number, files: FileList, checkboxes: any): VolumeData[] => {
   const volumeDatas: VolumeDataMap = {};
   Array.from(files).forEach((file) => {
     const filePath = file.webkitRelativePath;
@@ -90,7 +90,7 @@ export const getVolumeData = (seriesId: number, files: FileList): VolumeData[] =
         pageFiles: [],
         ocrFiles: [],
         coverFile: null,
-        firstPageIsCover: false,
+        firstPageIsCover: !!checkboxes[volumeNum],
         seriesId,
       } as RawVolumeData;
     }
@@ -116,4 +116,21 @@ export const getVolumeData = (seriesId: number, files: FileList): VolumeData[] =
   volumes.sort((a, b) => a.number - b.number);
 
   return volumes.map(rawVolumeDataToVolumeData);
+};
+
+export const validateVolumeData = (volume: VolumeData): boolean => {
+  if (!volume.coverPage) {
+    return false;
+  }
+
+  const missingOcrPages = volume.pages.filter((pages) => !pages.ocr);
+  if (missingOcrPages.length > 0) {
+    return false;
+  }
+
+  if (volume.pages.length === 0) {
+    return false;
+  }
+
+  return true;
 };
