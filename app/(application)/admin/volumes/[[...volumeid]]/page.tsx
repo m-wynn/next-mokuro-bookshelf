@@ -12,6 +12,7 @@ import NewSeriesModal from '@/NewSeriesModal';
 import { SeriesInputs } from 'series';
 import { Series } from '@prisma/client';
 import { PromisePool } from '@supercharge/promise-pool';
+import ConfirmDenyModal from '@/ConfirmDenyModal';
 import { useAdminContext } from '../../AdminContext';
 import DirectoryInfo from './directoryInfo';
 import VolumeInfo from './volumeInfo';
@@ -19,7 +20,7 @@ import { createSeries, createVolume } from '../../functions';
 import {
   VolumeData, PageData, PageUploadData, VolumeFields,
 } from './types';
-import { getOcrFileForPage, getVolumeData } from './utils';
+import { getOcrFileForPage, getVolumeData, validateVolumeData } from './utils';
 
 export default function VolumeEditor({
   params: { _volumeid },
@@ -30,6 +31,7 @@ export default function VolumeEditor({
   const [uploadedPages, setUploadedPages] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [isDirectoryUpload, setIsDirectoryUpload] = useState(false);
+  const [firstPageIsCoverDict, setFirstPageIsCoverDict] = useState<object>({});
 
   const {
     watch,
@@ -39,26 +41,25 @@ export default function VolumeEditor({
     setValue,
   } = useForm<VolumeFields>();
 
-  const getSeriesId = useCallback(
-    (englishName: string): number => {
-      const seriesId = series.find((s) => s.englishName === englishName)?.id;
-      if (!seriesId) {
-        throw new Error('Series not found');
-      }
-      return seriesId;
-    },
-    [series],
-  );
+  const getSeriesId = useCallback((englishName: string): number => {
+    const seriesId = series.find((s) => s.englishName === englishName)?.id;
+    if (!seriesId) {
+      throw new Error('Series not found');
+    }
+    return seriesId;
+  }, [series]);
 
   const seriesEnglishName = watch('seriesEnglishName');
   const directory = watch('directory');
 
   const volumeDataForPreview = useMemo(() => {
-    if (seriesEnglishName !== 'Manga Series' && directory) {
+    const fileCount = directory?.length || 0;
+    if (!['Manga Series', 'Add New'].includes(seriesEnglishName) && fileCount > 0) {
       const seriesId = getSeriesId(seriesEnglishName);
-      return getVolumeData(seriesId, directory);
+      return getVolumeData(seriesId, directory, firstPageIsCoverDict);
     }
     return [];
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getSeriesId, seriesEnglishName, directory]);
 
   const fetchWithTimeout = async (uri: string, timeout: number, data: any) => {
@@ -161,7 +162,7 @@ export default function VolumeEditor({
 
   const onDirectorySubmit: SubmitHandler<FieldValues> = async (data) => {
     const seriesId = getSeriesId(data.seriesEnglishName);
-    const volumes = getVolumeData(seriesId, data.directory);
+    const volumes = getVolumeData(seriesId, data.directory, firstPageIsCoverDict);
     const totalPagesForAllVolumes = volumes.reduce((acc, volume) => acc + volume.pages.length, 0);
     let uploadsSoFar = 0;
 
@@ -179,6 +180,7 @@ export default function VolumeEditor({
   };
 
   const newSeriesModalRef: React.RefObject<HTMLDialogElement> = useRef(null);
+  const errorModalRef: React.RefObject<HTMLDialogElement> = useRef(null);
 
   const createSeriesHandler = async (data: SeriesInputs) => {
     const newSeries = await createSeries(data);
@@ -189,11 +191,40 @@ export default function VolumeEditor({
     setTimeout(() => setValue('seriesEnglishName', newSeries.englishName), 100);
   };
 
+  const submitForm = () => {
+    errorModalRef.current?.close();
+    handleSubmit(isDirectoryUpload ? onDirectorySubmit : onVolumeSubmit)();
+  };
+
+  const validateFormAndSubmit = (data: VolumeFields) => {
+    const seriesId = getSeriesId(data.seriesEnglishName);
+    const volumes = getVolumeData(seriesId, data.directory, firstPageIsCoverDict);
+    const dataIsValid = volumes.reduce((valid, volume) => (
+      valid && validateVolumeData(volume)
+    ), true);
+    if (!dataIsValid) {
+      errorModalRef.current?.show();
+      return;
+    }
+    submitForm();
+  };
+
   return (
     <>
       <NewSeriesModal
         dialogRef={newSeriesModalRef}
         createSeries={createSeriesHandler}
+      />
+      <ConfirmDenyModal
+        header="Missing volume data!"
+        message="Some volumes are missing data. Are you SURE you want to continue with this upload?"
+        dialogRef={errorModalRef}
+        callback={(accepted) => {
+          errorModalRef.current?.close();
+          if (accepted) {
+            submitForm();
+          }
+        }}
       />
       <label className="cursor-pointer label">
         <span className="label-text">Directory Upload</span>
@@ -204,7 +235,7 @@ export default function VolumeEditor({
           onChange={(_e) => { setIsDirectoryUpload(!isDirectoryUpload); }}
         />
       </label>
-      <form onSubmit={handleSubmit(isDirectoryUpload ? onDirectorySubmit : onVolumeSubmit)}>
+      <form onSubmit={handleSubmit(validateFormAndSubmit)}>
         { isDirectoryUpload
           ? (
             <DirectoryInfo
@@ -213,6 +244,7 @@ export default function VolumeEditor({
               series={series}
               setValue={setValue}
               volumeData={volumeDataForPreview}
+              setFirstPageIsCoverDict={setFirstPageIsCoverDict}
             />
           ) : (
             <VolumeInfo
