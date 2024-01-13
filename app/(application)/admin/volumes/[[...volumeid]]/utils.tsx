@@ -1,3 +1,4 @@
+import { FieldValues } from 'react-hook-form';
 import { VolumeData, PageData } from './types';
 
 type RawVolumeData = {
@@ -75,7 +76,34 @@ const rawVolumeDataToVolumeData = (rawData: RawVolumeData): VolumeData => {
   return volumeData;
 };
 
-export const getVolumeData = (seriesId: number, files: FileList, checkboxes: any): VolumeData[] => {
+export const getSingleVolumeData = (
+  seriesId: number,
+  data: FieldValues,
+): VolumeData => {
+  const ocrFiles = Array.from(data.ocrFiles) as File[];
+  const pagesToUpload: PageData[] = Array.from(data.pages).map((page, index) => {
+    const ocr = getOcrFileForPage(page as File, ocrFiles);
+    return {
+      index,
+      page,
+      ocr,
+    } as PageData;
+  });
+
+  return {
+    number: data.volumeNumber,
+    coverPage: data.coverImage[0],
+    pages: pagesToUpload,
+    firstPageIsCover: data.firstPageIsCover,
+    seriesId,
+  } as VolumeData;
+};
+
+export const getDirectoryVolumeData = (
+  seriesId: number,
+  files: FileList,
+  checkboxes: any,
+): VolumeData[] => {
   const volumeDatas: VolumeDataMap = {};
   Array.from(files).forEach((file) => {
     const filePath = file.webkitRelativePath;

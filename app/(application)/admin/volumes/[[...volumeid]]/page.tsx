@@ -20,7 +20,7 @@ import { createSeries, createVolume } from '../../functions';
 import {
   VolumeData, PageData, PageUploadData, VolumeFields,
 } from './types';
-import { getOcrFileForPage, getVolumeData, validateVolumeData } from './utils';
+import { getDirectoryVolumeData, validateVolumeData, getSingleVolumeData } from './utils';
 
 export default function VolumeEditor({
   params: { _volumeid },
@@ -56,7 +56,7 @@ export default function VolumeEditor({
     const fileCount = directory?.length || 0;
     if (!['Manga Series', 'Add New'].includes(seriesEnglishName) && fileCount > 0) {
       const seriesId = getSeriesId(seriesEnglishName);
-      return getVolumeData(seriesId, directory, firstPageIsCoverDict);
+      return getDirectoryVolumeData(seriesId, directory, firstPageIsCoverDict);
     }
     return [];
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -132,29 +132,13 @@ export default function VolumeEditor({
     }
   };
 
-  const onVolumeSubmit: SubmitHandler<FieldValues> = async (data) => {
+  const onVolumeSubmit: SubmitHandler<FieldValues> = async (data: FieldValues) => {
     const seriesId = getSeriesId(data.seriesEnglishName);
-    const ocrFiles = Array.from(data.ocrFiles) as File[];
-    const pagesToUpload: PageData[] = Array.from(data.pages).map((page, index) => {
-      const ocr = getOcrFileForPage(page as File, ocrFiles);
-      return {
-        index,
-        page,
-        ocr,
-      } as PageData;
-    });
-
-    const volumeData = {
-      number: data.volumeNumber,
-      coverPage: data.coverImage[0],
-      pages: pagesToUpload,
-      firstPageIsCover: data.firstPageIsCover,
-      seriesId,
-    } as VolumeData;
+    const volume = getSingleVolumeData(seriesId, data);
 
     setUploadedPages(0);
     setTotalPages(data.pages.length);
-    await uploadVolume(volumeData);
+    await uploadVolume(volume);
 
     // eslint-disable-next-line no-alert
     alert('Done!');
@@ -162,7 +146,7 @@ export default function VolumeEditor({
 
   const onDirectorySubmit: SubmitHandler<FieldValues> = async (data) => {
     const seriesId = getSeriesId(data.seriesEnglishName);
-    const volumes = getVolumeData(seriesId, data.directory, firstPageIsCoverDict);
+    const volumes = getDirectoryVolumeData(seriesId, data.directory, firstPageIsCoverDict);
     const totalPagesForAllVolumes = volumes.reduce((acc, volume) => acc + volume.pages.length, 0);
     let uploadsSoFar = 0;
 
@@ -196,13 +180,19 @@ export default function VolumeEditor({
     handleSubmit(isDirectoryUpload ? onDirectorySubmit : onVolumeSubmit)();
   };
 
-  const validateFormAndSubmit = (data: VolumeFields) => {
+  const validateFormAndSubmit = (data: FieldValues) => {
+    let isDataValid = false;
     const seriesId = getSeriesId(data.seriesEnglishName);
-    const volumes = getVolumeData(seriesId, data.directory, firstPageIsCoverDict);
-    const dataIsValid = volumes.reduce((valid, volume) => (
-      valid && validateVolumeData(volume)
-    ), true);
-    if (!dataIsValid) {
+    if (isDirectoryUpload) {
+      const volumes = getDirectoryVolumeData(seriesId, data.directory, firstPageIsCoverDict);
+      isDataValid = volumes.reduce((valid, volume) => (
+        valid && validateVolumeData(volume)
+      ), true);
+    } else {
+      const volume = getSingleVolumeData(seriesId, data);
+      isDataValid = validateVolumeData(volume);
+    }
+    if (!isDataValid) {
       errorModalRef.current?.show();
       return;
     }
