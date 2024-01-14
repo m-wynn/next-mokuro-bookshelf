@@ -23,18 +23,20 @@ export async function GET(request: NextRequest) {
       page.number,
       page."volumeId",
       "Volume".number AS "volumeNumber",
-      "Series".id as "seriesId",
+      "Series".id AS "seriesId",
       "Series"."japaneseName" AS "japaneseName",
       "Series"."englishName" AS "englishName",
       text,
       score,
-      CASE WHEN "Reading".id IS NULL THEN false ELSE true END AS is_reading
+      CASE WHEN "Reading".id IS NULL THEN false ELSE true END AS isReading,
+      CAST(block_number - 1 AS SMALLINT) AS "blockNumber"
     FROM (
       SELECT
         number,
         "volumeId",
         score,
-        string_agg(line, '') text
+        string_agg(line, '') text,
+        block_number
       FROM (
         SELECT 
           id,
@@ -45,16 +47,16 @@ export async function GET(request: NextRequest) {
         FROM "Page"
         WHERE ocr ->> 'blocks' &@ ${q}
       ),
-      jsonb_array_elements(blocks::jsonb) as block,
-      jsonb_array_elements_text(block -> 'lines') as line
+      jsonb_array_elements(blocks::jsonb) WITH ORDINALITY AS t(block, block_number),
+      jsonb_array_elements_text(block -> 'lines') AS line
       WHERE block &@ ${q}
-      GROUP BY id, number, "volumeId", block, score
+      GROUP BY id, number, "volumeId", block, score, block_number
       LIMIT 20
     ) page
     JOIN "Volume" ON "Volume".id = "volumeId"
     JOIN "Series" ON "Series".id = "Volume"."seriesId"
     LEFT JOIN "Reading" ON "Reading"."volumeId" = "Volume"."id" AND "Reading"."userId" = ${session.user.userId}
-    ORDER BY is_reading DESC, score, number ASC
+    ORDER BY isReading DESC, score, number ASC
 `;
 
     if (pages == null) {

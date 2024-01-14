@@ -10,6 +10,8 @@ import type { Volume } from './page';
 
 const { useTwoPages, zoomSensitivity } = UserSettingsDefaultValues;
 
+export type HighlightBlock = { page: number, block: number } | null;
+
 const VolumeContext = createContext({
   currentPage: 0,
   setCurrentPage: (_page: number) => {},
@@ -20,7 +22,7 @@ const VolumeContext = createContext({
   zoomSensitivity,
   seriesTitle: '',
   volumeNumber: 0,
-
+  highlightBlock: null as HighlightBlock,
 });
 
 export function useVolumeContext() {
@@ -57,21 +59,19 @@ export default function VolumeDataProvider({
   };
 
   const initialPageNum = parseInt(useSearchParams().get('page') ?? '', 10) || null;
+  const initialHighlightBlock = parseInt(useSearchParams().get('block') ?? '', 10) || null;
 
   const getCurrentPage = () => {
-    const page = initialPageNum || (volume.readings[0]?.page ?? 0);
-    if (
-      page > 0
-      && getUseTwoPages()
-      && getFirstPageIsCover()
-      && page % 2 === 0
-    ) {
-      return page - 1;
+    const page = initialPageNum ? initialPageNum - 1 : (volume.readings[0]?.page ?? 0);
+    if (page > 0 && getUseTwoPages()) {
+      if (getFirstPageIsCover() && page % 2 === 0) {
+        return page - 1;
+      } if (!getFirstPageIsCover() && page % 2 === 1) {
+        return page - 1;
+      }
     }
     return page;
   };
-
-  const [currentPage, setCurrentPage] = useState(getCurrentPage());
 
   const useJapaneseTitle = userSettings?.useJapaneseTitle ?? false;
   const { japaneseName, englishName } = volume.series;
@@ -79,6 +79,13 @@ export default function VolumeDataProvider({
 
   const router = useRouter();
   const { volumeNum, seriesId } = useParams();
+
+  const [currentPage, setCurrentPage] = useState(getCurrentPage());
+  const [highlightBlock, setHighlightBlock] = useState<HighlightBlock>(
+    initialHighlightBlock ? {
+      page: getCurrentPage(), block: initialHighlightBlock,
+    } : null,
+  );
   const [useTracking, setUseTracking] = useState(initialPageNum === null);
 
   const setUseTrackingAndReturn = (value: boolean, returnToReadingPage: boolean) => {
@@ -89,18 +96,26 @@ export default function VolumeDataProvider({
   };
 
   useEffect(() => {
+    if (initialHighlightBlock !== null) {
+      setHighlightBlock({
+        page: initialPageNum ? initialPageNum - 1 : getCurrentPage(),
+        block: initialHighlightBlock,
+      });
+    }
     if (initialPageNum) {
       setCurrentPage(getCurrentPage());
       setUseTracking(false);
+    }
+    if (initialPageNum || highlightBlock !== null) {
       router.replace(`/reader/${seriesId}/${volumeNum}`);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [initialPageNum]);
+  }, [initialPageNum, initialHighlightBlock]);
 
   // eslint-disable-next-line react/jsx-no-constructed-context-values
   const value = {
     currentPage,
-    setCurrentPage,
+    setCurrentPage: (page: number) => { setHighlightBlock(null); setCurrentPage(page); },
     useTwoPages: getUseTwoPages(),
     firstPageIsCover: getFirstPageIsCover(),
     zoomSensitivity: getZoomSensitivity(),
@@ -108,6 +123,7 @@ export default function VolumeDataProvider({
     volumeNumber: volume.number,
     useTracking,
     setUseTrackingAndReturn,
+    highlightBlock,
   };
 
   return (

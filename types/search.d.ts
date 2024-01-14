@@ -8,6 +8,7 @@ declare module 'search' {
     englishName: string;
     text: string;
     score: number;
-    is_reading: boolean;
+    isReading: boolean;
+    blockNumber: number;
   }
 }
