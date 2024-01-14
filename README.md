@@ -2,6 +2,12 @@
 
 A bookshelf for your [mokuro](https://github.com/kha-white/mokuro)-scanned books
 
+
+
+https://github.com/m-wynn/next-mokuro-bookshelf/assets/6320753/de017150-3b9c-4922-b43d-dee6ced129be
+
+
+
 # Instructions
 
 ## Production Mode
