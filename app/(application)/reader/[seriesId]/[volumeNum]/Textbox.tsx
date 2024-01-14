@@ -6,11 +6,13 @@ function Textbox({
   fontSize,
   vertical,
   lines,
+  highlight,
 }: {
   box: OcrBlock['box'];
   fontSize: number;
   vertical: OcrBlock['vertical'];
   lines: OcrBlock['lines'];
+  highlight: boolean;
 }) {
   const minFontSize = 12;
   const maxFontSize = 64;
@@ -26,6 +28,7 @@ function Textbox({
         // so that the smaller boxes don't get hidden underneath larger ones
         zIndex: 10000 - ((box[2] - box[0]) * (box[3] - box[1])) / 1000,
         flexDirection: vertical ? 'row-reverse' : 'column',
+        outline: highlight ? '0.5em solid red' : '',
       }}
     >
       {lines.map((line: string, index) => (

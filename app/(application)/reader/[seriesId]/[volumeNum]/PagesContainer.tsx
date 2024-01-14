@@ -253,6 +253,11 @@ export default function PagesContainer({
                 page={pages[currentPage + 1]}
                 preloads={[]}
                 getImageUri={getImageUri}
+                highlightBlock={
+                volumeData?.highlightBlock?.page === currentPage + 1
+                  ? volumeData.highlightBlock.block
+                  : undefined
+              }
               />
             ) : null}
             <PageContainer
@@ -262,6 +267,11 @@ export default function PagesContainer({
                 .filter((i) => i < pages.length)
                 .map((i) => pages[i])}
               getImageUri={getImageUri}
+              highlightBlock={
+                volumeData?.highlightBlock?.page === currentPage
+                  ? volumeData.highlightBlock.block
+                  : undefined
+              }
             />
           </div>
           <DummyYomichanSentenceTerminator />

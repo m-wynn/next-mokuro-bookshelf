@@ -38,9 +38,8 @@ export function SearchBar() {
   }, [search]);
 
   return (
-    <div className="w-full dropdown dropdown-end">
+    <div className="w-full dropdown dropdown-end" id="search">
       <input
-        id="search"
         type="text"
         placeholder="Search.."
         value={search}
@@ -58,7 +57,7 @@ export function SearchBar() {
           }
         }}
       />
-      <div className="overflow-auto top-14 z-20 flex-col max-h-96 rounded-md w-[24rem] dropdown-content bg-base-300">
+      <div className="overflow-auto top-14 z-50 flex-col max-h-96 rounded-md w-[24rem] dropdown-content bg-base-300">
         <ul
           className="menu menu-compact"
           // use ref to calculate the width of parent
@@ -72,9 +71,11 @@ export function SearchBar() {
             >
               <Link
                 className="flex flex-col"
-                href={`/reader/${item.seriesId}/${item.volumeNumber}?page=${item.number}`}
+                href={`/reader/${item.seriesId}/${item.volumeNumber}?page=${item.number + 1}&block=${item.blockNumber}`}
                 onClick={() => {
-                  document.getElementById('search')?.blur();
+                  if (document.activeElement instanceof HTMLElement) {
+                    document.activeElement?.blur();
+                  }
                 }}
               >
                 <div className="flex flex-row justify-between w-full">
@@ -87,12 +88,11 @@ export function SearchBar() {
                     {' '}
                     pg.
                     {' '}
-                    {item.number}
+                    {item.number + 1}
                   </p>
                 </div>
                 <p>{item.text}</p>
               </Link>
-
             </li>
           ))}
         </ul>
