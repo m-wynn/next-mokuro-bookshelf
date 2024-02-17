@@ -6,7 +6,8 @@ import { getSession } from 'lib/session';
 interface UserPreferences {
   zoomSensitivity?: number;
   useTwoPages?: boolean;
-  useJapaneseTitle?: boolean
+  useJapaneseTitle?: boolean;
+  showNsfwContent?: boolean;
 }
 
 const updateUserPreference = async (userId: string, preferences: UserPreferences) => {
@@ -36,4 +37,9 @@ export const updateZoomSensitivity = async (zoomSensitivity: number) => {
 export const updateUseJapaneseTitle = async (useJapaneseTitle: boolean) => {
   const session = await getSession('POST');
   await updateUserPreference(session.user.userId, { useJapaneseTitle });
+};
+
+export const updateShowNsfwContent = async (showNsfwContent: boolean) => {
+  const session = await getSession('POST');
+  await updateUserPreference(session.user.userId, { showNsfwContent });
 };

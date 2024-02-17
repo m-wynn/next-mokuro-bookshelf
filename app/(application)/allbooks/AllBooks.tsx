@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useCallback, useMemo } from 'react';
 import VolumeCard from '@/volumecard';
 import type { SeriesPayload } from './page';
 import { useGlobalContext } from '../GlobalContext';
@@ -9,9 +9,21 @@ export function AllBooks({ series }: { series: SeriesPayload[] }) {
   const { userSettings } = useGlobalContext();
   const useJapaneseTitle = userSettings?.useJapaneseTitle ?? false;
 
+  const canUserSeeIfNsfw = useCallback((singleSeries: SeriesPayload) => {
+    if (singleSeries.isNsfw && !userSettings.showNsfwContent) {
+      return false;
+    }
+    return true;
+  }, [userSettings]);
+
+  const filteredSeries = useMemo(
+    () => series.filter((each) => canUserSeeIfNsfw(each)),
+    [canUserSeeIfNsfw, series],
+  );
+
   return (
     <>
-      {series.map(({
+      {filteredSeries.map(({
         japaneseName, englishName, id, volumes,
       }) => {
         const name = useJapaneseTitle && japaneseName ? japaneseName : englishName;

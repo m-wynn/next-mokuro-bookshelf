@@ -7,6 +7,7 @@ import { AllBooks } from './AllBooks';
 const seriesSelect = (userId: string) => ({
   japaneseName: true,
   englishName: true,
+  isNsfw: true,
   id: true,
   volumes: {
     select: {

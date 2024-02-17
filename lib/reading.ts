@@ -19,6 +19,7 @@ export const ReadingSelectQuery = {
         select: {
           englishName: true,
           japaneseName: true,
+          isNsfw: true,
           id: true,
         },
       },

@@ -55,6 +55,7 @@ model Series {
   updatedAt    DateTime @updatedAt
   uploadedById String
   japaneseName String   @default("")
+  isNsfw       Boolean  @default(false)
   uploadedBy   User     @relation(fields: [uploadedById], references: [id])
   volumes      Volume[]
 }
@@ -115,6 +116,7 @@ model UserSetting {
   useTwoPages      Boolean @default(false)
   zoomSensitivity  Int     @default(1)
   useJapaneseTitle Boolean @default(false)
+  showNsfwContent  Boolean @default(false)
   user             User    @relation(fields: [userId], references: [id])
 }
 

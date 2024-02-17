@@ -53,6 +53,51 @@ function FormInput({
   );
 }
 
+function FormCheckbox({
+  defaultValue,
+  onEnter,
+}: {
+  defaultValue: boolean;
+  onEnter: (_value: boolean) => Promise<void>;
+}) {
+  enum LoadingState {
+    NORMAL,
+    LOADING,
+    RECENTLY_UPDATED,
+  }
+  const [loadingState, setLoadingState] = React.useState(LoadingState.NORMAL);
+  return (
+    <div className="indicator">
+      {loadingState !== LoadingState.NORMAL
+        && (loadingState === LoadingState.LOADING ? (
+          <span className="indicator-item badge badge-secondary">
+            <span className="loading loading-ball loading-xs" />
+          </span>
+        ) : (
+          <span className="indicator-item badge badge-success">
+            <FontAwesomeIcon icon={faCheck} />
+          </span>
+        ))}
+      <input
+        type="checkbox"
+        className="checkbox"
+        defaultChecked={defaultValue}
+        onClick={async (e) => {
+          if (e.target instanceof HTMLInputElement) {
+            setLoadingState(LoadingState.LOADING);
+            e.target.blur();
+            await onEnter(e.target.checked);
+            setLoadingState(LoadingState.RECENTLY_UPDATED);
+            setTimeout(() => {
+              setLoadingState(LoadingState.NORMAL);
+            }, 10000);
+          }
+        }}
+      />
+    </div>
+  );
+}
+
 function SeriesTable({ series }: { series: SeriesPayload[] }) {
   return (
     <table className="table bg-base-200">
@@ -63,6 +108,7 @@ function SeriesTable({ series }: { series: SeriesPayload[] }) {
           <th>Japanese Name</th>
           <th>Created At</th>
           <th>Updated At</th>
+          <th>Is NSFW</th>
         </tr>
       </thead>
       <tbody>
@@ -88,6 +134,14 @@ function SeriesTable({ series }: { series: SeriesPayload[] }) {
               </th>
               <th>{each.createdAt.toUTCString()}</th>
               <th>{each.updatedAt.toUTCString()}</th>
+              <td>
+                <FormCheckbox
+                  defaultValue={each.isNsfw}
+                  onEnter={async (value) => {
+                    await updateSeries(each.id, { isNsfw: value });
+                  }}
+                />
+              </td>
             </tr>
             {each.volumes.length > 0 && (
               <tr>

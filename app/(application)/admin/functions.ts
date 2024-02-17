@@ -19,6 +19,7 @@ export const createSeries = async (data: SeriesInputs) => {
     data: {
       englishName: data.englishName,
       japaneseName: data.japaneseName,
+      isNsfw: data.isNsfw,
       uploadedById: session.user.userId,
     },
   });
