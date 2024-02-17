@@ -28,6 +28,7 @@ const seriesSelect = {
   id: true,
   japaneseName: true,
   englishName: true,
+  isNsfw: true,
   createdAt: true,
   updatedAt: true,
   volumes: {

@@ -3,7 +3,7 @@
 import { faTriangleExclamation } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Link from 'next/link';
-import React, { useMemo } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import { ReadingStatus } from '@prisma/client';
 import type { Reading } from 'lib/reading';
 import Shelf from './Shelf';
@@ -12,25 +12,32 @@ import { useGlobalContext } from './GlobalContext';
 import { updateReadingStatus, removeReading } from './functions';
 
 function Bookshelf() {
-  const { allReadings, setAllReadings } = useGlobalContext();
+  const { allReadings, setAllReadings, userSettings } = useGlobalContext();
+
+  const canUserSeeIfNsfw = useCallback((reading: Reading) => {
+    if (reading.volume.series.isNsfw && !userSettings.showNsfwContent) {
+      return false;
+    }
+    return true;
+  }, [userSettings]);
 
   const inProgress = useMemo(
     () => allReadings.filter(
-      (reading) => reading.status === 'READING',
+      (reading) => reading.status === 'READING' && canUserSeeIfNsfw(reading),
     ) as unknown as Reading[],
-    [allReadings],
+    [allReadings, canUserSeeIfNsfw],
   );
   const unread = useMemo(
     () => allReadings.filter(
-      (reading) => reading.status === 'UNREAD',
+      (reading) => reading.status === 'UNREAD' && canUserSeeIfNsfw(reading),
     ) as unknown as Reading[],
-    [allReadings],
+    [allReadings, canUserSeeIfNsfw],
   );
   const read = useMemo(
     () => allReadings.filter(
-      (reading) => reading.status === 'READ',
+      (reading) => reading.status === 'READ' && canUserSeeIfNsfw(reading),
     ) as unknown as Reading[],
-    [allReadings],
+    [allReadings, canUserSeeIfNsfw],
   );
 
   const updateReadingStatusAndState = async (

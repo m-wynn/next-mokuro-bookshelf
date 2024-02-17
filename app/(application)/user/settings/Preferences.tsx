@@ -5,6 +5,7 @@ import {
   faTableColumns,
   faMagnifyingGlass,
   faYenSign,
+  faBan,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Checkbox from '@/checkbox';
@@ -14,6 +15,7 @@ import {
   updateUseTwoPages,
   updateZoomSensitivity,
   updateUseJapaneseTitle,
+  updateShowNsfwContent,
 } from './functions';
 
 export default function Preferences() {
@@ -29,8 +31,9 @@ export default function Preferences() {
     <div className="flex flex-col mt-4 w-96 max-w-2xl md:w-1/2 grow">
       <div className="card bg-base-300 rounded-box">
         <div className="items-center card-body">
-          <h2 className="card-title">Preferences</h2>
+          <span className="text-2xl card-title">Preferences</span>
           <div className="w-full">
+            <span className="text-xl font-bold">Reader</span>
             <Checkbox
               fa={faTableColumns}
               value={userSettings?.useTwoPages || false}
@@ -40,16 +43,6 @@ export default function Preferences() {
               }}
             >
               Display Two Pages
-            </Checkbox>
-            <Checkbox
-              fa={faYenSign}
-              value={userSettings?.useJapaneseTitle || false}
-              set={(checked) => {
-                updateUseJapaneseTitle(checked);
-                setUserSetting({ useJapaneseTitle: checked });
-              }}
-            >
-              Show Japanese Title
             </Checkbox>
             <label className="flex-row w-full cursor-pointer label">
               <span className="flex-grow label-text">
@@ -70,6 +63,28 @@ export default function Preferences() {
                 ))}
               </select>
             </label>
+            <hr className="mt-4 mb-4 opacity-30" />
+            <span className="text-xl font-bold">General</span>
+            <Checkbox
+              fa={faYenSign}
+              value={userSettings?.useJapaneseTitle || false}
+              set={(checked) => {
+                updateUseJapaneseTitle(checked);
+                setUserSetting({ useJapaneseTitle: checked });
+              }}
+            >
+              Show Japanese Title
+            </Checkbox>
+            <Checkbox
+              fa={faBan}
+              value={userSettings?.showNsfwContent || false}
+              set={(checked) => {
+                updateShowNsfwContent(checked);
+                setUserSetting({ showNsfwContent: checked });
+              }}
+            >
+              Show NSFW Content
+            </Checkbox>
           </div>
         </div>
       </div>

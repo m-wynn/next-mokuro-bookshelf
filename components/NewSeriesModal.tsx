@@ -41,6 +41,12 @@ function NewSeriesModal({
                 required: 'Japanese Name is required',
               })}
             />
+            <Input
+              label="Is NSFW"
+              type="checkbox"
+              classNameOverride="checkbox"
+              register={register('isNsfw')}
+            />
             <button type="submit" className="mt-8 w-full btn btn-primary">
               Create
             </button>
