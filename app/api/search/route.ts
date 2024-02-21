@@ -4,6 +4,7 @@ import * as context from 'next/headers';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import { SearchResult } from 'search';
+import { shouldShowNsfw } from 'lib/userSetting';
 
 export async function GET(request: NextRequest) {
   const session = await auth.handleRequest(request.method, context).validate();
@@ -18,7 +19,13 @@ export async function GET(request: NextRequest) {
   }
 
   if (q != null) {
-    const pages: SearchResult[] = await prisma.$queryRaw`
+    const showNsfw = await shouldShowNsfw(session.user.userId);
+    let nsfwFilter = '';
+    if (!showNsfw) {
+      nsfwFilter = 'AND "Series"."isNsfw" = false';
+    }
+
+    const rawQuery = `
     SELECT 
       page.number,
       page."volumeId",
@@ -39,25 +46,29 @@ export async function GET(request: NextRequest) {
         block_number
       FROM (
         SELECT 
-          id,
-          number,
+          "Page".id,
+          "Page".number,
           "volumeId",
           ocr ->> 'blocks' blocks,
-          pgroonga_score(tableoid, ctid) AS score
+          pgroonga_score("Page".tableoid, "Page".ctid) AS score
         FROM "Page"
-        WHERE ocr ->> 'blocks' &@ ${q}
+        INNER JOIN "Volume" ON "Volume".id = "Page"."volumeId"
+        INNER JOIN "Series" ON "Series".id = "Volume"."seriesId"
+        WHERE ocr ->> 'blocks' &@ $1 ${nsfwFilter}
       ),
       jsonb_array_elements(blocks::jsonb) WITH ORDINALITY AS t(block, block_number),
       jsonb_array_elements_text(block -> 'lines') AS line
-      WHERE block &@ ${q}
+      WHERE block &@ $1
       GROUP BY id, number, "volumeId", block, score, block_number
       LIMIT 20
     ) page
     JOIN "Volume" ON "Volume".id = "volumeId"
     JOIN "Series" ON "Series".id = "Volume"."seriesId"
-    LEFT JOIN "Reading" ON "Reading"."volumeId" = "Volume"."id" AND "Reading"."userId" = ${session.user.userId}
+    LEFT JOIN "Reading" ON "Reading"."volumeId" = "Volume"."id" AND "Reading"."userId" = $2
     ORDER BY isReading DESC, score, number ASC
-`;
+    `;
+
+    const pages: SearchResult[] = await prisma.$queryRawUnsafe(rawQuery, q, session.user.userId);
 
     if (pages == null) {
       return NextResponse.json({ error: 'No such lines' }, { status: 404 });

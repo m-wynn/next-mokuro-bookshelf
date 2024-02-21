@@ -1,4 +1,5 @@
 import { Prisma } from '@prisma/client';
+import prisma from 'db';
 
 export const UserSettingSelectQuery = {
   useTwoPages: true,
@@ -17,3 +18,15 @@ export const UserSettingsDefaultValues: UserSetting = {
   zoomSensitivity: 1,
   showNsfwContent: false,
 };
+
+export async function shouldShowNsfw(userId: string) {
+  const userSetting = await prisma.userSetting.findUnique({
+    where: {
+      userId,
+    },
+    select: {
+      showNsfwContent: true,
+    },
+  });
+  return userSetting?.showNsfwContent;
+}
