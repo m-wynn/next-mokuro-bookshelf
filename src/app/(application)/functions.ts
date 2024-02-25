@@ -31,3 +31,18 @@ export const removeReading = async (id: number) => {
     select: ReadingSelectQuery,
   });
 };
+
+export const setReadingVolume = async (id: number, volumeNum: number) => {
+  'use server';
+
+  return prisma.reading.update({
+    where: {
+      id,
+    },
+    data: {
+      volumeNum,
+      page: 0,
+    },
+    select: ReadingSelectQuery,
+  });
+};

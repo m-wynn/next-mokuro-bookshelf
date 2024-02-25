@@ -39,8 +39,8 @@ export async function GET(request: NextRequest) {
         "Series"."englishName" AS "englishName",
         (CASE WHEN "Reading".id IS NOT NULL THEN true ELSE false END) AS "isReading"
       FROM "Page"
-      LEFT JOIN "Reading" ON "Reading"."userId" = $2 AND "Reading"."volumeId" = "Page"."volumeId"
       INNER JOIN "Volume" ON "Volume".id = "Page"."volumeId"
+      LEFT JOIN "Reading" ON "Reading"."userId" = $2 AND "Reading"."seriesId" = "Volume"."seriesId"
       INNER JOIN "Series" ON "Series".id = "Volume"."seriesId"
       CROSS JOIN LATERAL unnest("blockText") WITH ORDINALITY AS t(text_element, idx)
       WHERE

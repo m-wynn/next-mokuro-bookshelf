@@ -4,18 +4,16 @@ import { faTriangleExclamation } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Link from 'next/link';
 import React, { useMemo, useCallback } from 'react';
-import { ReadingStatus } from '@prisma/client';
 import type { Reading } from 'lib/reading';
 import Shelf from './Shelf';
 
 import { useGlobalContext } from './GlobalContext';
-import { updateReadingStatus, removeReading } from './functions';
 
 function Bookshelf() {
-  const { allReadings, setAllReadings, userSettings } = useGlobalContext();
+  const { allReadings, userSettings } = useGlobalContext();
 
   const canUserSeeIfNsfw = useCallback((reading: Reading) => {
-    if (reading.volume.series.isNsfw && !userSettings.showNsfwContent) {
+    if (reading.series.isNsfw && !userSettings.showNsfwContent) {
       return false;
     }
     return true;
@@ -40,22 +38,6 @@ function Bookshelf() {
     [allReadings, canUserSeeIfNsfw],
   );
 
-  const updateReadingStatusAndState = async (
-    id: number,
-    status: ReadingStatus,
-  ) => {
-    const newReading = await updateReadingStatus(id, status);
-    setAllReadings((prev: Reading[]) => {
-      const newReadings = prev.map((reading) => (reading.id === id ? newReading : reading));
-      return newReadings;
-    });
-  };
-
-  const removeReadingAndState = async (id: number) => {
-    await removeReading(id);
-    setAllReadings((prev: Reading[]) => prev.filter((reading) => reading.id !== id));
-  };
-
   return (
     <div>
       {allReadings.length === 0 && (
@@ -73,24 +55,18 @@ function Bookshelf() {
         <Shelf
           title="Reading"
           readings={inProgress}
-          updateReadingStatus={updateReadingStatusAndState}
-          removeReading={removeReadingAndState}
         />
       )}
       {unread.length > 0 && (
         <Shelf
           title="Future"
           readings={unread}
-          updateReadingStatus={updateReadingStatusAndState}
-          removeReading={removeReadingAndState}
         />
       )}
       {read.length > 0 && (
         <Shelf
           title="Finished"
           readings={read}
-          updateReadingStatus={updateReadingStatusAndState}
-          removeReading={removeReadingAndState}
         />
       )}
     </div>

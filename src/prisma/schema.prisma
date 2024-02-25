@@ -49,16 +49,17 @@ model Key {
 }
 
 model Series {
-  id           Int      @id @default(autoincrement())
-  englishName  String   @unique
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id           Int       @id @default(autoincrement())
+  englishName  String    @unique
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
   uploadedById String
-  japaneseName String   @default("")
-  isNsfw       Boolean  @default(false)
-  uploadedBy   User     @relation(fields: [uploadedById], references: [id])
+  japaneseName String    @default("")
+  isNsfw       Boolean   @default(false)
+  uploadedBy   User      @relation(fields: [uploadedById], references: [id])
   volumes      Volume[]
-  shortName    String   @default("")
+  shortName    String    @default("")
+  Reading      Reading[]
 }
 
 model Volume {
@@ -99,7 +100,8 @@ model Page {
 model Reading {
   id                       Int           @id @default(autoincrement())
   userId                   String
-  volumeId                 Int
+  seriesId                 Int
+  volumeNum                Int
   page                     Int           @default(0)
   status                   ReadingStatus
   createdAt                DateTime      @default(now())
@@ -108,9 +110,10 @@ model Reading {
   firstPageIsCoverOverride Boolean?
   isActive                 Boolean       @default(true)
   user                     User          @relation(fields: [userId], references: [id])
-  volume                   Volume        @relation(fields: [volumeId], references: [id])
+  volume                   Volume        @relation(fields: [seriesId, volumeNum], references: [seriesId, number])
+  series                   Series        @relation(fields: [seriesId], references: [id])
 
-  @@unique([userId, volumeId], name: "volumeUser")
+  @@unique([userId, seriesId], name: "seriesUser")
 }
 
 model UserSetting {
