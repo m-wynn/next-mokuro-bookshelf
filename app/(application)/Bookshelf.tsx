@@ -15,7 +15,7 @@ function Bookshelf() {
   const { allReadings, setAllReadings, userSettings } = useGlobalContext();
 
   const canUserSeeIfNsfw = useCallback((reading: Reading) => {
-    if (reading.volume.series.isNsfw && !userSettings.showNsfwContent) {
+    if (reading.series.isNsfw && !userSettings.showNsfwContent) {
       return false;
     }
     return true;
@@ -40,22 +40,6 @@ function Bookshelf() {
     [allReadings, canUserSeeIfNsfw],
   );
 
-  const updateReadingStatusAndState = async (
-    id: number,
-    status: ReadingStatus,
-  ) => {
-    const newReading = await updateReadingStatus(id, status);
-    setAllReadings((prev: Reading[]) => {
-      const newReadings = prev.map((reading) => (reading.id === id ? newReading : reading));
-      return newReadings;
-    });
-  };
-
-  const removeReadingAndState = async (id: number) => {
-    await removeReading(id);
-    setAllReadings((prev: Reading[]) => prev.filter((reading) => reading.id !== id));
-  };
-
   return (
     <div>
       {allReadings.length === 0 && (
@@ -73,24 +57,18 @@ function Bookshelf() {
         <Shelf
           title="Reading"
           readings={inProgress}
-          updateReadingStatus={updateReadingStatusAndState}
-          removeReading={removeReadingAndState}
         />
       )}
       {unread.length > 0 && (
         <Shelf
           title="Future"
           readings={unread}
-          updateReadingStatus={updateReadingStatusAndState}
-          removeReading={removeReadingAndState}
         />
       )}
       {read.length > 0 && (
         <Shelf
           title="Finished"
           readings={read}
-          updateReadingStatus={updateReadingStatusAndState}
-          removeReading={removeReadingAndState}
         />
       )}
     </div>

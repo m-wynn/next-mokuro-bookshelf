@@ -21,6 +21,7 @@ const VolumeContext = createContext({
   useTwoPages,
   zoomSensitivity,
   seriesTitle: '',
+  seriesId: 0,
   volumeNumber: 0,
   highlightBlock: null as HighlightBlock,
 });
@@ -86,7 +87,11 @@ export default function VolumeDataProvider({
       page: getCurrentPage(), block: initialHighlightBlock,
     } : null,
   );
-  const [useTracking, setUseTracking] = useState(initialPageNum === null);
+  const [useTracking, setUseTracking] = useState(
+    initialPageNum === null && (
+      !volume.series.Reading || volume.series.Reading[0].volumeNum === volume.number
+    ),
+  );
 
   const setUseTrackingAndReturn = (value: boolean, returnToReadingPage: boolean) => {
     if (returnToReadingPage) {
@@ -120,6 +125,7 @@ export default function VolumeDataProvider({
     firstPageIsCover: getFirstPageIsCover(),
     zoomSensitivity: getZoomSensitivity(),
     seriesTitle,
+    seriesId: volume.series.id,
     volumeNumber: volume.number,
     useTracking,
     setUseTrackingAndReturn,

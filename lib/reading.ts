@@ -6,21 +6,39 @@ export const ReadingSelectQuery = {
   page: true,
   status: true,
   updatedAt: true,
+  volumeNum: true,
   volume: {
     select: {
-      number: true,
-      id: true,
-      seriesId: true,
-      cover: true,
       _count: {
         select: { pages: true },
       },
-      series: {
+    },
+  },
+  series: {
+    select: {
+      englishName: true,
+      japaneseName: true,
+      isNsfw: true,
+      id: true,
+      volumes: {
+        orderBy: {
+          number: 'asc',
+        },
         select: {
-          englishName: true,
-          japaneseName: true,
-          isNsfw: true,
+          number: true,
           id: true,
+          seriesId: true,
+          cover: true,
+          _count: {
+            select: { pages: true },
+          },
+          series: {
+            select: {
+              englishName: true,
+              japaneseName: true,
+              id: true,
+            },
+          },
         },
       },
     },

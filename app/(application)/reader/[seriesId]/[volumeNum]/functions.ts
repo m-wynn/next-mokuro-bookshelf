@@ -6,7 +6,8 @@ import { getSession } from 'lib/session';
 
 const updateReadingInDb = async (
   reading: Reading | null,
-  volumeId: number,
+  volumeNum: number,
+  seriesId: number,
   page: number,
   userId: string,
 ) => {
@@ -14,16 +15,15 @@ const updateReadingInDb = async (
     return null;
   }
 
-  let status = reading?.status ?? 'READING';
-  if (reading && page === reading.volume._count.pages - 1) {
-    status = 'READ';
-  }
+  const status = reading?.status ?? 'READING';
+  const newVolumeNum = (reading && page === reading.volume._count.pages - 1)
+    ? volumeNum + 1 : volumeNum;
 
   return prisma.reading.upsert({
     where: {
-      volumeUser: {
+      seriesUser: {
         userId,
-        volumeId,
+        seriesId,
       },
     },
     update: {
@@ -33,7 +33,8 @@ const updateReadingInDb = async (
     },
     create: {
       userId,
-      volumeId,
+      seriesId,
+      volumeNum: newVolumeNum,
       page,
       status,
       isActive: true,
@@ -42,21 +43,21 @@ const updateReadingInDb = async (
   });
 };
 
-export const updateReadingProgress = async (volumeId: number, page: number) => {
+export const updateReadingProgress = async (volumeNum: number, seriesId: number, page: number) => {
   const session = await getSession('POST');
   const { userId } = session.user;
   // If the page is less than four, maybe the user isn't actually reading
   // TODO: Maybe prompt them if they wanna start tracking.
   const reading = await prisma.reading.findUnique({
     where: {
-      volumeUser: {
+      seriesUser: {
         userId,
-        volumeId,
+        seriesId,
       },
       isActive: true,
     },
     select: ReadingSelectQuery,
   });
 
-  return updateReadingInDb(reading, volumeId, page, userId);
+  return updateReadingInDb(reading, volumeNum, seriesId, page, userId);
 };

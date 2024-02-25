@@ -9,6 +9,7 @@ type VolumeCardProps = {
   seriesName: string;
   volumeNumber: number;
   children?: React.ReactNode;
+  onClick?: () => void;
 };
 
 function VolumeCard({
@@ -19,9 +20,13 @@ function VolumeCard({
   seriesName,
   href,
   children,
+  onClick,
 }: VolumeCardProps) {
   return (
-    <div className="flex-initial m-2 shadow hover:shadow-lg w-[13.5rem] h-[20.25rem] readingcard card card-compact image-full bg-base-300">
+    <div
+      className="flex-initial m-2 border shadow hover:shadow-lg w-[13.5rem] h-[20.25rem] readingcard card card-compact image-full bg-base-300"
+      onClick={onClick}
+    >
       <figure className="overflow-hidden">
         {/* To optimize this we need to know the dimensions of the image */}
         {/* eslint-disable-next-line @next/next/no-img-element */}

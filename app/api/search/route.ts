@@ -64,7 +64,7 @@ export async function GET(request: NextRequest) {
     ) page
     JOIN "Volume" ON "Volume".id = "volumeId"
     JOIN "Series" ON "Series".id = "Volume"."seriesId"
-    LEFT JOIN "Reading" ON "Reading"."volumeId" = "Volume"."id" AND "Reading"."userId" = $2
+    LEFT JOIN "Reading" ON "Reading"."seriesId" = "Series"."id" AND "Reading"."userId" = $2
     ORDER BY isReading DESC, score, number ASC
     `;
 
