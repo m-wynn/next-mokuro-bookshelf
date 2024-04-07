@@ -3,6 +3,20 @@ name: Push Docker Image to Docker Hub
 on:
   push:
     branches: [ "main", "dev" ]
+    paths:
+      - "Dockerfile"
+      - "docker-compose.dev.yml"
+      - "docker-compose.prod.yml"
+      - 'package.json'
+      - 'package-lock.json'
+      - 'prisma/**'
+      - 'public/**'
+      - 'tailwind.config.js'
+      - 'tsconfig.json'
+      - '**/*.js'
+      - '**/*.ts'
+      - '**/*.tsx'
+      - '**/*.css'
 
 env:
   # Use docker.io for Docker Hub if empty
