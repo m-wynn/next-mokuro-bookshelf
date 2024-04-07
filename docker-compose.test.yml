@@ -1,0 +1,36 @@
+services:
+  next-mokuro-bookshelf:
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+      target: prod
+    container_name: next-mokuro-bookshelf
+    user: "1000"
+    ports:
+      - "3000:3000"
+      - "9229:9229"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - DB_URL=postgres://root:toor@db:5432/default
+    env_file:
+      - ./.env
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: always
+
+  db:
+    image: groonga/pgroonga:latest-debian-16
+    restart: always
+    environment:
+      POSTGRES_DB: default
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: toor
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U root"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
