@@ -54,7 +54,7 @@ export async function GET(request: NextRequest) {
         FROM "Page"
         INNER JOIN "Volume" ON "Volume".id = "Page"."volumeId"
         INNER JOIN "Series" ON "Series".id = "Volume"."seriesId"
-        WHERE ocr ->> 'blocks' &@ $1 ${nsfwFilter}
+        WHERE fulltext &@ $1 ${nsfwFilter}
       ),
       jsonb_array_elements(blocks::jsonb) WITH ORDINALITY AS t(block, block_number),
       jsonb_array_elements_text(block -> 'lines') AS line
