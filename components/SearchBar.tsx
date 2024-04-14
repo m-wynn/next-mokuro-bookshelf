@@ -91,7 +91,7 @@ export function SearchBar() {
         >
           {searchResults.map((item, index) => (
             <li
-              key={`${item.id}-${item.blockNumber}`}
+              key={`${item.pageId}-${item.blockNumber}`}
               tabIndex={index + 1}
               className="w-full border-b border-b-base-content/10"
             >

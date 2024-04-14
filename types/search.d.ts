@@ -1,6 +1,6 @@
 declare module 'search' {
   export interface SearchResult {
-    id: number;
+    pageId: number;
     number: number;
     volumeid: string;
     volumeNumber: number;

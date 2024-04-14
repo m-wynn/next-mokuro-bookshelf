@@ -27,8 +27,8 @@ export async function GET(request: NextRequest) {
     }
 
     const rawQuery = `
-    SELECT 
-      page.id,
+    SELECT
+      page.pageId,
       page.number,
       page."volumeId",
       "Volume".number AS "volumeNumber",
@@ -37,39 +37,41 @@ export async function GET(request: NextRequest) {
       "Series"."englishName" AS "englishName",
       text,
       score,
-      CASE WHEN "Reading".id IS NULL THEN false ELSE true END AS isReading,
-      CAST(block_number - 1 AS SMALLINT) AS "blockNumber"
+      CAST(block_number - 1 AS SMALLINT) AS "blockNumber",
+      isReading
     FROM (
       SELECT
-        id,
+        pageId,
         number,
         "volumeId",
         score,
         string_agg(line, '') text,
-        block_number
+        block_number,
+        isReading
       FROM (
         SELECT 
-          "Page".id,
+          "Page".id as pageId,
           "Page".number,
-          "volumeId",
+          "Page"."volumeId",
           ocr ->> 'blocks' blocks,
-          pgroonga_score("Page".tableoid, "Page".ctid) AS score
+          pgroonga_score("Page".tableoid, "Page".ctid) AS score,
+          CASE WHEN "Reading".id IS NULL THEN false ELSE true END AS isReading
         FROM "Page"
         INNER JOIN "Volume" ON "Volume".id = "Page"."volumeId"
         INNER JOIN "Series" ON "Series".id = "Volume"."seriesId"
+        LEFT JOIN "Reading" ON "Reading"."volumeId" = "Page"."volumeId" AND "Reading"."userId" = $2
         WHERE fulltext &@ $1 ${nsfwFilter}
       ),
       jsonb_array_elements(blocks::jsonb) WITH ORDINALITY AS t(block, block_number),
       jsonb_array_elements_text(block -> 'lines') AS line
       WHERE block &@ $1
-      GROUP BY id, number, "volumeId", block, score, block_number
+      GROUP BY pageId, number, "volumeId", block, score, block_number, isReading
+      ORDER BY isReading DESC, score DESC, "volumeId", number ASC
       LIMIT 20
       OFFSET $3
     ) page
     JOIN "Volume" ON "Volume".id = "volumeId"
     JOIN "Series" ON "Series".id = "Volume"."seriesId"
-    LEFT JOIN "Reading" ON "Reading"."volumeId" = "Volume"."id" AND "Reading"."userId" = $2
-    ORDER BY isReading DESC, score DESC, "volumeId", number ASC
     `;
 
     const pages: SearchResult[] = await prisma.$queryRawUnsafe(
