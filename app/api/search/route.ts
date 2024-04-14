@@ -13,6 +13,7 @@ export async function GET(request: NextRequest) {
   }
   const { searchParams } = new URL(request.url);
   const q = searchParams.get('q')?.trim();
+  const offset = parseInt(searchParams.get('offset') ?? '0', 10);
 
   if (q === '') {
     return NextResponse.json([]);
@@ -27,6 +28,7 @@ export async function GET(request: NextRequest) {
 
     const rawQuery = `
     SELECT 
+      page.id,
       page.number,
       page."volumeId",
       "Volume".number AS "volumeNumber",
@@ -39,6 +41,7 @@ export async function GET(request: NextRequest) {
       CAST(block_number - 1 AS SMALLINT) AS "blockNumber"
     FROM (
       SELECT
+        id,
         number,
         "volumeId",
         score,
@@ -61,14 +64,20 @@ export async function GET(request: NextRequest) {
       WHERE block &@ $1
       GROUP BY id, number, "volumeId", block, score, block_number
       LIMIT 20
+      OFFSET $3
     ) page
     JOIN "Volume" ON "Volume".id = "volumeId"
     JOIN "Series" ON "Series".id = "Volume"."seriesId"
     LEFT JOIN "Reading" ON "Reading"."volumeId" = "Volume"."id" AND "Reading"."userId" = $2
-    ORDER BY isReading DESC, score, number ASC
+    ORDER BY isReading DESC, score DESC, "volumeId", number ASC
     `;
 
-    const pages: SearchResult[] = await prisma.$queryRawUnsafe(rawQuery, q, session.user.userId);
+    const pages: SearchResult[] = await prisma.$queryRawUnsafe(
+      rawQuery,
+      q,
+      session.user.userId,
+      offset,
+    );
 
     if (pages == null) {
       return NextResponse.json({ error: 'No such lines' }, { status: 404 });
