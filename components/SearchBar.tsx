@@ -7,11 +7,30 @@ import { SearchResult } from 'search';
 export function SearchBar() {
   const [search, setSearch] = useState('');
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
+  const [offset, setOffset] = useState(0);
+  const [searchIsExhausted, setSearchIsExhausted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const [
     searchTimeoutId, setSearchTimeoutId,
   ] = useState<ReturnType<typeof setTimeout> | null>(null);
   const [searchAbortController, setSearchAbortController] = useState<AbortController | null>(null);
+
+  const onScroll = (event: any) => {
+    // visible height + pixel scrolled >= total height
+    if (event.target.offsetHeight + event.target.scrollTop >= event.target.scrollHeight) {
+      if (searchIsExhausted || isLoading) {
+        return;
+      }
+      setOffset(searchResults.length);
+    }
+  };
+
+  useEffect(() => {
+    setSearchResults([]);
+    setOffset(0);
+    setSearchIsExhausted(false);
+  }, [search]);
 
   useEffect(() => {
     (async () => {
@@ -19,23 +38,30 @@ export function SearchBar() {
         clearTimeout(searchTimeoutId);
       }
 
+      setIsLoading(true);
       const newTimeoutId = setTimeout(async () => {
         if (searchAbortController && !searchAbortController.signal.aborted) {
           searchAbortController.abort();
         }
         const newAbortController = new AbortController();
         setSearchAbortController(newAbortController);
-        await fetch(`/api/search?q=${search}`, { signal: newAbortController.signal })
+        await fetch(`/api/search?q=${search}&offset=${offset}`, { signal: newAbortController.signal })
           .then(async (results) => {
             setSearchAbortController(null);
-            setSearchResults(await results.json() as SearchResult[]);
+            const newResults = await results.json() as SearchResult[];
+            if (newResults.length === 0) {
+              setSearchIsExhausted(true);
+              return;
+            }
+            setSearchResults((originalSearchResults) => [...originalSearchResults, ...newResults]);
           })
-          .catch(() => {});
+          .catch(() => {})
+          .finally(() => { setIsLoading(false); });
       }, 300);
       setSearchTimeoutId(newTimeoutId);
     })();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [search]);
+  }, [search, offset]);
 
   return (
     <div className="w-full dropdown dropdown-end" id="search">
@@ -57,7 +83,7 @@ export function SearchBar() {
           }
         }}
       />
-      <div className="overflow-auto top-14 z-50 flex-col max-h-96 rounded-md w-[24rem] dropdown-content bg-base-300">
+      <div className="overflow-auto top-14 z-50 flex-col max-h-96 rounded-md w-[24rem] dropdown-content bg-base-300" onScroll={onScroll}>
         <ul
           className="menu menu-compact"
           // use ref to calculate the width of parent
@@ -65,7 +91,7 @@ export function SearchBar() {
         >
           {searchResults.map((item, index) => (
             <li
-              key={`${item.seriesId}-${item.volumeNumber}-${item.number}-${item.text}`}
+              key={`${item.pageId}-${item.blockNumber}`}
               tabIndex={index + 1}
               className="w-full border-b border-b-base-content/10"
             >
@@ -95,6 +121,13 @@ export function SearchBar() {
               </Link>
             </li>
           ))}
+          {isLoading && (
+            <li className="w-full">
+              <div className="flex flex-col">
+                <p className="center">Loading...</p>
+              </div>
+            </li>
+          )}
         </ul>
       </div>
     </div>
