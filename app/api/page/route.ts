@@ -35,6 +35,7 @@ export async function POST(request: NextRequest) {
 
   const fileData = Buffer.from(await file.arrayBuffer());
   const fileName = getFileHash(fileData);
+  const blockText = ocrData?.blocks.map((block: any) => block.lines.join('')) ?? [];
 
   await fs.writeFile(
     `${process.env.IMAGE_PATH}/${volumeId}/${fileName}`,
@@ -61,6 +62,7 @@ export async function POST(request: NextRequest) {
       ocr: ocrData,
       fileName,
       uploadedById: session.user.userId,
+      blockText,
     },
   });
 

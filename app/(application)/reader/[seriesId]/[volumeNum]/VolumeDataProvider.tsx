@@ -58,11 +58,13 @@ export default function VolumeDataProvider({
     return override;
   };
 
-  const initialPageNum = parseInt(useSearchParams().get('page') ?? '', 10) || null;
-  const initialHighlightBlock = parseInt(useSearchParams().get('block') ?? '', 10) || null;
+  const initialPageValue = useSearchParams().get('page');
+  const initialPageNum = initialPageValue !== null ? parseInt(initialPageValue, 10) : null;
+  const blockValue = useSearchParams().get('block');
+  const initialHighlightBlock = blockValue !== null ? parseInt(blockValue, 10) : null;
 
   const getCurrentPage = () => {
-    const page = initialPageNum ? initialPageNum - 1 : (volume.readings[0]?.page ?? 0);
+    const page = initialPageNum !== null ? initialPageNum - 1 : (volume.readings[0]?.page ?? 0);
     if (page > 0 && getUseTwoPages()) {
       if (getFirstPageIsCover() && page % 2 === 0) {
         return page - 1;
@@ -82,7 +84,7 @@ export default function VolumeDataProvider({
 
   const [currentPage, setCurrentPage] = useState(getCurrentPage());
   const [highlightBlock, setHighlightBlock] = useState<HighlightBlock>(
-    initialHighlightBlock ? {
+    initialHighlightBlock !== null ? {
       page: getCurrentPage(), block: initialHighlightBlock,
     } : null,
   );

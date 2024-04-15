@@ -1,5 +1,6 @@
 declare module 'search' {
   export interface SearchResult {
+    pageId: number;
     number: number;
     volumeid: string;
     volumeNumber: number;
@@ -7,7 +8,6 @@ declare module 'search' {
     japaneseName: string;
     englishName: string;
     text: string;
-    score: number;
     isReading: boolean;
     blockNumber: number;
   }
