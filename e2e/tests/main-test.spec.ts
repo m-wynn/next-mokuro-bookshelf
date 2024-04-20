@@ -1,30 +1,25 @@
 import { test, expect } from '@playwright/test';
 
+import { signup, login, get_username, get_password } from '../helper';
+
 const d = new Date();
 const time = d.getTime();
 
 test('Basic Signup', async ({ page, context }) => {
   const suffix = crypto.getRandomValues(new Uint32Array(1))[0];
   const username = `test_${time}_${suffix}`;
-  await page.goto('http://localhost:3000/login');
-  await page.getByRole('link', { name: 'Don\'t have an account? Sign up' }).click();
-
-  await expect(page.getByRole('heading')).toContainText('Sign Up');
-
-  await page.locator('input[name="username"]').fill(username);
-  await page.locator('input[name="password"]').fill('password123');
-  await page.locator('input[name="confirmPassword"]').fill('password123');
-  await page.locator('input[name="inviteCode"]').fill('123');
-  await page.getByRole('button', { name: 'Submit' }).click();
-  await expect(page.getByRole('navigation')).toContainText('Hondana');
+  const password = `${crypto.getRandomValues(new Uint32Array(1))[0]}`;
+  await signup(page, username, password);
 
   await context.clearCookies();
 
-  await page.goto('http://localhost:3000/login');
+  await login(page, username, password);
+});
 
-  await page.locator('input[name="username"]').fill(username);
-  await page.locator('input[name="password"]').fill('password123');
-  await page.getByRole('button', { name: 'Submit' }).click();
-
-  await expect(page.getByRole('navigation')).toContainText('Hondana');
+test('Admin Login', async ({ page, context }) => {
+  const username = await get_username();
+  const password = await get_password();
+  await login(page, username, password);
+  await page.getByRole('link').nth(3).click();
+  await expect(page.getByRole('heading')).toContainText('Admin');
 });
