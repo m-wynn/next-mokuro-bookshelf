@@ -134,7 +134,7 @@ export const getDirectoryVolumeData = (
 
   Object.keys(volumeDatas).forEach((volumeNum) => {
     const numericKey = parseInt(volumeNum, 10);
-    volumeDatas[numericKey].pageFiles.sort((a, b) => a.name.localeCompare(b.name));
+    volumeDatas[numericKey].pageFiles.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' }));
   });
 
   const volumes = Object.keys(volumeDatas).map((key) => {

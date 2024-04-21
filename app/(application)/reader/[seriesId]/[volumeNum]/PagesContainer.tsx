@@ -27,9 +27,11 @@ function DummyYomichanSentenceTerminator() {
   // This element is a hack to keep Yomitan at bay.
   // It adds one of the sentence termination characters to the DOM
   // but keeps it invisible so that it doesn't end up including the stuff
-  // before the beginning or after the end of the page containers
+  // before the beginning or after the end of the page containers.
+  // Chromium is smart enough to know that 'color:transparent' means that the content is not
+  // visible (so it's ignored), so we have to use a color that is almost transparent instead
   return (
-    <p className="dummyYomichanSentenceTerminator" style={{ position: 'absolute', color: 'transparent' }}>"</p>
+    <p className="dummyYomichanSentenceTerminator" style={{ position: 'absolute', color: 'rgba(255,255,255,0.01)', zIndex: '-1' }}>"</p>
   );
 }
 
