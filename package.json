@@ -14,7 +14,7 @@
     "@fortawesome/react-fontawesome": "^0.2.0",
     "@hookform/error-message": "^2.0.1",
     "@lucia-auth/adapter-prisma": "^3.0.2",
-    "@prisma/client": "^5.7.1",
+    "@prisma/client": "^5.13.0",
     "@supercharge/promise-pool": "^3.1.0",
     "lru-cache": "^10.1.0",
     "lucia": "^2.7.6",
