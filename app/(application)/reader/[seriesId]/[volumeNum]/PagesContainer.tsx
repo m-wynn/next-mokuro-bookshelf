@@ -232,9 +232,11 @@ export default function PagesContainer({
         }}
         wheel={{
           smoothStep: 0.001 * volumeData.zoomSensitivity,
-          excluded: ['leading-none', 'group'],
         }}
         zoomAnimation={{
+          disabled: true,
+        }}
+        doubleClick={{
           disabled: true,
         }}
         alignmentAnimation={{
