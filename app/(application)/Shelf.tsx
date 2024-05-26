@@ -11,6 +11,7 @@ import VolumeCard from '@/volumecard';
 import { ReadingStatus } from '@prisma/client';
 import { useGlobalContext } from 'app/(application)/GlobalContext';
 import type { Reading } from 'lib/reading';
+import AllUserProgressMenu from '@/AllUserProgressMenu';
 
 import React from 'react';
 
@@ -92,6 +93,7 @@ function Shelf({
                     </button>
                   </li>
                 )}
+                <AllUserProgressMenu volumeId={reading.volume.id} />
                 <li>
                   <button
                     type="button"

@@ -31,3 +31,15 @@ export const removeReading = async (id: number) => {
     select: ReadingSelectQuery,
   });
 };
+
+export const getAllUserProgress = async (volumeId: number) => {
+  'use server';
+
+  return prisma.reading.findMany({
+    where: {
+      volumeId,
+      isActive: true,
+    },
+    select: ReadingSelectQuery,
+  });
+};
