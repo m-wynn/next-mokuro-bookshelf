@@ -35,6 +35,8 @@ function Textbox({
         <div
           // eslint-disable-next-line react/no-array-index-key
           key={`${box[0]}-${box[1]}-${index}`}
+          contentEditable
+          suppressContentEditableWarning
           className="hidden mx-auto leading-none whitespace-nowrap select-text group-hover:inline-block"
           style={{
             color: 'black',
