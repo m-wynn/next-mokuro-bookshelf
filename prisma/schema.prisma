@@ -58,6 +58,7 @@ model Series {
   isNsfw       Boolean  @default(false)
   uploadedBy   User     @relation(fields: [uploadedById], references: [id])
   volumes      Volume[]
+  shortName    String   @default("")
 }
 
 model Volume {
@@ -113,13 +114,14 @@ model Reading {
 }
 
 model UserSetting {
-  id               Int     @id @default(autoincrement())
-  userId           String  @unique
-  useTwoPages      Boolean @default(false)
-  zoomSensitivity  Int     @default(1)
-  useJapaneseTitle Boolean @default(false)
-  showNsfwContent  Boolean @default(false)
-  user             User    @relation(fields: [userId], references: [id])
+  id                      Int     @id @default(autoincrement())
+  userId                  String  @unique
+  useTwoPages             Boolean @default(false)
+  zoomSensitivity         Int     @default(1)
+  useJapaneseTitle        Boolean @default(false)
+  showNsfwContent         Boolean @default(false)
+  customTitleFormatString String  @default("")
+  user                    User    @relation(fields: [userId], references: [id])
 }
 
 enum Role {

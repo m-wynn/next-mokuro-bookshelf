@@ -6,21 +6,22 @@ import {
   faMagnifyingGlass,
   faYenSign,
   faBan,
+  faCode,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Tooltip } from 'react-tooltip';
 import Checkbox from '@/checkbox';
+import FormInput from '@/FormInput';
 import type { UserSetting } from 'lib/userSetting';
 import { useGlobalContext } from 'app/(application)/GlobalContext';
 import {
-  updateUseTwoPages,
-  updateZoomSensitivity,
-  updateUseJapaneseTitle,
-  updateShowNsfwContent,
+  updateUserPreference,
 } from './functions';
 
 export default function Preferences() {
   const { userSettings, setUserSettings } = useGlobalContext();
   const setUserSetting = (setting: any) => {
+    updateUserPreference(setting);
     setUserSettings((original: UserSetting) => ({
       ...original,
       ...setting,
@@ -34,11 +35,32 @@ export default function Preferences() {
           <span className="text-2xl card-title">Preferences</span>
           <div className="w-full">
             <span className="text-xl font-bold">Reader</span>
+            <div className="flex form-control">
+              <Tooltip id="my-tooltip" place="right">
+                <div>You can use the following variables:</div>
+                <div>{'{seriesTitle} - Series title'}</div>
+                <div>{'{volumeNumber} - Volume number'}</div>
+                <div>{'{currentPage} - Current page. Formatted like 10,11 if showing two pages'}</div>
+                <div>{'{localizedVolumeNumber} - Localized volume number (ENG or JP)'}</div>
+                <div>{'{seriesShortTitle} - Shortened series title (2-4 characters)'}</div>
+              </Tooltip>
+              <label className="flex-row w-full cursor-pointer label" data-tooltip-id="my-tooltip">
+                <span className="flex-grow label-text">
+                  <FontAwesomeIcon icon={faCode} style={{ width: '14px' }} className="mr-4" />
+                  Custom Browser Tab Title Format
+                </span>
+                <FormInput
+                  defaultValue={userSettings?.customTitleFormatString}
+                  onEnter={async (value) => {
+                    setUserSetting({ customTitleFormatString: value });
+                  }}
+                />
+              </label>
+            </div>
             <Checkbox
               fa={faTableColumns}
               value={userSettings?.useTwoPages || false}
               set={(checked) => {
-                updateUseTwoPages(checked);
                 setUserSetting({ useTwoPages: checked });
               }}
             >
@@ -54,7 +76,6 @@ export default function Preferences() {
                 defaultValue={userSettings?.zoomSensitivity}
                 onChange={(e) => {
                   const sensitivity = +e.target.value;
-                  updateZoomSensitivity(sensitivity);
                   setUserSetting({ zoomSensitivity: sensitivity });
                 }}
               >
@@ -69,7 +90,6 @@ export default function Preferences() {
               fa={faYenSign}
               value={userSettings?.useJapaneseTitle || false}
               set={(checked) => {
-                updateUseJapaneseTitle(checked);
                 setUserSetting({ useJapaneseTitle: checked });
               }}
             >
@@ -79,7 +99,6 @@ export default function Preferences() {
               fa={faBan}
               value={userSettings?.showNsfwContent || false}
               set={(checked) => {
-                updateShowNsfwContent(checked);
                 setUserSetting({ showNsfwContent: checked });
               }}
             >

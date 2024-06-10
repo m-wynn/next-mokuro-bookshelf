@@ -6,6 +6,7 @@ export const UserSettingSelectQuery = {
   zoomSensitivity: true,
   useJapaneseTitle: true,
   showNsfwContent: true,
+  customTitleFormatString: true,
 } satisfies Prisma.UserSettingSelect;
 
 export type UserSetting = Prisma.UserSettingGetPayload<{
@@ -17,6 +18,7 @@ export const UserSettingsDefaultValues: UserSetting = {
   useJapaneseTitle: false,
   zoomSensitivity: 1,
   showNsfwContent: false,
+  customTitleFormatString: '',
 };
 
 export async function shouldShowNsfw(userId: string) {

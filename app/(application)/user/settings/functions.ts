@@ -8,9 +8,12 @@ interface UserPreferences {
   useTwoPages?: boolean;
   useJapaneseTitle?: boolean;
   showNsfwContent?: boolean;
+  customTitleFormatString?: string;
 }
 
-const updateUserPreference = async (userId: string, preferences: UserPreferences) => {
+export const updateUserPreference = async (preferences: UserPreferences) => {
+  const session = await getSession('POST');
+  const { userId } = session.user;
   await prisma.userSetting.upsert({
     where: {
       userId,
@@ -23,23 +26,4 @@ const updateUserPreference = async (userId: string, preferences: UserPreferences
       ...preferences,
     },
   });
-};
-export const updateUseTwoPages = async (useTwoPages: boolean) => {
-  const session = await getSession('POST');
-  await updateUserPreference(session.user.userId, { useTwoPages });
-};
-
-export const updateZoomSensitivity = async (zoomSensitivity: number) => {
-  const session = await getSession('POST');
-  await updateUserPreference(session.user.userId, { zoomSensitivity });
-};
-
-export const updateUseJapaneseTitle = async (useJapaneseTitle: boolean) => {
-  const session = await getSession('POST');
-  await updateUserPreference(session.user.userId, { useJapaneseTitle });
-};
-
-export const updateShowNsfwContent = async (showNsfwContent: boolean) => {
-  const session = await getSession('POST');
-  await updateUserPreference(session.user.userId, { showNsfwContent });
 };

@@ -21,6 +21,7 @@ const VolumeContext = createContext({
   useTwoPages,
   zoomSensitivity,
   seriesTitle: '',
+  seriesShortTitle: '',
   volumeNumber: 0,
   highlightBlock: null as HighlightBlock,
 });
@@ -76,7 +77,7 @@ export default function VolumeDataProvider({
   };
 
   const useJapaneseTitle = userSettings?.useJapaneseTitle ?? false;
-  const { japaneseName, englishName } = volume.series;
+  const { japaneseName, englishName, shortName } = volume.series;
   const seriesTitle = useJapaneseTitle && japaneseName ? japaneseName : englishName;
 
   const router = useRouter();
@@ -122,6 +123,7 @@ export default function VolumeDataProvider({
     firstPageIsCover: getFirstPageIsCover(),
     zoomSensitivity: getZoomSensitivity(),
     seriesTitle,
+    seriesShortTitle: shortName,
     volumeNumber: volume.number,
     useTracking,
     setUseTrackingAndReturn,
