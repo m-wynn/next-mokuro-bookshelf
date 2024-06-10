@@ -30,6 +30,7 @@ const VolumeSelectQuery = (userId: string) => ({
     select: {
       englishName: true,
       japaneseName: true,
+      shortName: true,
     },
   },
   pages: {

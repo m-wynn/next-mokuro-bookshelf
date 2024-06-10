@@ -35,6 +35,28 @@ function DummyYomichanSentenceTerminator() {
   );
 }
 
+function formatPageTitle(
+  volumeData: any,
+  currentPage: number,
+  showTwoPages: boolean,
+  userSettings: any,
+): string {
+  const { seriesTitle, volumeNumber, seriesShortTitle } = volumeData;
+  const { customTitleFormatString, useJapaneseTitle } = userSettings;
+  const realCurrentPage = currentPage + 1;
+  const localizedVolumeNumber = useJapaneseTitle ? `${volumeNumber}巻` : `Vol ${volumeNumber}`;
+
+  if (!customTitleFormatString) {
+    return `${seriesTitle} — ${localizedVolumeNumber} — ${realCurrentPage}${showTwoPages ? `,${realCurrentPage + 1}` : ''}`;
+  }
+  return customTitleFormatString
+    .replace('{seriesTitle}', seriesTitle)
+    .replace('{seriesShortTitle}', seriesShortTitle ?? '')
+    .replace('{localizedVolumeNumber}', localizedVolumeNumber)
+    .replace('{volumeNumber}', volumeNumber.toString())
+    .replace('{currentPage}', `${realCurrentPage}${showTwoPages ? `,${realCurrentPage + 1}` : ''}`);
+}
+
 export default function PagesContainer({
   volumeId,
   pages,
@@ -63,10 +85,13 @@ export default function PagesContainer({
   );
 
   useEffect(() => {
-    const { seriesTitle, volumeNumber } = volumeData;
-    const localizedVolumeNumber = userSettings?.useJapaneseTitle ? `${volumeNumber}巻` : `Vol ${volumeNumber}`;
-    document.title = `${seriesTitle} — ${localizedVolumeNumber} — ${currentPage}${showTwoPages ? `,${currentPage + 1}` : ''}`;
-  }, [currentPage, showTwoPages, userSettings?.useJapaneseTitle, volumeData]);
+    document.title = formatPageTitle(volumeData, currentPage, showTwoPages, userSettings);
+  }, [
+    currentPage,
+    showTwoPages,
+    userSettings,
+    volumeData,
+  ]);
 
   useEffect(() => {
     (async () => {
