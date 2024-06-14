@@ -37,7 +37,7 @@ function Textbox({
           key={`${box[0]}-${box[1]}-${index}`}
           contentEditable
           suppressContentEditableWarning
-          className="hidden mx-auto leading-none whitespace-nowrap select-text group-hover:inline-block"
+          className="hidden mx-auto leading-none whitespace-nowrap outline-none select-text group-hover:inline-block selection:bg-base-content"
           style={{
             color: 'black',
             fontSize: Math.min(Math.max(fontSize, minFontSize), maxFontSize),
