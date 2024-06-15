@@ -1,5 +1,59 @@
 import type { OcrBlock } from 'page';
-import React from 'react';
+import React, { useRef, useState, useEffect } from 'react';
+
+function TextLine({
+  children,
+  vertical,
+  fontSize,
+}: {
+  children: React.ReactNode;
+  vertical: OcrBlock['vertical'];
+  fontSize: number;
+}) {
+  const [isEditable, setIsEditable] = useState(false);
+  const divRef = useRef<HTMLDivElement | null>(null);
+
+  const minFontSize = 12;
+  const maxFontSize = 64;
+
+  useEffect(() => {
+    const handleClickOutside = (event: any) => {
+      if (divRef.current && !divRef.current.contains(event.target)) {
+        setIsEditable(false);
+      }
+    };
+
+    document.addEventListener('click', handleClickOutside, true);
+
+    return () => {
+      document.removeEventListener('click', handleClickOutside, true);
+    };
+  }, []);
+
+  return (
+    // eslint-disable-next-line jsx-a11y/click-events-have-key-events
+    <div
+      ref={divRef}
+      contentEditable={isEditable}
+      suppressContentEditableWarning
+      onClick={() => {
+        setIsEditable(true);
+      }}
+      tabIndex={0}
+      role="textbox"
+      aria-label="Editable content"
+      aria-multiline="true"
+      className="hidden mx-auto leading-none whitespace-nowrap outline-none select-text group-hover:inline-block selection:bg-base-content"
+      style={{
+        color: 'black',
+        fontSize: Math.min(Math.max(fontSize, minFontSize), maxFontSize),
+        writingMode: vertical ? 'vertical-rl' : 'horizontal-tb',
+      }}
+    >
+      {children}
+    </div>
+  );
+}
 
 function Textbox({
   box,
@@ -14,8 +68,6 @@ function Textbox({
   lines: OcrBlock['lines'];
   highlight: boolean;
 }) {
-  const minFontSize = 12;
-  const maxFontSize = 64;
   return (
     <div
       className="flex absolute justify-between hover:bg-white group textBox"
@@ -32,20 +84,8 @@ function Textbox({
       }}
     >
       {lines.map((line: string, index) => (
-        <div
-          // eslint-disable-next-line react/no-array-index-key
-          key={`${box[0]}-${box[1]}-${index}`}
-          contentEditable
-          suppressContentEditableWarning
-          className="hidden mx-auto leading-none whitespace-nowrap outline-none select-text group-hover:inline-block selection:bg-base-content"
-          style={{
-            color: 'black',
-            fontSize: Math.min(Math.max(fontSize, minFontSize), maxFontSize),
-            writingMode: vertical ? 'vertical-rl' : 'horizontal-tb',
-          }}
-        >
-          {line}
-        </div>
+        // eslint-disable-next-line react/no-array-index-key
+        <TextLine fontSize={fontSize} key={`${box[0]}-${box[1]}-${index}`} vertical={vertical}>{line}</TextLine>
       ))}
     </div>
   );
