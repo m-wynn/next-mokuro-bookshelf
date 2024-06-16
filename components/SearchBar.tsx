@@ -1,10 +1,13 @@
 'use client';
 
+import { UserSetting } from 'lib/userSetting';
 import Link from 'next/link';
 import React, { useEffect, useRef, useState } from 'react';
 import { SearchResult } from 'search';
 
-export function SearchBar() {
+export function SearchBar({ userSettings }: { userSettings: UserSetting }) {
+  const useJapaneseTitle = userSettings?.useJapaneseTitle ?? false;
+
   const [search, setSearch] = useState('');
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const [offset, setOffset] = useState(0);
@@ -105,7 +108,7 @@ export function SearchBar() {
                 }}
               >
                 <div className="flex flex-row justify-between w-full">
-                  <p className="text-xl text-left">{item.englishName}</p>
+                  <p className="text-xl text-left">{useJapaneseTitle ? item.japaneseName : item.englishName}</p>
                   <p className="text-lg text-right">
                     {' '}
                     Vol

@@ -15,7 +15,7 @@ import { SearchBar } from '@/SearchBar';
 import { useGlobalContext } from './GlobalContext';
 
 function Navbar({ session }: { session: Session }) {
-  const { fullScreen } = useGlobalContext();
+  const { fullScreen, userSettings } = useGlobalContext();
   // Light/Dark theme is still handled by the theme-controller input in the navbar
   // So we have to keep it in the DOM
   return (
@@ -31,7 +31,7 @@ function Navbar({ session }: { session: Session }) {
       </div>
       <div className="flex-none gap-2">
         <div className="form-control">
-          <SearchBar />
+          <SearchBar userSettings={userSettings} />
         </div>
         <div className="tooltip tooltip-bottom" data-tip="Browse All Books">
           <Link
