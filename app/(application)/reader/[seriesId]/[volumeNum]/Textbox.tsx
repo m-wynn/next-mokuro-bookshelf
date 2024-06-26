@@ -4,46 +4,27 @@ import React, { useRef, useState, useEffect } from 'react';
 function TextLine({
   children,
   vertical,
+  isEditable,
   fontSize,
 }: {
   children: React.ReactNode;
   vertical: OcrBlock['vertical'];
+  isEditable: boolean;
   fontSize: number;
 }) {
-  const [isEditable, setIsEditable] = useState(false);
-  const divRef = useRef<HTMLDivElement | null>(null);
-
   const minFontSize = 12;
   const maxFontSize = 64;
-
-  useEffect(() => {
-    const handleClickOutside = (event: any) => {
-      if (divRef.current && !divRef.current.contains(event.target)) {
-        setIsEditable(false);
-      }
-    };
-
-    document.addEventListener('click', handleClickOutside, true);
-
-    return () => {
-      document.removeEventListener('click', handleClickOutside, true);
-    };
-  }, []);
 
   return (
     // eslint-disable-next-line jsx-a11y/click-events-have-key-events
     <div
-      ref={divRef}
       contentEditable={isEditable}
       suppressContentEditableWarning
-      onClick={() => {
-        setIsEditable(true);
-      }}
       tabIndex={0}
       role="textbox"
       aria-label="Editable content"
       aria-multiline="true"
-      className="hidden mx-auto leading-none whitespace-nowrap outline-none select-text group-hover:inline-block selection:bg-base-content"
+      className={`${isEditable ? 'inline-block' : 'hidden'} mx-auto leading-none whitespace-nowrap outline-none select-text group-hover:inline-block selection:bg-base-content`}
       style={{
         color: 'black',
         fontSize: Math.min(Math.max(fontSize, minFontSize), maxFontSize),
@@ -68,9 +49,33 @@ function Textbox({
   lines: OcrBlock['lines'];
   highlight: boolean;
 }) {
+  const [isEditable, setIsEditable] = useState(false);
+
+  const divRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: any) => {
+      if (divRef.current && !divRef.current.contains(event.target)) {
+        setIsEditable(false);
+      }
+    };
+
+    document.addEventListener('click', handleClickOutside, true);
+
+    return () => {
+      document.removeEventListener('click', handleClickOutside, true);
+    };
+  }, []);
+
   return (
+    // eslint-disable-next-line max-len
+    // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
     <div
-      className="flex absolute justify-between hover:bg-white group textBox"
+      ref={divRef}
+      onClick={() => {
+        setIsEditable(true);
+      }}
+      className={`${isEditable ? 'bg-white' : 'hover:bg-white'} flex absolute justify-between group textBox`}
       style={{
         left: box[0],
         top: box[1],
@@ -85,7 +90,7 @@ function Textbox({
     >
       {lines.map((line: string, index) => (
         // eslint-disable-next-line react/no-array-index-key
-        <TextLine fontSize={fontSize} key={`${box[0]}-${box[1]}-${index}`} vertical={vertical}>{line}</TextLine>
+        <TextLine fontSize={fontSize} key={`${box[0]}-${box[1]}-${index}`} vertical={vertical} isEditable={isEditable}>{line}</TextLine>
       ))}
     </div>
   );
