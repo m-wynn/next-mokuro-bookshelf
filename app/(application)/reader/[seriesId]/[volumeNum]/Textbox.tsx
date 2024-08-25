@@ -42,12 +42,14 @@ function Textbox({
   vertical,
   lines,
   highlight,
+  setIsEditing,
 }: {
   box: OcrBlock['box'];
   fontSize: number;
   vertical: OcrBlock['vertical'];
   lines: OcrBlock['lines'];
   highlight: boolean;
+  setIsEditing: (value: boolean) => void;
 }) {
   const [isEditable, setIsEditable] = useState(false);
 
@@ -57,15 +59,18 @@ function Textbox({
     const handleClickOutside = (event: any) => {
       if (divRef.current && !divRef.current.contains(event.target)) {
         setIsEditable(false);
+        setIsEditing(false);
       }
     };
 
     document.addEventListener('click', handleClickOutside, true);
 
     return () => {
+      setIsEditable(false);
+      setIsEditing(false);
       document.removeEventListener('click', handleClickOutside, true);
     };
-  }, []);
+  }, [setIsEditing]);
 
   return (
     // eslint-disable-next-line max-len
@@ -74,6 +79,7 @@ function Textbox({
       ref={divRef}
       onClick={() => {
         setIsEditable(true);
+        setIsEditing(true);
       }}
       className={`${isEditable ? 'bg-white' : 'hover:bg-white'} flex absolute justify-between group textBox`}
       style={{

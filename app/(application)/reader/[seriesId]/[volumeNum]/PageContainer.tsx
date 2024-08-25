@@ -5,11 +5,13 @@ import Textbox from './Textbox';
 import type { Page } from './page';
 
 function PageContainer({
+  setIsEditing,
   page,
   preloads,
   getImageUri,
   highlightBlock,
 }: {
+  setIsEditing: (value: boolean) => void;
   page: Page;
   preloads: Page[];
   getImageUri: (id: number) => string;
@@ -51,6 +53,7 @@ function PageContainer({
         ))}
         {page.ocr.blocks.map((block: OcrBlock, index: number) => (
           <Textbox
+            setIsEditing={setIsEditing}
             key={block.box.join(',')}
             box={block.box}
             fontSize={block.font_size}
