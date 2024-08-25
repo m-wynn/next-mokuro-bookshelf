@@ -76,6 +76,7 @@ export default function PagesContainer({
   const layoutChanged = useRef({ useTwoPages, firstPageIsCover }).current;
   const { fullScreen, setFullScreen, setAllReadings } = useGlobalContext();
   const { userSettings } = useGlobalContext();
+  const [isEditing, setIsEditing] = useState(false);
 
   const showTwoPages = useMemo(
     () => useTwoPages
@@ -156,18 +157,20 @@ export default function PagesContainer({
       // eslint-disable-next-line default-case
       switch (e.key) {
         case 'ArrowLeft':
+          if (isEditing) { return; }
           e.preventDefault();
           e.stopPropagation();
           setBoundPage(currentPage - (showTwoPages ? 2 : 1));
           break;
         case 'ArrowRight':
+          if (isEditing) { return; }
           e.preventDefault();
           e.stopPropagation();
           setBoundPage(currentPage + (showTwoPages ? 2 : 1));
           break;
       }
     },
-    [setBoundPage, currentPage, showTwoPages],
+    [setBoundPage, currentPage, showTwoPages, isEditing],
   );
 
   useEffect(() => {
@@ -279,6 +282,7 @@ export default function PagesContainer({
           <div id="visiblePagesContainer" className="flex flex-row flex-nowrap">
             {showTwoPages ? (
               <PageContainer
+                setIsEditing={setIsEditing}
                 page={pages[currentPage + 1]}
                 preloads={[]}
                 getImageUri={getImageUri}
@@ -290,6 +294,7 @@ export default function PagesContainer({
               />
             ) : null}
             <PageContainer
+              setIsEditing={setIsEditing}
               page={page}
               preloads={(showTwoPages ? [2, 3, 4] : [1, 2])
                 .map((i) => currentPage + i)
