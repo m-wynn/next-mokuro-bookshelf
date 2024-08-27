@@ -5,8 +5,12 @@ import VolumeCard from '@/volumecard';
 import { Series } from '@prisma/client';
 import { useEffect, useState } from 'react';
 import { UseFormSetValue } from 'react-hook-form';
+<<<<<<< Updated upstream
 import type { FormChild, VolumeFields } from './types';
 import SeriesSelect from './seriesselect';
+=======
+import { FormChild, VolumeFields } from './page';
+>>>>>>> Stashed changes
 
 export default function Info({
   errors,

@@ -37,9 +37,26 @@ export default function VolumeDataProvider({
   children: React.ReactNode;
   volume: Volume;
 }) {
+<<<<<<< Updated upstream
   const { userSettings } = useGlobalContext();
 
   const getZoomSensitivity = () => userSettings?.zoomSensitivity ?? 1;
+=======
+  const getZoomSensitivity = () => userSetting?.zoomSensitivity ?? 1;
+
+  const getCurrentPage = () => {
+    const page = volume.readings[0]?.page ?? 0;
+    if (
+      page > 0
+      && getUseTwoPages()
+      && getFirstPageIsCover()
+      && page % 2 == 0
+    ) {
+      return page - 1;
+    }
+    return page;
+  };
+>>>>>>> Stashed changes
 
   const getUseTwoPages = () => {
     const defaultSetting = !!userSettings?.useTwoPages;

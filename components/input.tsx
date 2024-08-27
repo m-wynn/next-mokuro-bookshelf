@@ -7,7 +7,11 @@ import {
   UseFormRegisterReturn,
 } from 'react-hook-form';
 
+<<<<<<< Updated upstream
 function Input({
+=======
+export default function Input({
+>>>>>>> Stashed changes
   label,
   errors,
   register,

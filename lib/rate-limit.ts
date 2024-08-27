@@ -22,11 +22,15 @@ export default function rateLimit(options?: Options) {
       const currentUsage = tokenCount[0];
       const isRateLimited = currentUsage >= limit;
 
+<<<<<<< Updated upstream
       if (isRateLimited) {
         reject();
       } else {
         resolve();
       }
+=======
+      return isRateLimited ? reject() : resolve();
+>>>>>>> Stashed changes
     }),
   };
 }

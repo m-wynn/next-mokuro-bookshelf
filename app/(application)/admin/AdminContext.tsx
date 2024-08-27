@@ -1,7 +1,11 @@
 'use client';
 
 import { Series } from '@prisma/client';
+<<<<<<< Updated upstream
 import React, {
+=======
+import {
+>>>>>>> Stashed changes
   createContext, useContext, useState, Dispatch,
 } from 'react';
 

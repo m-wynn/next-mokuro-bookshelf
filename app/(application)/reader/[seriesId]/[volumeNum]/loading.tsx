@@ -1,5 +1,11 @@
 'use client';
 
+<<<<<<< Updated upstream
+=======
+import React from 'react';
+import { useGlobalContext } from 'app/(application)/GlobalContext';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+>>>>>>> Stashed changes
 import { faMaximize } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useGlobalContext } from 'app/(application)/GlobalContext';
@@ -8,7 +14,11 @@ import Pagination from './Pagination';
 import Settings from './Settings';
 
 export function Loading() {
+<<<<<<< Updated upstream
   const { fullScreen, setFullScreen } = useGlobalContext();
+=======
+  const { fullScreen, setFullScreen, setAllReadings } = useGlobalContext();
+>>>>>>> Stashed changes
   return (
     <div
       id="pagesContainer"

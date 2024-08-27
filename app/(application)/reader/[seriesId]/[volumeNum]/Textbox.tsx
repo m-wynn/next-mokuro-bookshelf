@@ -1,6 +1,7 @@
 import type { OcrBlock } from 'page';
 import React, { useRef, useState, useEffect } from 'react';
 
+<<<<<<< Updated upstream
 function TextLine({
   children,
   vertical,
@@ -19,6 +20,7 @@ function TextLine({
     // eslint-disable-next-line jsx-a11y/click-events-have-key-events
     <div
       contentEditable={isEditable}
+      inputMode={isEditable ? 'text' : undefined}
       suppressContentEditableWarning
       tabIndex={0}
       role="textbox"
@@ -37,6 +39,9 @@ function TextLine({
 }
 
 function Textbox({
+=======
+export function Textbox({
+>>>>>>> Stashed changes
   box,
   fontSize,
   vertical,
@@ -47,6 +52,7 @@ function Textbox({
   fontSize: number;
   vertical: OcrBlock['vertical'];
   lines: OcrBlock['lines'];
+<<<<<<< Updated upstream
   highlight: boolean;
 }) {
   const [isEditable, setIsEditable] = useState(false);
@@ -67,6 +73,11 @@ function Textbox({
     };
   }, []);
 
+=======
+}) {
+  const minFontSize = 12;
+  const maxFontSize = 64;
+>>>>>>> Stashed changes
   return (
     // eslint-disable-next-line max-len
     // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions

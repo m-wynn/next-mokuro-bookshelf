@@ -1,7 +1,12 @@
 import { useEffect, useState } from 'react';
 import Input from '@/input';
+<<<<<<< Updated upstream
 import type { OcrPage } from 'page';
 import type { FormChild } from './types';
+=======
+import { OcrPage } from 'page';
+import { FormChild } from './page';
+>>>>>>> Stashed changes
 
 function readFile(file: File) {
   return new Promise((resolve, reject) => {
@@ -28,7 +33,11 @@ export default function Ocr({
     const parseFiles = async (files: FileList) => {
       const fileMap = (
         await Promise.all(
+<<<<<<< Updated upstream
           Array.from(files).map(async (ocrFile) => ({
+=======
+          Array.from(ocrFiles).map(async (ocrFile) => ({
+>>>>>>> Stashed changes
             [ocrFile.name]: JSON.parse((await readFile(ocrFile)) as string),
           })),
         )

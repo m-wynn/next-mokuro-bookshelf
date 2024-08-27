@@ -1,4 +1,5 @@
 'use client';
+<<<<<<< Updated upstream
 
 import React, { useCallback, useMemo } from 'react';
 import VolumeCard from '@/volumecard';
@@ -24,6 +25,19 @@ export function AllBooks({ series }: { series: SeriesPayload[] }) {
   return (
     <>
       {filteredSeries.map(({
+=======
+
+import React from 'react';
+import VolumeCard from '@/volumecard';
+import { SeriesPayload } from './page';
+import { useGlobalContext } from '../GlobalContext';
+
+export function AllBooks({ series }: { series: SeriesPayload[] }) {
+  const { useJapaneseTitle } = useGlobalContext();
+  return (
+    <>
+      {series.map(({
+>>>>>>> Stashed changes
         japaneseName, englishName, id, volumes,
       }) => {
         const name = useJapaneseTitle && japaneseName ? japaneseName : englishName;

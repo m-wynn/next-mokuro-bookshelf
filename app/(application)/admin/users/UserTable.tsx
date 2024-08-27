@@ -21,7 +21,11 @@ function UserTable({
     <table className="table bg-base-200">
       <thead>
         <tr>
+<<<<<<< Updated upstream
           <th aria-label="Index"></th>
+=======
+          <th />
+>>>>>>> Stashed changes
           <th>Name</th>
           <th>Role</th>
           <th>Created At</th>

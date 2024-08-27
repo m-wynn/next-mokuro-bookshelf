@@ -142,8 +142,13 @@ export default function Pagination({
           defaultValue={oneIndexedPage}
           doublePage={
             useTwoPages
+<<<<<<< Updated upstream
             && !(firstPageIsCover && currentPage === 0)
             && currentPage !== pageCount - 1
+=======
+            && !(firstPageIsCover && currentPage == 0)
+            && currentPage != pageCount - 1
+>>>>>>> Stashed changes
               ? oneIndexedPage + 1
               : null
           }
@@ -224,3 +229,51 @@ export default function Pagination({
     </>
   );
 }
+<<<<<<< Updated upstream
+=======
+
+function EnterInput({
+  className,
+  defaultValue,
+  doublePage,
+  onSubmit,
+}: {
+  className: string;
+  defaultValue: number;
+  doublePage: number | null;
+  onSubmit: (value: number) => void;
+}) {
+  const [value, setValue] = useState(defaultValue);
+  useEffect(() => {
+    setValue(defaultValue);
+  }, [defaultValue]);
+  return (
+    <>
+      <input
+        type="number"
+        pattern="[0-9]*"
+        className={`${className} ${doublePage ? 'h-1/2' : 'h-full'}`}
+        placeholder="pg"
+        value={value}
+        onFocus={(_) => setValue(value)}
+        onChange={(e) => {
+          setValue(e.target.validity.valid ? parseInt(e.target.value) : value);
+        }}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            onSubmit(value);
+            if (document.activeElement instanceof HTMLElement) {
+              document.activeElement.blur();
+            }
+          }
+        }}
+      />
+      {doublePage && (
+        <div className="p-0 m-0 w-full h-1/2 text-center text-top">
+          {value + 1}
+        </div>
+      )}
+    </>
+  );
+}
+>>>>>>> Stashed changes

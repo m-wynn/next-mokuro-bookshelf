@@ -3,7 +3,10 @@ import { redirect } from 'next/navigation';
 import { auth } from 'auth/lucia';
 import prisma from 'db';
 import { ReadingSelectQuery } from 'lib/reading';
+<<<<<<< Updated upstream
 import { UserSettingSelectQuery } from 'lib/userSetting';
+=======
+>>>>>>> Stashed changes
 import GlobalDataProvider from './GlobalContext';
 import Navbar from './navbar';
 

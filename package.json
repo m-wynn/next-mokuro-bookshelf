@@ -36,7 +36,10 @@
     "daisyui": "^4.4.24",
     "eslint": "8.56.0",
     "eslint-config-airbnb": "^19.0.4",
+<<<<<<< Updated upstream
     "eslint-config-airbnb-typescript": "^17.1.0",
+=======
+>>>>>>> Stashed changes
     "eslint-config-next": "^14.0.4",
     "eslint-import-resolver-typescript": "^3.6.1",
     "eslint-plugin-import": "^2.29.1",

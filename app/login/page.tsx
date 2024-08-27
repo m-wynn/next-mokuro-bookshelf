@@ -1,6 +1,9 @@
 'use client';
 
+<<<<<<< Updated upstream
 import React, { useState } from 'react';
+=======
+>>>>>>> Stashed changes
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
 import Input from '@/input';
@@ -24,6 +27,15 @@ export default function Register() {
 
     if (response.status === 200) {
       return router.push('/');
+<<<<<<< Updated upstream
+=======
+    }
+    try {
+      const data = await response.json();
+      setError(data.error);
+    } catch (error) {
+      setError('An error occurred');
+>>>>>>> Stashed changes
     }
     try {
       const json = await response.json();

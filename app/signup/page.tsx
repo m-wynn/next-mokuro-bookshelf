@@ -25,6 +25,15 @@ export default function Register() {
 
     if (response.status === 201) {
       return router.push('/');
+<<<<<<< Updated upstream
+=======
+    }
+    try {
+      const data = await response.json();
+      setError(data.error);
+    } catch (error) {
+      setError('An error occurred');
+>>>>>>> Stashed changes
     }
     try {
       const json = await response.json();

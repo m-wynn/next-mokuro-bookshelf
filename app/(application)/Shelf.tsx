@@ -30,9 +30,13 @@ function Shelf({
   updateReadingStatus,
   removeReading,
 }: ShelfProps) {
+<<<<<<< Updated upstream
   const { userSettings } = useGlobalContext();
   const useJapaneseTitle = userSettings?.useJapaneseTitle ?? false;
 
+=======
+  const { useJapaneseTitle } = useGlobalContext();
+>>>>>>> Stashed changes
   return (
     <div className="p-4 m-4 shadow-lg bg-base-200">
       <h1 className="mb-4 text-4xl font-bold text">{title}</h1>
@@ -59,7 +63,10 @@ function Shelf({
                 {reading.status !== ReadingStatus.UNREAD && (
                   <li>
                     <button
+<<<<<<< Updated upstream
                       type="button"
+=======
+>>>>>>> Stashed changes
                       onClick={() => updateReadingStatus(reading.id, ReadingStatus.UNREAD)}
                     >
                       <FontAwesomeIcon icon={faBook} />
@@ -71,7 +78,10 @@ function Shelf({
                 {reading.status !== ReadingStatus.READING && (
                   <li>
                     <button
+<<<<<<< Updated upstream
                       type="button"
+=======
+>>>>>>> Stashed changes
                       onClick={() => updateReadingStatus(reading.id, ReadingStatus.READING)}
                     >
                       <FontAwesomeIcon icon={faBookOpen} />
@@ -83,7 +93,10 @@ function Shelf({
                 {reading.status !== ReadingStatus.READ && (
                   <li>
                     <button
+<<<<<<< Updated upstream
                       type="button"
+=======
+>>>>>>> Stashed changes
                       onClick={() => updateReadingStatus(reading.id, ReadingStatus.READ)}
                     >
                       <FontAwesomeIcon icon={faCheck} />
@@ -93,10 +106,14 @@ function Shelf({
                   </li>
                 )}
                 <li>
+<<<<<<< Updated upstream
                   <button
                     type="button"
                     onClick={() => removeReading(reading.id)}
                   >
+=======
+                  <button onClick={() => removeReading(reading.id)}>
+>>>>>>> Stashed changes
                     <FontAwesomeIcon icon={faTrash} />
                     {' '}
                     Remove

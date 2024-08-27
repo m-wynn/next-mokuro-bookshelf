@@ -9,18 +9,27 @@ import {
   TransformWrapper,
 } from 'react-zoom-pan-pinch';
 
+<<<<<<< Updated upstream
 import {
   faEye, faMask, faMaximize, faMinimize,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useGlobalContext } from 'app/(application)/GlobalContext';
 import type { Reading } from 'lib/reading';
+=======
+import { useGlobalContext } from 'app/(application)/GlobalContext';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faMaximize } from '@fortawesome/free-solid-svg-icons';
+import { Reading } from 'lib/reading';
+import Pagination from './Pagination';
+>>>>>>> Stashed changes
 import PageContainer from './PageContainer';
 import Pagination from './Pagination';
 import Settings from './Settings';
 
 import { useVolumeContext } from './VolumeDataProvider';
 import { updateReadingProgress } from './functions';
+<<<<<<< Updated upstream
 import type { Page } from './page';
 
 function DummyYomichanSentenceTerminator() {
@@ -56,6 +65,8 @@ function formatPageTitle(
     .replace('{volumeNumber}', volumeNumber.toString())
     .replace('{currentPage}', `${realCurrentPage}${showTwoPages ? `,${realCurrentPage + 1}` : ''}`);
 }
+=======
+>>>>>>> Stashed changes
 
 export default function PagesContainer({
   volumeId,
@@ -150,6 +161,16 @@ export default function PagesContainer({
 
   const transformComponentRef = useRef<ReactZoomPanPinchRef | null>(null);
 
+<<<<<<< Updated upstream
+=======
+  const showTwoPages = useMemo(
+    () => useTwoPages
+      && currentPage < pages.length - 1
+      && (!firstPageIsCover || currentPage > 0),
+    [useTwoPages, currentPage, pages, firstPageIsCover],
+  );
+
+>>>>>>> Stashed changes
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
       // We only care about keys we specifically define
@@ -309,3 +330,15 @@ export default function PagesContainer({
     </div>
   );
 }
+<<<<<<< Updated upstream
+=======
+
+function DummyYomichanSentenceTerminator() {
+  // This element is a hack to keep Yomitan at bay. It adds one of the sentence termination characters
+  // to the DOM but keeps it invisible so that it doesn't end up including the stuff before the beginning
+  // or after the end of the page containers
+  return (
+    <p className="dummyYomichanSentenceTerminator" style={{ position: 'absolute', color: 'transparent' }}>"</p>
+  );
+}
+>>>>>>> Stashed changes

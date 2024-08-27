@@ -1,8 +1,14 @@
 import React from 'react';
 import Image from 'next/image';
+<<<<<<< Updated upstream
 import type { OcrBlock } from 'page';
 import Textbox from './Textbox';
 import type { Page } from './page';
+=======
+import { OcrBlock } from 'page';
+import Textbox from './Textbox';
+import { Page } from './page';
+>>>>>>> Stashed changes
 
 function PageContainer({
   page,
@@ -13,7 +19,10 @@ function PageContainer({
   page: Page;
   preloads: Page[];
   getImageUri: (id: number) => string;
+<<<<<<< Updated upstream
   highlightBlock?: number;
+=======
+>>>>>>> Stashed changes
 }) {
   return page ? (
     <div className="inline-flex relative page">

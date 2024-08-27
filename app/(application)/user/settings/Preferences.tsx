@@ -1,6 +1,10 @@
 'use client';
 
+<<<<<<< Updated upstream
 import React from 'react';
+=======
+import React, { useState } from 'react';
+>>>>>>> Stashed changes
 import {
   faTableColumns,
   faMagnifyingGlass,
@@ -11,11 +15,19 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Tooltip } from 'react-tooltip';
 import Checkbox from '@/checkbox';
+<<<<<<< Updated upstream
 import FormInput from '@/FormInput';
 import type { UserSetting } from 'lib/userSetting';
 import { useGlobalContext } from 'app/(application)/GlobalContext';
 import {
   updateUserPreference,
+=======
+import { UserSetting } from 'lib/userSetting';
+import {
+  updateUseTwoPages,
+  updateZoomSensitivity,
+  updateUseJapaneseTitle,
+>>>>>>> Stashed changes
 } from './functions';
 
 export default function Preferences() {

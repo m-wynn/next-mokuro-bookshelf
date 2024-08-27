@@ -3,6 +3,29 @@
 import { ReadingSelectQuery, Reading } from 'lib/reading';
 import prisma from 'db';
 import { getSession } from 'lib/session';
+<<<<<<< Updated upstream
+=======
+import { revalidatePath } from 'next/cache';
+
+export const updateReadingProgress = async (volumeId: number, page: number) => {
+  const session = await getSession('POST');
+  const { userId } = session.user;
+  // If the page is less than four, maybe the user isn't actually reading
+  // TODO: Maybe prompt them if they wanna start tracking.
+  const reading = await prisma.reading.findUnique({
+    where: {
+      volumeUser: {
+        userId,
+        volumeId,
+      },
+      isActive: true,
+    },
+    select: ReadingSelectQuery,
+  });
+
+  return await updateReadingInDb(reading, volumeId, page, userId);
+};
+>>>>>>> Stashed changes
 
 const updateReadingInDb = async (
   reading: Reading | null,

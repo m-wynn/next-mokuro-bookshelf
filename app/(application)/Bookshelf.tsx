@@ -3,12 +3,17 @@
 import { faTriangleExclamation } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Link from 'next/link';
+<<<<<<< Updated upstream
 import React, { useMemo, useCallback } from 'react';
 import { ReadingStatus } from '@prisma/client';
 import type { Reading } from 'lib/reading';
 import Shelf from './Shelf';
+=======
+import React, { useMemo } from 'react';
+>>>>>>> Stashed changes
 
 import { useGlobalContext } from './GlobalContext';
+<<<<<<< Updated upstream
 import { updateReadingStatus, removeReading } from './functions';
 
 function Bookshelf() {
@@ -38,6 +43,27 @@ function Bookshelf() {
       (reading) => reading.status === 'READ' && canUserSeeIfNsfw(reading),
     ) as unknown as Reading[],
     [allReadings, canUserSeeIfNsfw],
+=======
+import Shelf from './Shelf';
+import { removeReading, updateReadingStatus } from './functions';
+
+export function Bookshelf() {
+  const { allReadings, setAllReadings } = useGlobalContext();
+
+  const inProgress = useMemo(
+    () => allReadings.filter(
+      (reading) => reading.status === 'READING',
+    ) as Reading[],
+    [allReadings],
+  );
+  const unread = useMemo(
+    () => allReadings.filter((reading) => reading.status === 'UNREAD') as Reading[],
+    [allReadings],
+  );
+  const read = useMemo(
+    () => allReadings.filter((reading) => reading.status === 'READ') as Reading[],
+    [allReadings],
+>>>>>>> Stashed changes
   );
 
   const updateReadingStatusAndState = async (

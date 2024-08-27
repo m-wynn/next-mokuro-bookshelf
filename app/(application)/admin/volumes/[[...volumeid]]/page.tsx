@@ -1,8 +1,12 @@
 'use client';
 
+<<<<<<< Updated upstream
 import {
   useCallback, useMemo, useRef, useState,
 } from 'react';
+=======
+import { useEffect, useRef, useState } from 'react';
+>>>>>>> Stashed changes
 import {
   FieldValues,
   SubmitHandler,
@@ -11,6 +15,7 @@ import {
 import NewSeriesModal from '@/NewSeriesModal';
 import { SeriesInputs } from 'series';
 import { Series } from '@prisma/client';
+<<<<<<< Updated upstream
 import { PromisePool } from '@supercharge/promise-pool';
 import ConfirmDenyModal from '@/ConfirmDenyModal';
 import { useAdminContext } from '../../AdminContext';
@@ -21,6 +26,29 @@ import {
   VolumeData, PageData, PageUploadData, VolumeFields,
 } from './types';
 import { getDirectoryVolumeData, validateVolumeData, getSingleVolumeData } from './utils';
+=======
+import PromisePool from 'async-promise-pool';
+import { useAdminContext } from '../../AdminContext';
+import Images from './images';
+import Info from './info';
+import Ocr from './ocr';
+import { createSeries, createVolume, createPage } from '../../functions';
+
+export type FormChild = {
+  errors: FieldErrors<VolumeFields>;
+  register: UseFormRegister<VolumeFields>;
+  watch: UseFormWatch<VolumeFields>;
+};
+
+export type VolumeFields = {
+  seriesEnglishName: string;
+  volumeNumber: number;
+  coverImage: FileList;
+  firstPageIsCover: boolean;
+  pages: FileList;
+  ocrFiles: FileList;
+};
+>>>>>>> Stashed changes
 
 export default function VolumeEditor({
   params: { _volumeid },
@@ -88,6 +116,7 @@ export default function VolumeEditor({
       .process(async (pageData: PageData) => {
         const { page, ocr, index } = pageData;
         const pageFormData = new FormData();
+<<<<<<< Updated upstream
         pageFormData.append('volumeId', volumeId.toString());
         pageFormData.append('number', index.toString());
         pageFormData.append('file', page as Blob);
@@ -141,6 +170,24 @@ export default function VolumeEditor({
     await uploadVolume(volume);
 
     // eslint-disable-next-line no-alert
+=======
+        pageFormData.append('volumeId', volume.id.toString());
+        pageFormData.append('number', i.toString());
+        pageFormData.append('file', page);
+        pageFormData.append(
+          'ocr',
+          Array.from(data.ocrFiles as FileList).find(
+            (ocrFile) => ocrFile.name
+              === `${(page as File).name.replace(/\.[^/.]+$/, '')}.json`,
+          ) as Blob,
+        );
+        await createPage(pageFormData);
+        uploadedPageCount++;
+        setUploadedPages(uploadedPageCount);
+      })
+      .forEach((task) => pool.add(() => task));
+    await pool.all();
+>>>>>>> Stashed changes
     alert('Done!');
   };
 
@@ -224,6 +271,7 @@ export default function VolumeEditor({
           checked={isDirectoryUpload}
           onChange={(_e) => { setIsDirectoryUpload(!isDirectoryUpload); }}
         />
+<<<<<<< Updated upstream
       </label>
       <form onSubmit={handleSubmit(validateFormAndSubmit)}>
         { isDirectoryUpload
@@ -246,6 +294,19 @@ export default function VolumeEditor({
               setValue={setValue}
             />
           )}
+=======
+        <div className="divider" />
+        <Ocr register={register} watch={watch} errors={errors} />
+        <div className="divider" />
+        <Images register={register} watch={watch} errors={errors} />
+        {totalPages > 0 && (
+          <progress
+            className="progress progress-accent"
+            value={uploadedPages}
+            max={totalPages}
+          />
+        )}
+>>>>>>> Stashed changes
       </form>
       {totalPages > 0 && (
         <progress

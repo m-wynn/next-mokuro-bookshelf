@@ -21,11 +21,19 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Nice try' }, { status: 401 });
   }
 
+<<<<<<< Updated upstream
   const formData = await request.formData();
   const volumeId = +(formData.get('volumeId') as string);
   const number = +(formData.get('number') as string);
   const ocr = formData.get('ocr') as Blob | null;
   const file = formData.get('file') as Blob;
+=======
+  const req = await request.formData();
+  const volumeId = parseInt(req.get('volumeId') as string);
+  const number = parseInt(req.get('number') as string);
+  const ocr = req.get('ocr') as Blob | null;
+  const file = req.get('file') as Blob;
+>>>>>>> Stashed changes
 
   if (volumeId == null || number == null || file == null) {
     throw new Error('Missing required fields');
