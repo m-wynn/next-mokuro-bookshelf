@@ -3,8 +3,10 @@ import { auth } from 'auth/lucia';
 import prisma from 'db';
 import * as context from 'next/headers';
 import type { OcrPage } from 'page';
+import { Provider } from 'jotai';
 import PagesContainer from './PagesContainer';
 import VolumeDataProvider from './VolumeDataProvider';
+import { HydrateVolumeAtoms } from './ReaderAtom';
 
 const PageSelectQuery = {
   id: true,
@@ -82,14 +84,16 @@ export default async function PageComponent({
   if (!volume) return <div>Volume not found</div>;
 
   return (
-    <VolumeDataProvider volume={volume}>
-      <PagesContainer
-        volumeId={volume.id}
-        pages={volume.pages.map((page: Page) => ({
-          ...page,
-          ocr: page.ocr as unknown as OcrPage,
-        }))}
-      />
-    </VolumeDataProvider>
+    <Provider>
+      <HydrateVolumeAtoms volume={volume}>
+        <PagesContainer
+          volumeId={volume.id}
+          pages={volume.pages.map((page: Page) => ({
+            ...page,
+            ocr: page.ocr as unknown as OcrPage,
+          }))}
+        />
+      </HydrateVolumeAtoms>
+    </Provider>
   );
 }

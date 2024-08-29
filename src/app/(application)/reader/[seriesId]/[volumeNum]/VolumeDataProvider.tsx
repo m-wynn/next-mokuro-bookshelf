@@ -92,7 +92,9 @@ export default function VolumeDataProvider({
   );
   const [useTracking, setUseTracking] = useState(
     initialPageNum === null && (
-      !volume.series.Reading || volume.series.Reading[0].volumeNum === volume.number
+      !volume.series.Reading || volume.series.Reading.some(
+        (reading) => reading.volumeNum === volume.number,
+      )
     ),
   );
 

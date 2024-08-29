@@ -11,6 +11,7 @@ const updateReadingInDb = async (
   page: number,
   userId: string,
 ) => {
+  console.log('Update reading in db', reading, volumeNum, seriesId, page, userId);
   if (!reading && page < 4) {
     return null;
   }
