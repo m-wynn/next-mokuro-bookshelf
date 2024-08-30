@@ -1,32 +1,23 @@
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
-# ESLint is a tool for identifying and reporting on patterns
-# found in ECMAScript/JavaScript code.
-# More details at https://github.com/eslint/eslint
-# and https://eslint.org
-
+---
 name: ESLint
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
     paths:
-      - '.eslintrc.json'
-      - '**/*.js'
-      - '**/*.ts'
-      - '**/*.tsx'
+      - "src/.eslintrc.json"
+      - "**/*.js"
+      - "**/*.ts"
+      - "**/*.tsx"
   pull_request:
-    # The branches below must be a subset of the branches above
-    branches: [ "main" ]
+    branches: ["main"]
     paths:
-      - '.eslintrc.json'
-      - '**/*.js'
-      - '**/*.ts'
-      - '**/*.tsx'
+      - "src/.eslintrc.json"
+      - "**/*.js"
+      - "**/*.ts"
+      - "**/*.tsx"
   schedule:
-    - cron: '41 10 * * 5'
+    - cron: "41 10 * * 5"
 
 jobs:
   eslint:
@@ -44,6 +35,7 @@ jobs:
         run: |
           npm install eslint@8.10.0
           npm install @microsoft/eslint-formatter-sarif@2.1.7
+        working-directory: src
 
       - name: Run ESLint
         run: npx eslint .
@@ -51,10 +43,11 @@ jobs:
           --ext .js,.jsx,.ts,.tsx
           --format @microsoft/eslint-formatter-sarif
           --output-file eslint-results.sarif
+        working-directory: src
         continue-on-error: true
 
       - name: Upload analysis results to GitHub
         uses: github/codeql-action/upload-sarif@v2
         with:
-          sarif_file: eslint-results.sarif
+          sarif_file: src/eslint-results.sarif
           wait-for-processing: true

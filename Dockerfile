@@ -5,11 +5,11 @@ EXPOSE 3000
 
 ENV PORT 3000
 
-COPY package.json package-lock.json ./
+COPY ./src/package.json ./src/package-lock.json ./
 
 RUN npm install --frozen-lockfile
 
-COPY . .
+COPY ./src/ .
 
 
 FROM base as prod

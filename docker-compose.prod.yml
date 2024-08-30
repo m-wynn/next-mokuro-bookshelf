@@ -1,13 +1,11 @@
 services:
   next-mokuro-bookshelf:
+    container_name: next-mokuro-bookshelf
     build:
       context: ./
       dockerfile: ./Dockerfile
       target: prod
-    container_name: next-mokuro-bookshelf
     user: "1000"
-    volumes:
-      - ./images/:/app/private/images/
     ports:
       - "3000:3000"
       - "9229:9229"
@@ -16,9 +14,11 @@ services:
       - PORT=3000
     env_file:
       - ./.env
+    volumes:
+      - ./images/:/app/private/images/
 
   db:
-    image: postgres
+    image: groonga/pgroonga:latest-debian-16
     restart: always
     env_file:
       - ./.env
