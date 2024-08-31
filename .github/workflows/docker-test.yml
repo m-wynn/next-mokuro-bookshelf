@@ -4,31 +4,31 @@ on:
   push:
     branches: ["main", "prod"]
     paths:
-      - 'Dockerfile'
-      - 'package.json'
-      - 'package-lock.json'
-      - 'prisma/**'
-      - 'public/**'
-      - 'tailwind.config.js'
-      - 'tsconfig.json'
-      - '**/*.js'
-      - '**/*.ts'
-      - '**/*.tsx'
-      - '**/*.css'
+      - "Dockerfile"
+      - "src/package.json"
+      - "src/package-lock.json"
+      - "src/prisma/**"
+      - "public/**"
+      - "src/tailwind.config.js"
+      - "src/tsconfig.json"
+      - "**/*.js"
+      - "**/*.ts"
+      - "**/*.tsx"
+      - "**/*.css"
   pull_request:
     branches: ["main", "prod"]
     paths:
-      - 'Dockerfile'
-      - 'package.json'
-      - 'package-lock.json'
-      - 'prisma/**'
-      - 'public/**'
-      - 'tailwind.config.js'
-      - 'tsconfig.json'
-      - '**/*.js'
-      - '**/*.ts'
-      - '**/*.tsx'
-      - '**/*.css'
+      - "Dockerfile"
+      - "src/package.json"
+      - "src/package-lock.json"
+      - "src/prisma/**"
+      - "public/**"
+      - "src/tailwind.config.js"
+      - "src/tsconfig.json"
+      - "**/*.js"
+      - "**/*.ts"
+      - "**/*.tsx"
+      - "**/*.css"
 
 jobs:
   build:
