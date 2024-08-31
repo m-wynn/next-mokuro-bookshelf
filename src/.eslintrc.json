@@ -20,7 +20,9 @@
     "globalThis": false
   },
   "rules": {
-    "react/jsx-one-expression-per-line": ["off"],
+    "react/jsx-one-expression-per-line": [
+      "off"
+    ],
     "react/jsx-filename-extension": [
       2,
       {
@@ -71,7 +73,9 @@
     ],
     "react/require-default-props": "off",
     "react/jsx-props-no-spreading": "off",
+    "react/function-component-definition": "off",
     "jsx-a11y/label-has-associated-control": "off",
+    "jsx-a11y/control-has-associated-label": "off",
     "import/prefer-default-export": "off"
   }
 }
