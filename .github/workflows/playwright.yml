@@ -1,68 +1,68 @@
 name: Playwright Tests
 on:
   push:
-    branches: [ main, dev ]
+    branches: [main, dev]
     paths:
       - ".github/workflows/playwright.yml"
       - "Dockerfile"
       - "docker-compose.dev.yml"
       - "docker-compose.test.yml"
       - "e2e/*"
-      - 'package.json'
-      - 'package-lock.json'
-      - 'prisma/**'
-      - 'public/**'
-      - 'tailwind.config.js'
-      - 'tsconfig.json'
-      - '**/*.js'
-      - '**/*.ts'
-      - '**/*.tsx'
-      - '**/*.css'
+      - "src/package.json"
+      - "src/package-lock.json"
+      - "src/prisma/**"
+      - "public/**"
+      - "src/tailwind.config.js"
+      - "src/tsconfig.json"
+      - "**/*.js"
+      - "**/*.ts"
+      - "**/*.tsx"
+      - "**/*.css"
   pull_request:
-    branches: [ main, dev ]
+    branches: [main, dev]
     paths:
       - ".github/workflows/playwright.yml"
       - "Dockerfile"
       - "docker-compose.dev.yml"
       - "docker-compose.test.yml"
       - "e2e/*"
-      - 'package.json'
-      - 'package-lock.json'
-      - 'prisma/**'
-      - 'public/**'
-      - 'tailwind.config.js'
-      - 'tsconfig.json'
-      - '**/*.js'
-      - '**/*.ts'
-      - '**/*.tsx'
-      - '**/*.css'
+      - "src/package.json"
+      - "src/package-lock.json"
+      - "src/prisma/**"
+      - "public/**"
+      - "src/tailwind.config.js"
+      - "src/tsconfig.json"
+      - "**/*.js"
+      - "**/*.ts"
+      - "**/*.tsx"
+      - "**/*.css"
 jobs:
   e2e-tests:
     timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4
-    - uses: actions/setup-node@1e60f620b9541d16bece96c5465dc8ee9832be0b # v4
-      with:
-        node-version: lts/*
-    - name: Create .env
-      run: cp .env.example .env && cp .env.example e2e/.env
-      working-directory: ./
-    - name: Docker Compose Up
-      run: docker compose -f docker-compose.test.yml --env-file .env up -d
-      working-directory: ./
-    - name: Change directory and install dependencies
-      run: npm ci
-      working-directory: e2e
-    # - name: Docker Compose Up NextJS
-    #   run: docker compose -f docker-compose.test.yml --env-file .env up next-mokuro-bookshelf -d
-    #   working-directory: ./
-    - name: Install Playwright Browsers
-      run:  npx playwright install --with-deps
-      working-directory: e2e
-    - name: Run Playwright tests
-      run: npx playwright test
-      working-directory: e2e
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4
+      - uses: actions/setup-node@1e60f620b9541d16bece96c5465dc8ee9832be0b # v4
+        with:
+          node-version: lts/*
+      - name: Create .env
+        run: cp .env.example .env && cp .env.example e2e/.env
+        working-directory: ./
+      - name: Docker Compose Up
+        run: docker compose -f docker-compose.test.yml --env-file .env up -d
+        working-directory: ./
+      - name: Change directory and install dependencies
+        run: npm ci
+        working-directory: e2e
+      # - name: Docker Compose Up NextJS
+      #   run: docker compose -f docker-compose.test.yml --env-file .env up next-mokuro-bookshelf -d
+      #   working-directory: ./
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+        working-directory: e2e
+      - name: Run Playwright tests
+        run: npx playwright test
+        working-directory: e2e
     # - uses: actions/upload-artifact@v4
     #   if: always()
     #   with:
