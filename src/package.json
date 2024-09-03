@@ -39,7 +39,7 @@
     "eslint-config-next": "14.2.7",
     "eslint-config-airbnb-typescript": "18.0.0",
     "eslint-import-resolver-typescript": "3.6.3",
-    "eslint-plugin-import": "2.29.1",
+    "eslint-plugin-import": "2.30.0",
     "eslint-plugin-react-hooks": "4.6.2",
     "postcss": "8.4.41",
     "prisma": "5.19.1",
