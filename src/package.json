@@ -17,6 +17,8 @@
     "@prisma/client": "^5.7.1",
     "@supercharge/promise-pool": "^3.1.0",
     "lru-cache": "^11.0.0",
+    "jotai": "^2.9.3",
+    "jotai-effect": "^1.0.2",
     "lucia": "^2.7.6",
     "next": "^14.1.1",
     "next-connect": "^1.0.0",

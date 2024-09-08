@@ -95,13 +95,14 @@ export default function PagesContainer({
   ]);
 
   useEffect(() => {
+    const { seriesId, volumeNumber } = volumeData;
     (async () => {
       if (!useTracking) return;
       let pageToSet = currentPage;
       if (useTwoPages && currentPage !== pages.length - 1) {
         pageToSet = currentPage + 1;
       }
-      const reading = await updateReadingProgress(volumeId, pageToSet);
+      const reading = await updateReadingProgress(volumeNumber, seriesId, pageToSet);
       if (reading) {
         setAllReadings((prev: Reading[]) => {
           let found = false;
@@ -119,7 +120,7 @@ export default function PagesContainer({
         });
       }
     })();
-  }, [currentPage, volumeId, setAllReadings, pages.length, useTwoPages, useTracking]);
+  }, [currentPage, volumeId, setAllReadings, pages.length, useTwoPages, useTracking, volumeData]);
 
   const setBoundPage = useCallback(
     (page: number) => {

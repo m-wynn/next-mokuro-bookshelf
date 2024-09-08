@@ -22,6 +22,7 @@ const VolumeContext = createContext({
   zoomSensitivity,
   seriesTitle: '',
   seriesShortTitle: '',
+  seriesId: 0,
   volumeNumber: 0,
   highlightBlock: null as HighlightBlock,
 });
@@ -89,7 +90,13 @@ export default function VolumeDataProvider({
       page: getCurrentPage(), block: initialHighlightBlock,
     } : null,
   );
-  const [useTracking, setUseTracking] = useState(initialPageNum === null);
+  const [useTracking, setUseTracking] = useState(
+    initialPageNum === null && (
+      !volume.series.Reading || volume.series.Reading.some(
+        (reading) => reading.volumeNum === volume.number,
+      )
+    ),
+  );
 
   const setUseTrackingAndReturn = (value: boolean, returnToReadingPage: boolean) => {
     if (returnToReadingPage) {
@@ -124,6 +131,7 @@ export default function VolumeDataProvider({
     zoomSensitivity: getZoomSensitivity(),
     seriesTitle,
     seriesShortTitle: shortName,
+    seriesId: volume.series.id,
     volumeNumber: volume.number,
     useTracking,
     setUseTrackingAndReturn,
