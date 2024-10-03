@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
 
@@ -23,9 +24,9 @@ function VolumeCard({
   return (
     <div className="flex-initial m-2 shadow hover:shadow-lg w-[13.5rem] h-[20.25rem] readingcard card card-compact image-full bg-base-300">
       <figure className="overflow-hidden">
-        {/* To optimize this we need to know the dimensions of the image */}
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
+        <Image
+          width={250}
+          height={350}
           src={coverUri}
           alt={`${seriesName} volume ${volumeNumber}`}
           className="flex items-center bg-center bg-no-repeat bg-cover w-[13.5rem] h-[20.25rem]"
