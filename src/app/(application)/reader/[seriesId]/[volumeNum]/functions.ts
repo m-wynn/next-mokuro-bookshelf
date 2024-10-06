@@ -3,6 +3,7 @@
 import { ReadingSelectQuery, Reading } from 'lib/reading';
 import prisma from 'db';
 import { getSession } from 'lib/session';
+import { revalidatePath } from 'next/cache';
 
 const updateReadingInDb = async (
   reading: Reading | null,
@@ -58,5 +59,7 @@ export const updateReadingProgress = async (volumeId: number, page: number) => {
     select: ReadingSelectQuery,
   });
 
-  return updateReadingInDb(reading, volumeId, page, userId);
+  const updatedReading = await updateReadingInDb(reading, volumeId, page, userId);
+  revalidatePath(`/reader/${updatedReading!.volume.seriesId}/${volumeId}/`);
+  return updatedReading;
 };
