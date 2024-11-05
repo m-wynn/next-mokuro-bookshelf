@@ -42,6 +42,15 @@ export async function POST(request: NextRequest) {
     fileData,
   );
 
+  const upsertData = {
+    number,
+    volumeId,
+    ocr: ocrData,
+    fileName,
+    uploadedById: session.user.userId,
+    blockText,
+  };
+
   const page = await prisma.page.upsert({
     where: {
       volumeNum: {
@@ -49,21 +58,8 @@ export async function POST(request: NextRequest) {
         volumeId,
       },
     },
-    update: {
-      number,
-      volumeId,
-      ocr: ocrData,
-      fileName,
-      uploadedById: session.user.userId,
-    },
-    create: {
-      number,
-      volumeId,
-      ocr: ocrData,
-      fileName,
-      uploadedById: session.user.userId,
-      blockText,
-    },
+    update: upsertData,
+    create: upsertData,
   });
 
   return NextResponse.json(page);
