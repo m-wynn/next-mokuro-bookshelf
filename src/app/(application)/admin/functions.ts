@@ -1,5 +1,6 @@
 'use server';
 
+import { Reading } from '@prisma/client';
 import prisma from 'db';
 import { promises as fs } from 'fs';
 import { getSession } from 'lib/session';
@@ -68,6 +69,13 @@ export const createVolume = async (formData: FormData) => {
     },
   });
 
+  // Delete all pages in case of reupload
+  await prisma.page.deleteMany({
+    where: {
+      volumeId: volume.id,
+    },
+  });
+
   const coverPath = `${process.env.IMAGE_PATH}/${volume.id}/cover/${coverName}`;
 
   await fs.mkdir(coverPath.split('/').slice(0, -1).join('/'), {
@@ -77,3 +85,42 @@ export const createVolume = async (formData: FormData) => {
   await fs.writeFile(coverPath, Buffer.from(await coverImage.arrayBuffer()));
   return volume;
 };
+
+export async function updateExistingReadingsAfterUpload(volumdId: number) {
+  const readings = await prisma.reading.findMany({
+    where: {
+      volumeId: volumdId,
+    },
+  });
+
+  const maxPages = await prisma.page.findMany({
+    where: {
+      volumeId: volumdId,
+    },
+    select: {
+      number: true,
+    },
+    orderBy: {
+      number: 'desc',
+    },
+  });
+
+  if (!maxPages) { return; }
+  const maxPage = maxPages[0];
+
+  await Promise.all(
+    readings.map((reading: Reading) => {
+      if (reading.page > maxPage.number) {
+        return prisma.reading.update({
+          where: {
+            id: reading.id,
+          },
+          data: {
+            page: maxPage.number,
+          },
+        });
+      }
+      return null;
+    }),
+  );
+}

@@ -1,3 +1,5 @@
+/* eslint-disable import/extensions */
+
 'use client';
 
 import {
@@ -8,15 +10,15 @@ import {
   SubmitHandler,
   useForm,
 } from 'react-hook-form';
-import NewSeriesModal from '@/NewSeriesModal';
 import { SeriesInputs } from 'series';
 import { Series } from '@prisma/client';
 import { PromisePool } from '@supercharge/promise-pool';
+import NewSeriesModal from '@/NewSeriesModal';
 import ConfirmDenyModal from '@/ConfirmDenyModal';
 import { useAdminContext } from '../../AdminContext';
 import DirectoryInfo from './directoryInfo';
 import VolumeInfo from './volumeInfo';
-import { createSeries, createVolume } from '../../functions';
+import { createSeries, createVolume, updateExistingReadingsAfterUpload } from '../../functions';
 import {
   VolumeData, PageData, PageUploadData, VolumeFields,
 } from './types';
@@ -130,6 +132,7 @@ export default function VolumeEditor({
       // eslint-disable-next-line no-await-in-loop
       pageUploadData = await uploadPages(pageUploadData, volume.id);
     }
+    await updateExistingReadingsAfterUpload(volume.id);
   };
 
   const onVolumeSubmit: SubmitHandler<FieldValues> = async (data: FieldValues) => {
