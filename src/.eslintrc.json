@@ -76,6 +76,7 @@
     "react/function-component-definition": "off",
     "jsx-a11y/label-has-associated-control": "off",
     "jsx-a11y/control-has-associated-label": "off",
-    "import/prefer-default-export": "off"
+    "import/prefer-default-export": "off",
+    "extensions": "off"
   }
 }

@@ -16,6 +16,7 @@ function Input({
   extraProperties = {},
   classNameOverride,
   type = 'text',
+  pattern,
 }: {
   label: string;
   errors?: FieldError | Merge<FieldErrors, FieldErrorsImpl<any>> | null;
@@ -25,6 +26,7 @@ function Input({
   defaultValue?: string;
   classNameOverride?: string;
   type?: string;
+  pattern?: string;
 }) {
   return (
     <div className="w-full max-w-xs">
@@ -32,6 +34,7 @@ function Input({
         <span className="label-text">{label}</span>
       </label>
       <input
+        pattern={pattern}
         type={type}
         {...extraProperties}
         placeholder={placeholder}

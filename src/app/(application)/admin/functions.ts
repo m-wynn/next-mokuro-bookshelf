@@ -28,6 +28,68 @@ export const createSeries = async (data: SeriesInputs) => {
   return series;
 };
 
+export const createEpubVolume = async (formData: FormData) => {
+  const session = await getSession('POST');
+  if (!session) {
+    throw new Error('Not logged in');
+  }
+
+  if (!['ADMIN', 'EDITOR'].includes(session.user.role)) {
+    throw new Error('Not authorized to do that');
+  }
+
+  const seriesId = formData.get('seriesId') as string;
+  const volumeNumber = formData.get('volumeNumber') as string;
+  const coverImage = formData.get('coverImage') as Blob;
+  const epub = formData.get('epub') as Blob;
+
+  if (seriesId == null || volumeNumber == null || coverImage == null) {
+    throw new Error('Missing required fields');
+  }
+
+  const coverName = 'cover';
+  const volume = await prisma.volume.upsert({
+    where: {
+      seriesNum: {
+        number: +volumeNumber,
+        seriesId: +seriesId,
+      },
+    },
+    update: {
+      cover: coverName,
+      firstPageIsCover: false,
+    },
+    create: {
+      cover: coverName,
+      number: +volumeNumber,
+      seriesId: +seriesId,
+      uploadedById: session.user.userId,
+      firstPageIsCover: false,
+    },
+  });
+
+  const coverPath = `${process.env.IMAGE_PATH}/${volume.id}/cover/${coverName}`;
+  const epubPath = `${process.env.IMAGE_PATH}/${volume.id}/epub`;
+
+  await prisma.ePub.upsert({
+    where: { volumeId: volume.id },
+    update: {
+      fileName: epubPath,
+      uploadedById: session.user.userId,
+    },
+    create: {
+      volumeId: volume.id,
+      fileName: epubPath,
+      uploadedById: session.user.userId,
+    },
+  });
+
+  await fs.mkdir(coverPath.split('/').slice(0, -1).join('/'), { recursive: true });
+  await fs.writeFile(coverPath, Buffer.from(await coverImage.arrayBuffer()));
+  await fs.writeFile(epubPath, Buffer.from(await epub.arrayBuffer()));
+  return volume;
+};
+
 export const createVolume = async (formData: FormData) => {
   const session = await getSession('POST');
   if (!session) {

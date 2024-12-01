@@ -5,6 +5,7 @@ import * as context from 'next/headers';
 import type { OcrPage } from 'page';
 import PagesContainer from './PagesContainer';
 import VolumeDataProvider from './VolumeDataProvider';
+import EPubContainer from './EPubContainer';
 
 const PageSelectQuery = {
   id: true,
@@ -22,6 +23,7 @@ const VolumeSelectQuery = (userId: string) => ({
     },
     select: {
       page: true,
+      epubPage: true,
       useTwoPagesOverride: true,
       firstPageIsCoverOverride: true,
     },
@@ -37,6 +39,11 @@ const VolumeSelectQuery = (userId: string) => ({
     select: PageSelectQuery,
     orderBy: {
       number: 'asc',
+    },
+  },
+  epub: {
+    select: {
+      id: true,
     },
   },
 }) satisfies Prisma.VolumeSelect;
@@ -74,13 +81,17 @@ export default async function PageComponent({
 
   return (
     <VolumeDataProvider volume={volume}>
-      <PagesContainer
-        volumeId={volume.id}
-        pages={volume.pages.map((page: Page) => ({
-          ...page,
-          ocr: page.ocr as unknown as OcrPage,
-        }))}
-      />
+      {volume.epub ? (
+        <EPubContainer volume={volume} />
+      ) : (
+        <PagesContainer
+          volumeId={volume.id}
+          pages={volume.pages.map((page: Page) => ({
+            ...page,
+            ocr: page.ocr as unknown as OcrPage,
+          }))}
+        />
+      )}
     </VolumeDataProvider>
   );
 }

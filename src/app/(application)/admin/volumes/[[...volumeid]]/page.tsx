@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 /* eslint-disable import/extensions */
 
 'use client';
@@ -18,11 +19,15 @@ import ConfirmDenyModal from '@/ConfirmDenyModal';
 import { useAdminContext } from '../../AdminContext';
 import DirectoryInfo from './directoryInfo';
 import VolumeInfo from './volumeInfo';
-import { createSeries, createVolume, updateExistingReadingsAfterUpload } from '../../functions';
+import {
+  createEpubVolume, createSeries, createVolume, updateExistingReadingsAfterUpload,
+} from '../../functions';
 import {
   VolumeData, PageData, PageUploadData, VolumeFields,
+  EpubData,
 } from './types';
 import { getDirectoryVolumeData, validateVolumeData, getSingleVolumeData } from './utils';
+import EpubInfo from './epubInfo';
 
 export default function VolumeEditor({
   params: { _volumeid },
@@ -32,7 +37,7 @@ export default function VolumeEditor({
   const { series, setSeries } = useAdminContext();
   const [uploadedPages, setUploadedPages] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
-  const [isDirectoryUpload, setIsDirectoryUpload] = useState(false);
+  const [uploadMode, setUploadMode] = useState<'volume' | 'directory' | 'epub'>('volume');
   const [firstPageIsCoverDict, setFirstPageIsCoverDict] = useState<object>({});
 
   const {
@@ -135,6 +140,15 @@ export default function VolumeEditor({
     await updateExistingReadingsAfterUpload(volume.id);
   };
 
+  const uploadEpub = async (epubData: EpubData) => {
+    const formData = new FormData();
+    formData.append('seriesId', epubData.seriesId.toString());
+    formData.append('volumeNumber', epubData.volumeNumber.toString());
+    formData.append('coverImage', epubData.coverPage as Blob);
+    formData.append('epub', epubData.epub as Blob);
+    await createEpubVolume(formData);
+  };
+
   const onVolumeSubmit: SubmitHandler<FieldValues> = async (data: FieldValues) => {
     const seriesId = getSeriesId(data.seriesEnglishName);
     const volume = getSingleVolumeData(seriesId, data);
@@ -166,6 +180,18 @@ export default function VolumeEditor({
     alert('Done!');
   };
 
+  const onEpubSubmit: SubmitHandler<FieldValues> = async (data) => {
+    const seriesId = getSeriesId(data.seriesEnglishName);
+    await uploadEpub({
+      seriesId,
+      volumeNumber: data.volumeNumber,
+      coverPage: data.coverImage[0],
+      epub: data.epub[0],
+    });
+    // eslint-disable-next-line no-alert
+    alert('Done!');
+  };
+
   const newSeriesModalRef: React.RefObject<HTMLDialogElement> = useRef(null);
   const errorModalRef: React.RefObject<HTMLDialogElement> = useRef(null);
 
@@ -180,21 +206,36 @@ export default function VolumeEditor({
 
   const submitForm = () => {
     errorModalRef.current?.close();
-    handleSubmit(isDirectoryUpload ? onDirectorySubmit : onVolumeSubmit)();
+    switch (uploadMode) {
+      case 'volume':
+        handleSubmit(onVolumeSubmit)();
+        break;
+      case 'directory':
+        handleSubmit(onDirectorySubmit)();
+        break;
+      case 'epub':
+        handleSubmit(onEpubSubmit)();
+        break;
+      default:
+        break;
+    }
   };
 
   const validateFormAndSubmit = (data: FieldValues) => {
     let isDataValid = false;
     const seriesId = getSeriesId(data.seriesEnglishName);
-    if (isDirectoryUpload) {
+    if (uploadMode === 'volume') {
+      const volume = getSingleVolumeData(seriesId, data);
+      isDataValid = validateVolumeData(volume);
+    } else if (uploadMode === 'directory') {
       const volumes = getDirectoryVolumeData(seriesId, data.directory, firstPageIsCoverDict);
       isDataValid = volumes.reduce((valid, volume) => (
         valid && validateVolumeData(volume)
       ), true);
-    } else {
-      const volume = getSingleVolumeData(seriesId, data);
-      isDataValid = validateVolumeData(volume);
+    } else if (uploadMode === 'epub') {
+      isDataValid = true;
     }
+
     if (!isDataValid) {
       errorModalRef.current?.show();
       return;
@@ -220,35 +261,42 @@ export default function VolumeEditor({
         }}
       />
       <label className="cursor-pointer label">
-        <span className="label-text">Directory Upload</span>
-        <input
-          type="checkbox"
-          className="toggle"
-          checked={isDirectoryUpload}
-          onChange={(_e) => { setIsDirectoryUpload(!isDirectoryUpload); }}
-        />
+        <span className="label-text">Upload mode</span>
+        <select className="select select-bordered" value={uploadMode} onChange={(e) => setUploadMode(e.target.value as 'volume' | 'directory' | 'epub')}>
+          <option value="volume">Volume</option>
+          <option value="directory">Directory</option>
+          <option value="epub">Epub</option>
+        </select>
       </label>
       <form onSubmit={handleSubmit(validateFormAndSubmit)}>
-        { isDirectoryUpload
-          ? (
-            <DirectoryInfo
-              newSeriesModalRef={newSeriesModalRef}
-              register={register}
-              series={series}
-              setValue={setValue}
-              volumeData={volumeDataForPreview}
-              setFirstPageIsCoverDict={setFirstPageIsCoverDict}
-            />
-          ) : (
-            <VolumeInfo
-              newSeriesModalRef={newSeriesModalRef}
-              register={register}
-              watch={watch}
-              errors={errors}
-              series={series}
-              setValue={setValue}
-            />
-          )}
+        {uploadMode === 'directory' ? (
+          <DirectoryInfo
+            newSeriesModalRef={newSeriesModalRef}
+            register={register}
+            series={series}
+            setValue={setValue}
+            volumeData={volumeDataForPreview}
+            setFirstPageIsCoverDict={setFirstPageIsCoverDict}
+          />
+        ) : uploadMode === 'volume' ? (
+          <VolumeInfo
+            newSeriesModalRef={newSeriesModalRef}
+            register={register}
+            watch={watch}
+            errors={errors}
+            series={series}
+            setValue={setValue}
+          />
+        ) : uploadMode === 'epub' ? (
+          <EpubInfo
+            errors={errors}
+            setValue={setValue}
+            register={register}
+            watch={watch}
+            series={series}
+            newSeriesModalRef={newSeriesModalRef}
+          />
+        ) : null}
       </form>
       {totalPages > 0 && (
         <progress

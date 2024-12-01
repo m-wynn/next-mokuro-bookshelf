@@ -8,6 +8,13 @@ export type VolumeData = {
   seriesId: number;
 };
 
+export type EpubData = {
+  epub: File;
+  coverPage: File;
+  seriesId: number;
+  volumeNumber: number;
+};
+
 export type PageData = {
   page: File;
   ocr: File;
@@ -33,4 +40,5 @@ export type VolumeFields = {
   pages: FileList;
   ocrFiles: FileList;
   directory: FileList;
+  epub: FileList;
 };
