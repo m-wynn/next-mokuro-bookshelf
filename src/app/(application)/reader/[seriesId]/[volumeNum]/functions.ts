@@ -43,7 +43,41 @@ const updateReadingInDb = async (
   });
 };
 
-export const updateReadingProgress = async (volumeId: number, page: number) => {
+const updateEpubReadingInDb = async (
+  reading: Reading | null,
+  volumeId: number,
+  epubPage: string,
+  userId: string,
+) => {
+  let status = reading?.status ?? 'READING';
+  if (reading && epubPage === 'end') {
+    status = 'READ';
+  }
+
+  return prisma.reading.upsert({
+    where: {
+      volumeUser: {
+        userId,
+        volumeId,
+      },
+    },
+    update: {
+      epubPage,
+      status,
+      isActive: true,
+    },
+    create: {
+      userId,
+      volumeId,
+      epubPage,
+      status,
+      isActive: true,
+    },
+    select: ReadingSelectQuery,
+  });
+};
+
+export const updateReadingProgress = async (volumeId: number, page: number | string) => {
   const session = await getSession('POST');
   const { userId } = session.user;
   // If the page is less than four, maybe the user isn't actually reading
@@ -59,7 +93,26 @@ export const updateReadingProgress = async (volumeId: number, page: number) => {
     select: ReadingSelectQuery,
   });
 
-  const updatedReading = await updateReadingInDb(reading, volumeId, page, userId);
+  const updatedReading = await updateReadingInDb(reading, volumeId, page as number, userId);
+  revalidatePath(`/reader/${updatedReading!.volume.seriesId}/${volumeId}/`);
+  return updatedReading;
+};
+
+export const updateEpubReadingProgress = async (volumeId: number, epubPage: string) => {
+  const session = await getSession('POST');
+  const { userId } = session.user;
+  const reading = await prisma.reading.findUnique({
+    where: {
+      volumeUser: {
+        userId,
+        volumeId,
+      },
+      isActive: true,
+    },
+    select: ReadingSelectQuery,
+  });
+
+  const updatedReading = await updateEpubReadingInDb(reading, volumeId, epubPage, userId);
   revalidatePath(`/reader/${updatedReading!.volume.seriesId}/${volumeId}/`);
   return updatedReading;
 };
