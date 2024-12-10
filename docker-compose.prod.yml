@@ -18,7 +18,7 @@ services:
       - ./images/:/app/private/images/
 
   db:
-    image: groonga/pgroonga:latest-debian-16@sha256:e47a739e5eaac8c7b4559a5cc77b9b9e662858e79a39129eb5be6f4619f5c71e
+    image: groonga/pgroonga:latest-debian-16@sha256:f0327f8dfa7ae903228c277daa7359da3bfd73aaa13c3b215a704669060915bf
     restart: always
     env_file:
       - ./.env
