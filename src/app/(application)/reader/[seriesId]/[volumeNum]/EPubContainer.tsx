@@ -35,6 +35,10 @@ export default function EPubContainer({ volume }: { volume: Volume }) {
       url={`/api/epub/${volume.id}.epub`}
       location={location}
       locationChanged={(epubcfi: string) => realSetLocation(epubcfi)}
+      epubOptions={{
+        allowPopups: true,
+        allowScriptedContent: true,
+      }}
     />
   );
 }
