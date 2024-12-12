@@ -43,7 +43,7 @@ function Textbox({
   lines,
   highlight,
   setIsEditing,
-  disableContentEditable,
+  contentEditable,
 }: {
   box: OcrBlock['box'];
   fontSize: number;
@@ -51,14 +51,14 @@ function Textbox({
   lines: OcrBlock['lines'];
   highlight: boolean;
   setIsEditing: (value: boolean) => void;
-  disableContentEditable: boolean;
+  contentEditable: boolean;
 }) {
   const [isEditable, setIsEditable] = useState(false);
 
   const divRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    if (disableContentEditable) { return () => {}; }
+    if (!contentEditable) { return () => {}; }
     const handleClickOutside = (event: any) => {
       if (divRef.current && !divRef.current.contains(event.target)) {
         setIsEditable(false);
@@ -73,7 +73,7 @@ function Textbox({
       setIsEditing(false);
       document.removeEventListener('click', handleClickOutside, true);
     };
-  }, [setIsEditing, disableContentEditable]);
+  }, [setIsEditing, contentEditable]);
 
   return (
     // eslint-disable-next-line max-len
@@ -81,7 +81,7 @@ function Textbox({
     <div
       ref={divRef}
       onClick={() => {
-        if (disableContentEditable) { return; }
+        if (!contentEditable) { return; }
         setIsEditable(true);
         setIsEditing(true);
       }}
