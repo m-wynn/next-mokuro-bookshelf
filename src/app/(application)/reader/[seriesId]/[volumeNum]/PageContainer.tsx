@@ -6,12 +6,14 @@ import type { Page } from './page';
 
 function PageContainer({
   setIsEditing,
+  disableContentEditable,
   page,
   preloads,
   getImageUri,
   highlightBlock,
 }: {
   setIsEditing: (value: boolean) => void;
+  disableContentEditable: boolean;
   page: Page;
   preloads: Page[];
   getImageUri: (id: number) => string;
@@ -54,6 +56,7 @@ function PageContainer({
         {page.ocr.blocks.map((block: OcrBlock, index: number) => (
           <Textbox
             setIsEditing={setIsEditing}
+            disableContentEditable={disableContentEditable}
             key={block.box.join(',')}
             box={block.box}
             fontSize={block.font_size}

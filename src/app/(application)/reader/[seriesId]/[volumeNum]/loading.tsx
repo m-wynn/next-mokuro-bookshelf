@@ -8,17 +8,17 @@ import Pagination from './Pagination';
 import Settings from './Settings';
 
 export function Loading() {
-  const { fullScreen, setFullScreen } = useGlobalContext();
+  const { maximizeReader, setMaximizeReader } = useGlobalContext();
   return (
     <div
       id="pagesContainer"
       className={`flex flex-col m-0 w-full h-full ${
-        fullScreen ? 'fixed top-0' : ''
+        maximizeReader ? 'fixed top-0' : ''
       }`}
     >
-      {!fullScreen && (
+      {!maximizeReader && (
         <div className="join">
-          <button type="button" className="join-item btn" onClick={() => setFullScreen(true)}>
+          <button type="button" className="join-item btn" onClick={() => setMaximizeReader(true)}>
             <FontAwesomeIcon icon={faMaximize} />
           </button>
           <Pagination
@@ -34,6 +34,8 @@ export function Loading() {
             setUseTwoPages={() => {}}
             firstPageIsCover={false}
             setFirstPageIsCover={() => {}}
+            disableContentEditable={false}
+            setDisableContentEditable={() => {}}
           />
         </div>
       )}
