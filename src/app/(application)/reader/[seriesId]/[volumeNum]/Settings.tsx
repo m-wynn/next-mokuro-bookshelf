@@ -26,12 +26,16 @@ export default function Settings({
   setUseTwoPages,
   firstPageIsCover,
   setFirstPageIsCover,
+  disableContentEditable,
+  setDisableContentEditable,
 }: {
   volumeId: number;
   useTwoPages: boolean;
   setUseTwoPages: (value: boolean) => void;
   firstPageIsCover: boolean;
   setFirstPageIsCover: (value: boolean) => void;
+  disableContentEditable: boolean;
+  setDisableContentEditable: (value: boolean) => void;
 }) {
   return (
     <details className="dropdown dropdown-end join-item">
@@ -69,6 +73,15 @@ export default function Settings({
             }}
           >
             First Page Is Cover
+          </Checkbox>
+        </li>
+        <li>
+          <Checkbox
+            fa={faBook}
+            value={disableContentEditable}
+            set={(checked) => setDisableContentEditable(checked)}
+          >
+            Disable Editable Content
           </Checkbox>
         </li>
       </ul>

@@ -6,6 +6,8 @@ import {
   faGear,
   faScrewdriverWrench,
   faBookMedical,
+  faExpand,
+  faCompress,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Link from 'next/link';
@@ -15,13 +17,13 @@ import { SearchBar } from '@/SearchBar';
 import { useGlobalContext } from './GlobalContext';
 
 function Navbar({ session }: { session: Session }) {
-  const { fullScreen } = useGlobalContext();
+  const { maximizeReader, fullScreen, setFullScreen } = useGlobalContext();
   // Light/Dark theme is still handled by the theme-controller input in the navbar
   // So we have to keep it in the DOM
   return (
     <div
       className={`shadow navbar bg-base-300 ${
-        fullScreen ? 'h-0 w-0 m-0 p-0 min-h-0 overflow-hidden' : 'h-16'
+        maximizeReader ? 'h-0 w-0 m-0 p-0 min-h-0 overflow-hidden' : 'h-16'
       }`}
     >
       <div className="flex-1">
@@ -30,6 +32,14 @@ function Navbar({ session }: { session: Session }) {
         </Link>
       </div>
       <div className="flex-none gap-2">
+        <div className="tooltip tooltip-bottom" data-tip="Fullscreen">
+          <span className="text-2xl normal-case btn btn-primary">
+            <FontAwesomeIcon
+              onClick={() => setFullScreen(!fullScreen)}
+              icon={fullScreen ? faCompress : faExpand}
+            />
+          </span>
+        </div>
         <div className="form-control">
           <SearchBar />
         </div>

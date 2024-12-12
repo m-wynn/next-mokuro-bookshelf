@@ -66,6 +66,7 @@ export default function PagesContainer({
 }) {
   const volumeData = useVolumeContext();
   const [useTwoPages, setUseTwoPages] = useState(volumeData.useTwoPages);
+  const [disableContentEditable, setDisableContentEditable] = useState(false);
   const [firstPageIsCover, setFirstPageIsCover] = useState(
     volumeData.firstPageIsCover,
   );
@@ -74,7 +75,7 @@ export default function PagesContainer({
   } = volumeData;
 
   const layoutChanged = useRef({ useTwoPages, firstPageIsCover }).current;
-  const { fullScreen, setFullScreen, setAllReadings } = useGlobalContext();
+  const { maximizeReader, setMaximizeReader, setAllReadings } = useGlobalContext();
   const { userSettings } = useGlobalContext();
   const [isEditing, setIsEditing] = useState(false);
 
@@ -192,7 +193,7 @@ export default function PagesContainer({
     if (pages) {
       reZoom();
     }
-  }, [currentPage, pages, showTwoPages, fullScreen]);
+  }, [currentPage, pages, showTwoPages, maximizeReader]);
 
   const page = useMemo(() => pages[currentPage], [pages, currentPage]);
 
@@ -202,15 +203,15 @@ export default function PagesContainer({
     <div
       id="pagesContainer"
       className={`flex flex-col m-0 w-full h-full ${
-        fullScreen ? 'fixed top-0' : ''
+        maximizeReader ? 'fixed top-0' : ''
       }`}
     >
-      {fullScreen ? (
+      {maximizeReader ? (
         <div className="flex fixed top-0 left-0 z-10 items-center rounded-lg bg-base-200">
           <button
             type="button"
             className="btn btn-square join-item"
-            onClick={() => setFullScreen(false)}
+            onClick={() => setMaximizeReader(false)}
           >
             <FontAwesomeIcon icon={faMinimize} />
           </button>
@@ -222,7 +223,7 @@ export default function PagesContainer({
         </div>
       ) : (
         <div className="join">
-          <button type="button" className="join-item btn" onClick={() => setFullScreen(true)}>
+          <button type="button" className="join-item btn" onClick={() => setMaximizeReader(true)}>
             <FontAwesomeIcon icon={faMaximize} />
           </button>
           <Pagination
@@ -238,6 +239,8 @@ export default function PagesContainer({
             setUseTwoPages={setUseTwoPages}
             firstPageIsCover={firstPageIsCover}
             setFirstPageIsCover={setFirstPageIsCover}
+            disableContentEditable={disableContentEditable}
+            setDisableContentEditable={setDisableContentEditable}
           />
           {useTracking ? (
             <button type="button" className="join-item btn tooltip tooltip-bottom" data-tip="Saving your reading progress" onClick={() => setUseTrackingAndReturn(!useTracking, false)}>
@@ -271,6 +274,10 @@ export default function PagesContainer({
           disabled: true,
         }}
         ref={transformComponentRef}
+        pinch={{
+          disabled: false,
+          excluded: ['leading-none', 'group'],
+        }}
       >
         <TransformComponent
           wrapperStyle={{
@@ -283,6 +290,7 @@ export default function PagesContainer({
             {showTwoPages ? (
               <PageContainer
                 setIsEditing={setIsEditing}
+                disableContentEditable={disableContentEditable}
                 page={pages[currentPage + 1]}
                 preloads={[]}
                 getImageUri={getImageUri}
@@ -295,6 +303,7 @@ export default function PagesContainer({
             ) : null}
             <PageContainer
               setIsEditing={setIsEditing}
+              disableContentEditable={disableContentEditable}
               page={page}
               preloads={(showTwoPages ? [2, 3, 4] : [1, 2])
                 .map((i) => currentPage + i)
