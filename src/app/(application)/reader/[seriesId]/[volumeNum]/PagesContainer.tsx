@@ -10,6 +10,8 @@ import {
 } from 'react-zoom-pan-pinch';
 
 import {
+  faAnglesLeft,
+  faAnglesRight,
   faEye, faMask, faMaximize, faMinimize,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -66,7 +68,7 @@ export default function PagesContainer({
 }) {
   const volumeData = useVolumeContext();
   const [useTwoPages, setUseTwoPages] = useState(volumeData.useTwoPages);
-  const [disableContentEditable, setDisableContentEditable] = useState(false);
+  const [contentEditable, setContentEditable] = useState(true);
   const [firstPageIsCover, setFirstPageIsCover] = useState(
     volumeData.firstPageIsCover,
   );
@@ -207,7 +209,7 @@ export default function PagesContainer({
       }`}
     >
       {maximizeReader ? (
-        <div className="flex fixed top-0 left-0 z-10 items-center rounded-lg bg-base-200">
+        <div className="flex fixed top-0 left-0 items-center rounded-lg bg-base-200 z-20">
           <button
             type="button"
             className="btn btn-square join-item"
@@ -239,8 +241,8 @@ export default function PagesContainer({
             setUseTwoPages={setUseTwoPages}
             firstPageIsCover={firstPageIsCover}
             setFirstPageIsCover={setFirstPageIsCover}
-            disableContentEditable={disableContentEditable}
-            setDisableContentEditable={setDisableContentEditable}
+            contentEditable={contentEditable}
+            setContentEditable={setContentEditable}
           />
           {useTracking ? (
             <button type="button" className="join-item btn tooltip tooltip-bottom" data-tip="Saving your reading progress" onClick={() => setUseTrackingAndReturn(!useTracking, false)}>
@@ -253,73 +255,90 @@ export default function PagesContainer({
           )}
         </div>
       )}
-      <TransformWrapper
-        limitToBounds={false}
-        centerOnInit
-        minScale={0.2}
-        panning={{
-          velocityDisabled: true,
-          excluded: ['leading-none', 'group'],
-        }}
-        wheel={{
-          smoothStep: 0.001 * volumeData.zoomSensitivity,
-        }}
-        zoomAnimation={{
-          disabled: true,
-        }}
-        doubleClick={{
-          disabled: true,
-        }}
-        alignmentAnimation={{
-          disabled: true,
-        }}
-        ref={transformComponentRef}
-        pinch={{
-          disabled: false,
-          excluded: ['leading-none', 'group'],
-        }}
-      >
-        <TransformComponent
-          wrapperStyle={{
-            width: '100%',
-            height: '100%',
+      <div className="flex flex-row h-full w-full">
+        <button
+          type="button"
+          className="h-full w-8 bg-white bg-opacity-50 flex justify-center items-center z-10"
+          onClick={() => setBoundPage(currentPage - (showTwoPages ? 2 : 1))}
+        >
+          <FontAwesomeIcon icon={faAnglesLeft} />
+        </button>
+        <TransformWrapper
+          limitToBounds={false}
+          centerOnInit
+          minScale={0.2}
+          panning={{
+            velocityDisabled: true,
+            excluded: ['leading-none', 'group'],
+          }}
+          wheel={{
+            smoothStep: 0.001 * volumeData.zoomSensitivity,
+          }}
+          zoomAnimation={{
+            disabled: true,
+          }}
+          doubleClick={{
+            disabled: true,
+          }}
+          alignmentAnimation={{
+            disabled: true,
+          }}
+          ref={transformComponentRef}
+          pinch={{
+            disabled: false,
+            excluded: ['leading-none', 'group'],
           }}
         >
-          <DummyYomichanSentenceTerminator />
-          <div id="visiblePagesContainer" className="flex flex-row flex-nowrap">
-            {showTwoPages ? (
+          <TransformComponent
+            wrapperStyle={{
+              width: '100%',
+              height: '100%',
+              position: 'absolute',
+            }}
+          >
+            <DummyYomichanSentenceTerminator />
+            <div id="visiblePagesContainer" className="flex flex-row flex-nowrap">
+              {showTwoPages ? (
+                <PageContainer
+                  setIsEditing={setIsEditing}
+                  contentEditable={contentEditable}
+                  page={pages[currentPage + 1]}
+                  preloads={[]}
+                  getImageUri={getImageUri}
+                  highlightBlock={
+                  volumeData?.highlightBlock?.page === currentPage + 1
+                    ? volumeData.highlightBlock.block
+                    : undefined
+                }
+                />
+              ) : null}
               <PageContainer
                 setIsEditing={setIsEditing}
-                disableContentEditable={disableContentEditable}
-                page={pages[currentPage + 1]}
-                preloads={[]}
+                contentEditable={contentEditable}
+                page={page}
+                preloads={(showTwoPages ? [2, 3, 4] : [1, 2])
+                  .map((i) => currentPage + i)
+                  .filter((i) => i < pages.length)
+                  .map((i) => pages[i])}
                 getImageUri={getImageUri}
                 highlightBlock={
-                volumeData?.highlightBlock?.page === currentPage + 1
-                  ? volumeData.highlightBlock.block
-                  : undefined
-              }
+                  volumeData?.highlightBlock?.page === currentPage
+                    ? volumeData.highlightBlock.block
+                    : undefined
+                }
               />
-            ) : null}
-            <PageContainer
-              setIsEditing={setIsEditing}
-              disableContentEditable={disableContentEditable}
-              page={page}
-              preloads={(showTwoPages ? [2, 3, 4] : [1, 2])
-                .map((i) => currentPage + i)
-                .filter((i) => i < pages.length)
-                .map((i) => pages[i])}
-              getImageUri={getImageUri}
-              highlightBlock={
-                volumeData?.highlightBlock?.page === currentPage
-                  ? volumeData.highlightBlock.block
-                  : undefined
-              }
-            />
-          </div>
-          <DummyYomichanSentenceTerminator />
-        </TransformComponent>
-      </TransformWrapper>
+            </div>
+            <DummyYomichanSentenceTerminator />
+          </TransformComponent>
+        </TransformWrapper>
+        <button
+          type="button"
+          className="h-full w-8 bg-white bg-opacity-50 ml-auto flex justify-center items-center z-10"
+          onClick={() => setBoundPage(currentPage + (showTwoPages ? 2 : 1))}
+        >
+          <FontAwesomeIcon icon={faAnglesRight} />
+        </button>
+      </div>
     </div>
   );
 }

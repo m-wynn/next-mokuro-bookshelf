@@ -34,8 +34,8 @@ export function Loading() {
             setUseTwoPages={() => {}}
             firstPageIsCover={false}
             setFirstPageIsCover={() => {}}
-            disableContentEditable={false}
-            setDisableContentEditable={() => {}}
+            contentEditable={false}
+            setContentEditable={() => {}}
           />
         </div>
       )}
