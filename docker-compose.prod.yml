@@ -8,14 +8,13 @@ services:
     user: "1000"
     ports:
       - "3000:3000"
-      - "9229:9229"
     environment:
       - NODE_ENV=production
       - PORT=3000
     env_file:
       - ./.env
     volumes:
-      - ./images/:/app/private/images/
+      - ./src/public/images:/app/public/images
 
   db:
     image: groonga/pgroonga:latest-debian-16@sha256:e47a739e5eaac8c7b4559a5cc77b9b9e662858e79a39129eb5be6f4619f5c71e
