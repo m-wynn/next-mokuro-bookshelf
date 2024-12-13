@@ -10,18 +10,19 @@ COPY ./src/package.json ./src/package-lock.json ./
 RUN npm install --frozen-lockfile
 
 COPY ./src/ .
+RUN chown -R 1000:1000 /app
+USER 1000
+
+RUN mkdir -p /app/.next/cache/images \
+    && chown -R 1000:1000 /app/.next/
 
 
 FROM base as prod
 
 RUN npx prisma generate && npm run build
 
-USER 1000
-
 CMD ["npm", "run", "start:migrate:prod"]
 
 FROM base as dev
-
-USER 1000
 
 CMD ["npm", "run", "dev"]

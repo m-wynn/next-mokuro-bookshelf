@@ -22,8 +22,4 @@ yarn-error.log*
 
 .env
 
-/mokuro
-
-/shared/acme.json
-
-/public/images
+src/public/images
