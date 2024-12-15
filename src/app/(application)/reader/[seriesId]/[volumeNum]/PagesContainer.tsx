@@ -224,7 +224,7 @@ export default function PagesContainer({
           </div>
         </div>
       ) : (
-        <div className="join">
+        <div className="join h-12">
           <button type="button" className="join-item btn" onClick={() => setMaximizeReader(true)}>
             <FontAwesomeIcon icon={faMaximize} />
           </button>
@@ -255,7 +255,7 @@ export default function PagesContainer({
           )}
         </div>
       )}
-      <div className="flex flex-row h-full w-full">
+      <div className={`flex flex-row ${maximizeReader ? 'h-full' : 'h-[calc(100%-3rem)]'} w-full`}>
         <button
           type="button"
           className="h-full w-8 bg-white bg-opacity-50 flex justify-center items-center z-10"
@@ -293,7 +293,6 @@ export default function PagesContainer({
             wrapperStyle={{
               width: '100%',
               height: '100%',
-              position: 'absolute',
             }}
           >
             <DummyYomichanSentenceTerminator />
