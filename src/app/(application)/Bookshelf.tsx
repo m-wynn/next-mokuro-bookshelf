@@ -11,6 +11,11 @@ import Shelf from './Shelf';
 import { useGlobalContext } from './GlobalContext';
 import { updateReadingStatus, removeReading } from './functions';
 
+function compareReadings(a: Reading, b: Reading) {
+  return a.volume.series.englishName.localeCompare(b.volume.series.englishName)
+  || a.volume.number - b.volume.number;
+}
+
 function Bookshelf() {
   const { allReadings, setAllReadings, userSettings } = useGlobalContext();
 
@@ -24,19 +29,19 @@ function Bookshelf() {
   const inProgress = useMemo(
     () => allReadings.filter(
       (reading) => reading.status === 'READING' && canUserSeeIfNsfw(reading),
-    ) as unknown as Reading[],
+    ).sort(compareReadings) as unknown as Reading[],
     [allReadings, canUserSeeIfNsfw],
   );
   const unread = useMemo(
     () => allReadings.filter(
       (reading) => reading.status === 'UNREAD' && canUserSeeIfNsfw(reading),
-    ) as unknown as Reading[],
+    ).sort(compareReadings) as unknown as Reading[],
     [allReadings, canUserSeeIfNsfw],
   );
   const read = useMemo(
     () => allReadings.filter(
       (reading) => reading.status === 'READ' && canUserSeeIfNsfw(reading),
-    ) as unknown as Reading[],
+    ).sort(compareReadings) as unknown as Reading[],
     [allReadings, canUserSeeIfNsfw],
   );
 
