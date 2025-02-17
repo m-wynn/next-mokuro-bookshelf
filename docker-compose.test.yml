@@ -21,7 +21,7 @@ services:
     restart: always
 
   db:
-    image: groonga/pgroonga:latest-debian-16@sha256:e47a739e5eaac8c7b4559a5cc77b9b9e662858e79a39129eb5be6f4619f5c71e
+    image: groonga/pgroonga:latest-debian-16@sha256:2014f3bbafbaea97bfd517178062cee956403108e1e821624371d7b1c5cd3193
     restart: always
     environment:
       POSTGRES_DB: default
