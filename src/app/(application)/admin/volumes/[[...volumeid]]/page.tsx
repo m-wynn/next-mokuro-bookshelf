@@ -100,7 +100,8 @@ export default function VolumeEditor({
         pageFormData.append('file', page as Blob);
         pageFormData.append('ocr', ocr as Blob);
 
-        await fetchWithTimeout('/api/page', 5000, {
+        // Allow for up to 20 seconds to pass before timing out
+        await fetchWithTimeout('/api/page', 20000, {
           method: 'POST',
           body: pageFormData,
         }).then((response) => {
