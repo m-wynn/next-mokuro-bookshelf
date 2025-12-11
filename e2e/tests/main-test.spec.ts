@@ -1,14 +1,14 @@
 import { test, expect } from '@playwright/test';
 
-import { signup, login, get_username, get_password } from '../helper';
+import { signup, login, get_username, get_password, generateRandomSuffix } from '../helper';
 
 const d = new Date();
 const time = d.getTime();
 
 test('Basic Signup', async ({ page, context }) => {
-  const suffix = crypto.getRandomValues(new Uint32Array(1))[0];
+  const suffix = generateRandomSuffix();
   const username = `test_${time}_${suffix}`;
-  const password = `${crypto.getRandomValues(new Uint32Array(1))[0]}`;
+  const password = `${generateRandomSuffix()}`;
   await signup(page, username, password);
 
   await context.clearCookies();

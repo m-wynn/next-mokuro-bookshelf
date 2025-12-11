@@ -53,8 +53,9 @@ test('Navigation - Links Are Clickable', async ({ page }) => {
   // There should be at least one link
   expect(linkCount).toBeGreaterThan(0);
   
-  // Check that links are visible and enabled
-  for (let i = 0; i < Math.min(linkCount, 5); i++) {
+  // Check that links are visible and enabled (test up to first 5 links)
+  const MAX_LINKS_TO_TEST = 5;
+  for (let i = 0; i < Math.min(linkCount, MAX_LINKS_TO_TEST); i++) {
     await expect(navLinks.nth(i)).toBeVisible();
   }
 });
