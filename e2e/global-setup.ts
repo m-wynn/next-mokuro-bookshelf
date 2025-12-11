@@ -1,5 +1,5 @@
 import { firefox, type FullConfig } from '@playwright/test';
-import { signup } from './helper';
+import { signup, generateRandomSuffix } from './helper';
 
 require('dotenv').config();
 
@@ -11,9 +11,9 @@ async function globalSetup(config: FullConfig) {
         const browser = await firefox.launch();
         const page = await browser.newPage();
 
-        const suffix = crypto.getRandomValues(new Uint32Array(1))[0];
+        const suffix = generateRandomSuffix();
         const username = `test_${time}_${suffix}`;
-        const password = `${crypto.getRandomValues(new Uint32Array(1))[0]}`;
+        const password = `${generateRandomSuffix()}`;
         await signup(page, username, password);
 
         process.env.PLAYWRIGHT_ADMIN_PASSWORD = password;

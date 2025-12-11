@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-import { signup, login, get_username, get_password } from '../helper';
+import { signup, login, get_username, get_password, generateRandomSuffix } from '../helper';
 
 test('Logout Functionality', async ({ page, context }) => {
   const username = await get_username();
@@ -44,8 +44,8 @@ test('Login with Invalid Credentials', async ({ page }) => {
   await page.getByRole('button', { name: 'Submit' }).click();
   
   // Should show error or stay on login page
-  // Wait a bit for any error message
-  await page.waitForTimeout(1000);
+  // Wait for navigation to settle or error to appear
+  await page.waitForLoadState('networkidle');
   
   // Should still be on login page or show error
   const currentUrl = page.url();
@@ -58,7 +58,7 @@ test('Signup with Mismatched Passwords', async ({ page }) => {
   
   await expect(page.getByRole('heading')).toContainText('Sign Up');
   
-  const suffix = crypto.getRandomValues(new Uint32Array(1))[0];
+  const suffix = generateRandomSuffix();
   const username = `test_mismatch_${suffix}`;
   
   await page.locator('input[name="username"]').fill(username);
@@ -68,7 +68,7 @@ test('Signup with Mismatched Passwords', async ({ page }) => {
   await page.getByRole('button', { name: 'Submit' }).click();
   
   // Should show error or stay on signup page
-  await page.waitForTimeout(1000);
+  await page.waitForLoadState('networkidle');
   const currentUrl = page.url();
   expect(currentUrl).toContain('/signup');
 });
@@ -79,9 +79,9 @@ test('Signup with Invalid Invite Code', async ({ page }) => {
   
   await expect(page.getByRole('heading')).toContainText('Sign Up');
   
-  const suffix = crypto.getRandomValues(new Uint32Array(1))[0];
+  const suffix = generateRandomSuffix();
   const username = `test_invalidcode_${suffix}`;
-  const password = `${crypto.getRandomValues(new Uint32Array(1))[0]}`;
+  const password = `${generateRandomSuffix()}`;
   
   await page.locator('input[name="username"]').fill(username);
   await page.locator('input[name="password"]').fill(password);
@@ -90,7 +90,7 @@ test('Signup with Invalid Invite Code', async ({ page }) => {
   await page.getByRole('button', { name: 'Submit' }).click();
   
   // Should show error or stay on signup page
-  await page.waitForTimeout(1000);
+  await page.waitForLoadState('networkidle');
   const currentUrl = page.url();
   expect(currentUrl).toContain('/signup');
 });

@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-import { signup } from '../helper';
+import { signup, generateRandomSuffix } from '../helper';
 
 test('Multiple Sequential Signups', async ({ page }) => {
   // Create multiple users to test database and session handling
@@ -8,9 +8,9 @@ test('Multiple Sequential Signups', async ({ page }) => {
   const time = d.getTime();
   
   for (let i = 0; i < 3; i++) {
-    const suffix = crypto.getRandomValues(new Uint32Array(1))[0];
+    const suffix = generateRandomSuffix();
     const username = `test_multi_${time}_${suffix}`;
-    const password = `${crypto.getRandomValues(new Uint32Array(1))[0]}`;
+    const password = `${generateRandomSuffix()}`;
     
     await signup(page, username, password);
     
@@ -27,9 +27,9 @@ test('Multiple Sequential Signups', async ({ page }) => {
 test('Duplicate Username Prevention', async ({ page }) => {
   const d = new Date();
   const time = d.getTime();
-  const suffix = crypto.getRandomValues(new Uint32Array(1))[0];
+  const suffix = generateRandomSuffix();
   const username = `test_duplicate_${time}_${suffix}`;
-  const password = `${crypto.getRandomValues(new Uint32Array(1))[0]}`;
+  const password = `${generateRandomSuffix()}`;
   
   // First signup should succeed
   await signup(page, username, password);
@@ -46,7 +46,7 @@ test('Duplicate Username Prevention', async ({ page }) => {
   await page.getByRole('button', { name: 'Submit' }).click();
   
   // Should show error or stay on signup page
-  await page.waitForTimeout(1000);
+  await page.waitForLoadState('networkidle');
   const currentUrl = page.url();
   expect(currentUrl).toContain('/signup');
 });
@@ -54,9 +54,9 @@ test('Duplicate Username Prevention', async ({ page }) => {
 test('Session Persistence Across Page Reloads', async ({ page }) => {
   const d = new Date();
   const time = d.getTime();
-  const suffix = crypto.getRandomValues(new Uint32Array(1))[0];
+  const suffix = generateRandomSuffix();
   const username = `test_session_${time}_${suffix}`;
-  const password = `${crypto.getRandomValues(new Uint32Array(1))[0]}`;
+  const password = `${generateRandomSuffix()}`;
   
   // Signup
   await signup(page, username, password);
@@ -82,7 +82,7 @@ test('Empty Username Validation', async ({ page }) => {
   await page.getByRole('button', { name: 'Submit' }).click();
   
   // Should show validation error or stay on page
-  await page.waitForTimeout(500);
+  await page.waitForLoadState('networkidle');
   const currentUrl = page.url();
   expect(currentUrl).toContain('/signup');
 });
