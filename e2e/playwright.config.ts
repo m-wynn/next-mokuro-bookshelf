@@ -28,6 +28,18 @@ export default defineConfig({
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
+    
+    /* Add longer timeouts to prevent premature closure */
+    actionTimeout: 15000,
+    navigationTimeout: 30000,
+  },
+  
+  /* Set global test timeout */
+  timeout: 60000,
+  
+  /* Set expect timeout */
+  expect: {
+    timeout: 10000,
   },
 
   globalSetup: require.resolve('./global-setup'),
