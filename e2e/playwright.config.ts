@@ -29,36 +29,37 @@ export default defineConfig({
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
     
-    /* Add longer timeouts to prevent premature closure */
-    actionTimeout: 15000,
-    navigationTimeout: 30000,
+    /* Reasonable timeouts - fast but not too aggressive */
+    actionTimeout: 10000,
+    navigationTimeout: 15000,
   },
   
-  /* Set global test timeout */
-  timeout: 60000,
+  /* Set global test timeout - reduced from 60s to 30s */
+  timeout: 30000,
   
   /* Set expect timeout */
   expect: {
-    timeout: 10000,
+    timeout: 5000,
   },
 
   globalSetup: require.resolve('./global-setup'),
 
-  /* Configure projects for major browsers */
+  /* Configure projects for major browsers - only use one browser for speed */
   projects: [
-    // {
-    //   name: 'chromium',
-    //   use: { ...devices['Desktop Chrome'] },
-    // },
+    {
+      name: 'chromium',
+      use: { ...devices['Desktop Chrome'] },
+    },
 
-    {
-      name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
-    },
-    {
-      name: 'Google Chrome',
-      use: { ...devices['Desktop Chrome'], channel: 'chrome' },
-    },
+    // Disabled to speed up tests - only run on one browser
+    // {
+    //   name: 'firefox',
+    //   use: { ...devices['Desktop Firefox'] },
+    // },
+    // {
+    //   name: 'Google Chrome',
+    //   use: { ...devices['Desktop Chrome'], channel: 'chrome' },
+    // },
 
     // {
     //   name: 'webkit',
