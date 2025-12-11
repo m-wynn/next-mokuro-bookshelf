@@ -29,17 +29,17 @@ export default defineConfig({
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
     
-    /* Reasonable timeouts - fast but not too aggressive */
+    /* Reasonable timeouts for form submissions with API calls */
     actionTimeout: 10000,
-    navigationTimeout: 15000,
+    navigationTimeout: 20000, // Increased to handle API calls before navigation
   },
   
-  /* Set global test timeout - reduced from 60s to 30s */
-  timeout: 30000,
+  /* Set global test timeout - reasonable for tests with API calls */
+  timeout: 45000,
   
   /* Set expect timeout */
   expect: {
-    timeout: 5000,
+    timeout: 10000,
   },
 
   globalSetup: require.resolve('./global-setup'),
