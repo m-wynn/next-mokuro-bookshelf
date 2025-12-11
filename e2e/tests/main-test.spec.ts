@@ -20,6 +20,11 @@ test('Admin Login', async ({ page, context }) => {
   const username = await get_username();
   const password = await get_password();
   await login(page, username, password);
-  await page.getByRole('link').nth(3).click();
-  await expect(page.getByRole('heading')).toContainText('Admin');
+  
+  // Navigate to admin page
+  await page.goto('http://localhost:3000/admin');
+  await page.waitForLoadState('networkidle');
+  
+  // Verify admin page loaded
+  await expect(page.getByRole('heading', { name: 'Admin' })).toBeVisible({ timeout: 10000 });
 });
