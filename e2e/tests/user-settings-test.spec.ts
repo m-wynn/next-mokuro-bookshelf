@@ -10,9 +10,10 @@ test('User Settings Page Access', async ({ page }) => {
   
   // Navigate to user settings
   await page.goto('http://localhost:3000/user/settings');
+  await page.waitForLoadState('networkidle');
   
-  // Verify we're on the settings page
-  await expect(page.getByRole('heading')).toContainText('Settings');
+  // Verify we're on the settings page - look for "Preferences" heading
+  await expect(page.getByText('Preferences')).toBeVisible({ timeout: 10000 });
 });
 
 test('User Settings - Preferences Visible', async ({ page }) => {
@@ -23,12 +24,12 @@ test('User Settings - Preferences Visible', async ({ page }) => {
   
   // Navigate to user settings
   await page.goto('http://localhost:3000/user/settings');
+  await page.waitForLoadState('networkidle');
   
   // Check that preference toggles/inputs are visible
-  // Note: This test assumes standard form elements exist
-  // Adjust selectors based on actual implementation
-  const form = page.locator('form').first();
-  await expect(form).toBeVisible();
+  // Look for actual preference elements from the UI
+  await expect(page.getByText('Display Two Pages')).toBeVisible({ timeout: 10000 });
+  await expect(page.getByText('Show Japanese Title')).toBeVisible({ timeout: 10000 });
 });
 
 test('User Settings - Navigation from Navbar', async ({ page }) => {
@@ -39,19 +40,26 @@ test('User Settings - Navigation from Navbar', async ({ page }) => {
   
   // Try to navigate to settings from home page
   await page.goto('http://localhost:3000');
+  await page.waitForLoadState('networkidle');
   
   // Look for a settings link or user menu
   // This may need adjustment based on actual navbar structure
   const settingsLink = page.getByRole('link', { name: /settings/i }).first();
   const linkCount = await settingsLink.count();
   
-  if (linkCount > 0 && await settingsLink.isVisible().catch(() => false)) {
-    await settingsLink.click();
-    await page.waitForURL(/.*\/user\/settings/, { timeout: 10000 });
-    await expect(page).toHaveURL(/.*\/user\/settings/);
-  } else {
-    // If no settings link found in navbar, navigate directly to verify page exists
-    await page.goto('http://localhost:3000/user/settings');
-    await expect(page).toHaveURL(/.*\/user\/settings/);
+  if (linkCount > 0) {
+    const isVisible = await settingsLink.isVisible().catch(() => false);
+    if (isVisible) {
+      await settingsLink.click();
+      await page.waitForURL(/.*\/user\/settings/, { timeout: 10000 });
+      await expect(page).toHaveURL(/.*\/user\/settings/);
+      return;
+    }
   }
+  
+  // If no settings link found in navbar, navigate directly to verify page exists
+  await page.goto('http://localhost:3000/user/settings');
+  await page.waitForLoadState('networkidle');
+  await expect(page).toHaveURL(/.*\/user\/settings/);
+  await expect(page.getByText('Preferences')).toBeVisible({ timeout: 10000 });
 });
