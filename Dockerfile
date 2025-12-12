@@ -1,4 +1,4 @@
-FROM node:21@sha256:4b232062fa976e3a966c49e9b6279efa56c8d207a67270868f51b3d155c4e33d as base
+FROM node:24@sha256:20988bcdc6dc76690023eb2505dd273bdeefddcd0bde4bfd1efe4ebf8707f747 as base
 WORKDIR /app
 
 EXPOSE 3000
