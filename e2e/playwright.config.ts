@@ -56,13 +56,6 @@ export default defineConfig({
       name: 'chromium',
       use: { 
         ...devices['Desktop Chrome'],
-        // Enable console logging
-        launchOptions: {
-          logger: {
-            isEnabled: (name, severity) => name === 'api',
-            log: (name, severity, message) => console.log(`${name} ${message}`)
-          }
-        }
       },
     },
 
