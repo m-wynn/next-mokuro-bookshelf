@@ -20,14 +20,20 @@ export default defineConfig({
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: 'html',
+  reporter: [
+    ['list'], // Console output
+    ['html'], // HTML report
+    ['json', { outputFile: 'test-results/results.json' }] // JSON for debugging
+  ],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
     // baseURL: 'http://127.0.0.1:3000',
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-    trace: 'on-first-retry',
+    trace: 'retain-on-failure', // Always keep trace on failure
+    screenshot: 'only-on-failure', // Take screenshot on failure
+    video: 'retain-on-failure', // Record video on failure
     
     /* Reasonable timeouts for form submissions with API calls */
     actionTimeout: 10000,
@@ -48,7 +54,16 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      use: { 
+        ...devices['Desktop Chrome'],
+        // Enable console logging
+        launchOptions: {
+          logger: {
+            isEnabled: (name, severity) => name === 'api',
+            log: (name, severity, message) => console.log(`${name} ${message}`)
+          }
+        }
+      },
     },
 
     // Disabled to speed up tests - only run on one browser
