@@ -1,13 +1,25 @@
 {
   "compilerOptions": {
     "target": "ES2022",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "baseUrl": ".",
     "paths": {
-      "@/*": ["components/*"],
-      "$/*": ["utils/*"],
-      "db": ["lib/prisma"],
-      "lib": ["lib"]
+      "@/*": [
+        "components/*"
+      ],
+      "$/*": [
+        "utils/*"
+      ],
+      "db": [
+        "lib/prisma"
+      ],
+      "lib": [
+        "lib"
+      ]
     },
     "allowJs": true,
     "skipLibCheck": true,
@@ -20,14 +32,16 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "preserve",
+    "jsx": "react-jsx",
     "plugins": [
       {
         "name": "next"
       }
     ],
     "strictNullChecks": true,
-    "typeRoots": ["./types"]
+    "typeRoots": [
+      "./types"
+    ]
   },
   "include": [
     "next-env.d.ts",
@@ -36,9 +50,10 @@
     ".next/types/**/*.ts",
     "types/**/*.ts",
     "next.config.js",
+    ".next/dev/types/**/*.ts"
   ],
   "exclude": [
     "node_modules",
-    "e2e",
+    "e2e"
   ]
 }

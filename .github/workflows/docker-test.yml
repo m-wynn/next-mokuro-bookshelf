@@ -16,7 +16,6 @@ on:
       - "**/*.tsx"
       - "**/*.css"
   pull_request:
-    branches: ["main", "prod"]
     paths:
       - "Dockerfile"
       - "src/package.json"

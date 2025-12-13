@@ -76,7 +76,7 @@ export default function PagesContainer({
     currentPage, setCurrentPage, useTracking, setUseTrackingAndReturn,
   } = volumeData;
 
-  const layoutChanged = useRef({ useTwoPages, firstPageIsCover }).current;
+  const layoutChanged = useRef({ useTwoPages, firstPageIsCover });
   const { maximizeReader, setMaximizeReader, setAllReadings } = useGlobalContext();
   const { userSettings } = useGlobalContext();
   const [isEditing, setIsEditing] = useState(false);
@@ -143,14 +143,14 @@ export default function PagesContainer({
 
   useEffect(() => {
     if (
-      layoutChanged.useTwoPages !== useTwoPages
-      || layoutChanged.firstPageIsCover !== firstPageIsCover
+      layoutChanged.current.useTwoPages !== useTwoPages
+      || layoutChanged.current.firstPageIsCover !== firstPageIsCover
     ) {
-      layoutChanged.useTwoPages = useTwoPages;
-      layoutChanged.firstPageIsCover = firstPageIsCover;
+      layoutChanged.current.useTwoPages = useTwoPages;
+      layoutChanged.current.firstPageIsCover = firstPageIsCover;
       setBoundPage(currentPage);
     }
-  }, [firstPageIsCover, useTwoPages, currentPage, setBoundPage, layoutChanged]);
+  }, [firstPageIsCover, useTwoPages, currentPage, setBoundPage]);
 
   const transformComponentRef = useRef<ReactZoomPanPinchRef | null>(null);
 
