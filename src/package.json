@@ -28,6 +28,8 @@
     "react-zoom-pan-pinch": "^3.3.0"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3.3.3",
+    "@eslint/js": "^9.39.2",
     "@tailwindcss/typography": "0.5.15",
     "@types/node": "24.10.2",
     "@types/react": "18.3.27",

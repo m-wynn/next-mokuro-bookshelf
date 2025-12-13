@@ -15,7 +15,7 @@ const limiter = rateLimit({
 export const POST = async (request: NextRequest) => {
   try {
     await limiter.check(5, 'LOGIN_RATE_LIMIT');
-  } catch (e) {
+  } catch (_e) {
     return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
   }
   const { username, password }: LoginForm = await request.json();
