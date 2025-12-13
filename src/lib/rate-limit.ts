@@ -6,9 +6,10 @@ type Options = {
 };
 
 export default function rateLimit(options?: Options) {
-  // Disable rate limiting only in test environment to speed up E2E tests
-  // Keep it enabled in development to better simulate production conditions
-  const isTest = process.env.NODE_ENV === 'test';
+  // Disable rate limiting when DISABLE_RATE_LIMIT is set (for E2E tests)
+  // This keeps rate limiting active in all standard environments (dev, test, prod)
+  // unless explicitly disabled for testing purposes
+  const isRateLimitDisabled = process.env.DISABLE_RATE_LIMIT === 'true';
   
   const tokenCache = new LRUCache({
     max: options?.uniqueTokenPerInterval || 500,
@@ -17,8 +18,8 @@ export default function rateLimit(options?: Options) {
 
   return {
     check: (limit: number, token: string) => new Promise<void>((resolve, reject) => {
-      // Skip rate limiting in test environment only
-      if (isTest) {
+      // Skip rate limiting if explicitly disabled
+      if (isRateLimitDisabled) {
         resolve();
         return;
       }
