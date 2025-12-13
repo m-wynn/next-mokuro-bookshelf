@@ -10,7 +10,7 @@ services:
       - "3000:3000"
       - "9229:9229"
     environment:
-      - NODE_ENV=production
+      - NODE_ENV=test
       - PORT=3000
       - DB_URL=postgres://root:toor@db:5432/default
     env_file:
