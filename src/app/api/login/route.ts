@@ -1,8 +1,8 @@
 import { LoginForm } from 'auth';
 import { auth } from 'auth/lucia';
+import { setApiSession } from 'auth/context-adapter';
 import rateLimit from 'lib/rate-limit';
 import { LuciaError } from 'lucia';
-import * as context from 'next/headers';
 import { NextResponse } from 'next/server';
 
 import type { NextRequest } from 'next/server';
@@ -26,8 +26,7 @@ export const POST = async (request: NextRequest) => {
       userId: key.userId,
       attributes: {},
     });
-    const authRequest = auth.handleRequest(request.method, context);
-    authRequest.setSession(session);
+    await setApiSession(request.method, session);
     return new Response(null, {
       status: 200,
     });
