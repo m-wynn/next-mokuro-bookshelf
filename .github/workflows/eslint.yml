@@ -5,14 +5,13 @@ on:
   push:
     branches: ["main"]
     paths:
-      - "src/.eslintrc.json"
+      - "src/eslint.config.mjs"
       - "**/*.js"
       - "**/*.ts"
       - "**/*.tsx"
   pull_request:
-    branches: ["main"]
     paths:
-      - "src/.eslintrc.json"
+      - "src/eslint.config.mjs"
       - "**/*.js"
       - "**/*.ts"
       - "**/*.tsx"
@@ -33,14 +32,12 @@ jobs:
 
       - name: Install ESLint
         run: |
-          npm install eslint@8.56.0
-          npm install @microsoft/eslint-formatter-sarif@2.1.7
+          npm install eslint@9.17.0
+          npm install @microsoft/eslint-formatter-sarif@3.1.0
         working-directory: src
 
       - name: Run ESLint
         run: npx eslint .
-          --config .eslintrc.json
-          --ext .js,.jsx,.ts,.tsx
           --format @microsoft/eslint-formatter-sarif
           --output-file eslint-results.sarif
         working-directory: src
