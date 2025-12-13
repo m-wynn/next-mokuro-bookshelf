@@ -1,13 +1,12 @@
-import { auth } from 'auth/lucia';
+import { validateApiSession } from 'auth/context-adapter';
 import prisma from 'db';
-import * as context from 'next/headers';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import { SearchResult } from 'search';
 import { shouldShowNsfw } from 'lib/userSetting';
 
 export async function GET(request: NextRequest) {
-  const session = await auth.handleRequest(request.method, context).validate();
+  const session = await validateApiSession(request.method);
   if (!session) {
     return NextResponse.json({ error: 'Not logged in' }, { status: 401 });
   }

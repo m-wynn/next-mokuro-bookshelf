@@ -1,4 +1,5 @@
-import * as context from 'next/headers';
+import { initializeContext, clearContext } from 'auth/context-adapter';
+import * as context from 'auth/context-adapter';
 import { redirect } from 'next/navigation';
 import { auth } from 'auth/lucia';
 import prisma from 'db';
@@ -12,9 +13,11 @@ export default async function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const authRequest = auth.handleRequest('GET', context);
-  const session = (await authRequest.validate()) ?? null;
-  if (!session) redirect('/login');
+  await initializeContext();
+  try {
+    const authRequest = auth.handleRequest('GET', context);
+    const session = (await authRequest.validate()) ?? null;
+    if (!session) redirect('/login');
 
   const readings = await prisma.reading.findMany({
     where: {
@@ -42,4 +45,7 @@ export default async function DashboardLayout({
       <main>{children}</main>
     </GlobalDataProvider>
   );
+  } finally {
+    clearContext();
+  }
 }

@@ -1,18 +1,18 @@
 import prisma from 'db';
 import { NextResponse } from 'next/server';
-import { auth } from 'auth/lucia';
-import * as context from 'next/headers';
+import { validateApiSession } from 'auth/context-adapter';
 import type { NextRequest } from 'next/server';
 
 export async function GET(
   request: NextRequest,
-  { params: { volumeId } }: { params: { volumeId: string } },
+  { params }: { params: Promise<{ volumeId: string }> },
 ) {
-  const session = await auth.handleRequest(request.method, context).validate();
+  const session = await validateApiSession(request.method);
   if (!session) {
     return NextResponse.json({ error: 'Not logged in' }, { status: 401 });
   }
 
+  const { volumeId } = await params;
   const reading = await prisma.reading.findUnique({
     where: {
       volumeUser: {
@@ -34,13 +34,14 @@ export async function GET(
 
 export async function POST(
   request: NextRequest,
-  { params: { volumeId } }: { params: { volumeId: string } },
+  { params }: { params: Promise<{ volumeId: string }> },
 ) {
-  const session = await auth.handleRequest(request.method, context).validate();
+  const session = await validateApiSession(request.method);
   if (!session) {
     return NextResponse.json({ error: 'Not logged in' }, { status: 401 });
   }
 
+  const { volumeId } = await params;
   const res = await request.json();
   const { page } = res;
 

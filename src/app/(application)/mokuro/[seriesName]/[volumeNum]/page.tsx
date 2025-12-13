@@ -3,10 +3,11 @@ import prisma from 'db';
 
 // If you go to an old link, it redirects to the new reader
 export default async function Page({
-  params: { seriesName, volumeNum },
+  params,
 }: {
-  params: { seriesName: string; volumeNum: string };
+  params: Promise<{ seriesName: string; volumeNum: string }>;
 }) {
+  const { seriesName, volumeNum } = await params;
   const vNum = decodeURIComponent(volumeNum);
   const series = await prisma.series.findUnique({
     where: {
