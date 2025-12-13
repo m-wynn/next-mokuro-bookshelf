@@ -10,7 +10,7 @@ export default function rateLimit(options?: Options) {
   // This keeps rate limiting active in all standard environments (dev, test, prod)
   // unless explicitly disabled for testing purposes
   const isRateLimitDisabled = process.env.DISABLE_RATE_LIMIT === 'true';
-  
+
   const tokenCache = new LRUCache({
     max: options?.uniqueTokenPerInterval || 500,
     ttl: options?.interval || 60000,
@@ -23,7 +23,7 @@ export default function rateLimit(options?: Options) {
         resolve();
         return;
       }
-      
+
       const tokenCount = (tokenCache.get(token) as number[]) || [0];
       if (tokenCount[0] === 0) {
         tokenCache.set(token, tokenCount);
