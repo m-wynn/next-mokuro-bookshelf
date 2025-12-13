@@ -3,6 +3,7 @@
 // by pre-fetching headers and cookies
 
 import { cookies as nextCookies, headers as nextHeaders } from 'next/headers';
+import type { Session } from 'lucia';
 
 let cachedHeaders: Awaited<ReturnType<typeof nextHeaders>> | null = null;
 let cachedCookies: Awaited<ReturnType<typeof nextCookies>> | null = null;
@@ -45,7 +46,7 @@ export async function validateApiSession(method: string) {
 }
 
 // Helper function for API routes that need to set session (login/signup)
-export async function setApiSession(method: string, session: any) {
+export async function setApiSession(method: string, session: Session) {
   await initializeContext();
   try {
     const { auth } = await import('./lucia');
