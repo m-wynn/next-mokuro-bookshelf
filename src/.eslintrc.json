@@ -1,10 +1,7 @@
 {
   "extends": [
-    "airbnb",
-    "airbnb-typescript",
-    "airbnb/hooks",
-    "plugin:import/typescript",
-    "next/core-web-vitals"
+    "next/core-web-vitals",
+    "next/typescript"
   ],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
@@ -16,15 +13,12 @@
     "@typescript-eslint",
     "import"
   ],
-  "globals": {
-    "globalThis": false
-  },
   "rules": {
     "react/jsx-one-expression-per-line": [
       "off"
     ],
     "react/jsx-filename-extension": [
-      2,
+      "error",
       {
         "extensions": [
           ".js",
@@ -74,9 +68,6 @@
     "react/require-default-props": "off",
     "react/jsx-props-no-spreading": "off",
     "react/function-component-definition": "off",
-    "jsx-a11y/label-has-associated-control": "off",
-    "jsx-a11y/control-has-associated-label": "off",
-    "import/prefer-default-export": "off",
-    "extensions": "off"
+    "import/prefer-default-export": "off"
   }
 }
