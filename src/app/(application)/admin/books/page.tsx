@@ -1,9 +1,11 @@
 import { Prisma } from '@prisma/client';
 import prisma from 'db';
+import { getSession } from 'lib/session';
 import React from 'react';
 import SeriesTable from './SeriesTable';
 
 const volumeSelect = {
+  id: true,
   number: true,
   createdAt: true,
   updatedAt: true,
@@ -45,6 +47,7 @@ export type SeriesPayload = Prisma.SeriesGetPayload<{
 }>;
 
 const Users = async () => {
+  const session = await getSession('GET');
   const series = await prisma.series.findMany({
     select: seriesSelect,
     orderBy: {
@@ -54,7 +57,7 @@ const Users = async () => {
 
   return (
     <div className="overflow-x-auto">
-      <SeriesTable series={series} />
+      <SeriesTable series={series} isAdmin={session.user.role === 'ADMIN'} />
     </div>
   );
 };

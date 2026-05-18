@@ -1,11 +1,12 @@
 'use client';
 
 import React from 'react';
+import { useRouter } from 'next/navigation';
 import FormInput from '@/FormInput';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
 import type { SeriesPayload } from './page';
-import { updateSeries } from './functions';
+import { deleteVolume, updateSeries } from './functions';
 
 function FormCheckbox({
   defaultValue,
@@ -52,7 +53,14 @@ function FormCheckbox({
   );
 }
 
-function SeriesTable({ series }: { series: SeriesPayload[] }) {
+function SeriesTable({
+  series,
+  isAdmin,
+}: {
+  series: SeriesPayload[];
+  isAdmin: boolean;
+}) {
+  const router = useRouter();
   return (
     <table className="table bg-base-200">
       <thead>
@@ -117,6 +125,7 @@ function SeriesTable({ series }: { series: SeriesPayload[] }) {
                         <th>Updated At</th>
                         <th>Uploaded By</th>
                         <th>Readings</th>
+                        {isAdmin && <th aria-label="Actions"></th>}
                       </tr>
                     </thead>
                     <tbody>
@@ -127,6 +136,26 @@ function SeriesTable({ series }: { series: SeriesPayload[] }) {
                           <td>{volume.updatedAt.toUTCString()}</td>
                           <td>{volume.uploadedBy.name}</td>
                           <td>{volume._count.readings}</td>
+                          {isAdmin && (
+                            <td>
+                              <button
+                                type="button"
+                                className="btn btn-error btn-sm"
+                                onClick={async () => {
+                                  // eslint-disable-next-line no-alert
+                                  if (!window.confirm(
+                                    `Delete ${each.englishName} vol. ${volume.number}? This will permanently remove all pages, the epub, and reading progress for this volume.`,
+                                  )) {
+                                    return;
+                                  }
+                                  await deleteVolume(volume.id);
+                                  router.refresh();
+                                }}
+                              >
+                                Delete
+                              </button>
+                            </td>
+                          )}
                         </tr>
                       ))}
                     </tbody>
