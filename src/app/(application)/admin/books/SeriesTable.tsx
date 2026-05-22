@@ -6,7 +6,7 @@ import FormInput from '@/FormInput';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
 import type { SeriesPayload } from './page';
-import { deleteVolume, updateSeries } from './functions';
+import { deleteSeries, deleteVolume, updateSeries } from './functions';
 
 function FormCheckbox({
   defaultValue,
@@ -72,6 +72,7 @@ function SeriesTable({
           <th>Created At</th>
           <th>Updated At</th>
           <th>Is NSFW</th>
+          {isAdmin && <th aria-label="Actions"></th>}
         </tr>
       </thead>
       <tbody>
@@ -113,6 +114,26 @@ function SeriesTable({
                   }}
                 />
               </td>
+              {isAdmin && (
+                <td>
+                  <button
+                    type="button"
+                    className="btn btn-error btn-sm"
+                    onClick={async () => {
+                      // eslint-disable-next-line no-alert
+                      if (!window.confirm(
+                        `Delete the entire "${each.englishName}" series? This will permanently remove all ${each.volumes.length} volume(s), their pages, epubs, and reading progress.`,
+                      )) {
+                        return;
+                      }
+                      await deleteSeries(each.id);
+                      router.refresh();
+                    }}
+                  >
+                    Delete
+                  </button>
+                </td>
+              )}
             </tr>
             {each.volumes.length > 0 && (
               <tr>

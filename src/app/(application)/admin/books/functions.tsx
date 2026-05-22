@@ -26,6 +26,20 @@ export const updateSeries = async (
   }
 };
 
+async function deleteVolumeById(volumeId: number) {
+  await prisma.$transaction([
+    prisma.reading.deleteMany({ where: { volumeId } }),
+    prisma.page.deleteMany({ where: { volumeId } }),
+    prisma.ePub.deleteMany({ where: { volumeId } }),
+    prisma.volume.delete({ where: { id: volumeId } }),
+  ]);
+
+  await fs.rm(`${process.env.IMAGE_PATH}/${volumeId}`, {
+    recursive: true,
+    force: true,
+  });
+}
+
 export const deleteVolume = async (volumeId: number) => {
   'use server';
 
@@ -46,17 +60,33 @@ export const deleteVolume = async (volumeId: number) => {
     throw new Error('Volume not found');
   }
 
-  await prisma.$transaction([
-    prisma.reading.deleteMany({ where: { volumeId } }),
-    prisma.page.deleteMany({ where: { volumeId } }),
-    prisma.ePub.deleteMany({ where: { volumeId } }),
-    prisma.volume.delete({ where: { id: volumeId } }),
-  ]);
+  await deleteVolumeById(volumeId);
 
-  await fs.rm(`${process.env.IMAGE_PATH}/${volumeId}`, {
-    recursive: true,
-    force: true,
+  revalidatePath('/');
+};
+
+export const deleteSeries = async (seriesId: number) => {
+  'use server';
+
+  const session = await getSession('POST');
+  if (session.user.role !== 'ADMIN') {
+    throw new Error('Unauthorized');
+  }
+
+  const series = await prisma.series.findUnique({
+    where: { id: seriesId },
+    select: {
+      id: true,
+      volumes: { select: { id: true } },
+    },
   });
+  if (!series) {
+    throw new Error('Series not found');
+  }
+
+  await Promise.all(series.volumes.map((volume) => deleteVolumeById(volume.id)));
+
+  await prisma.series.delete({ where: { id: seriesId } });
 
   revalidatePath('/');
 };
