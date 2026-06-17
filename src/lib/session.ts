@@ -1,8 +1,7 @@
-import { auth } from 'auth/lucia';
-import * as context from 'next/headers';
+import { validateApiSession } from 'auth/context-adapter';
 
 export async function getSession(method: string) {
-  const session = await auth.handleRequest(method, context).validate();
+  const session = await validateApiSession(method);
   if (!session) {
     throw new Error('You must be signed in to perform this action');
   }

@@ -29,7 +29,7 @@ export default function Register() {
     try {
       const json = await response.json();
       setError(json.error);
-    } catch (e) {
+    } catch (_e) {
       setError('An error occurred');
     }
     return null;

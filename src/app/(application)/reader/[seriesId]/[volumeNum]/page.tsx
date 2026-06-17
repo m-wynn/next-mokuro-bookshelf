@@ -1,7 +1,8 @@
 import { Prisma } from '@prisma/client';
+import { initializeContext, clearContext } from 'auth/context-adapter';
+import * as context from 'auth/context-adapter';
 import { auth } from 'auth/lucia';
 import prisma from 'db';
-import * as context from 'next/headers';
 import type { OcrPage } from 'page';
 import PagesContainer from './PagesContainer';
 import VolumeDataProvider from './VolumeDataProvider';
@@ -71,27 +72,33 @@ const getVolume = async (
 });
 
 export default async function PageComponent({
-  params: { seriesId, volumeNum },
+  params,
 }: {
-  params: { seriesId: string; volumeNum: string };
+  params: Promise<{ seriesId: string; volumeNum: string }>;
 }) {
-  const session = await auth.handleRequest('GET', context).validate();
-  const volume = await getVolume(seriesId, volumeNum, session.user.userId);
-  if (!volume) return <div>Volume not found</div>;
+  const { seriesId, volumeNum } = await params;
+  await initializeContext();
+  try {
+    const session = await auth.handleRequest('GET', context).validate();
+    const volume = await getVolume(seriesId, volumeNum, session.user.userId);
+    if (!volume) return <div>Volume not found</div>;
 
-  return (
-    <VolumeDataProvider volume={volume}>
-      {volume.epub ? (
-        <EPubContainer volume={volume} />
-      ) : (
-        <PagesContainer
-          volumeId={volume.id}
-          pages={volume.pages.map((page: Page) => ({
-            ...page,
-            ocr: page.ocr as unknown as OcrPage,
-          }))}
-        />
-      )}
-    </VolumeDataProvider>
-  );
+    return (
+      <VolumeDataProvider volume={volume}>
+        {volume.epub ? (
+          <EPubContainer volume={volume} />
+        ) : (
+          <PagesContainer
+            volumeId={volume.id}
+            pages={volume.pages.map((page: Page) => ({
+              ...page,
+              ocr: page.ocr as unknown as OcrPage,
+            }))}
+          />
+        )}
+      </VolumeDataProvider>
+    );
+  } finally {
+    clearContext();
+  }
 }

@@ -4,7 +4,8 @@ import { nextjs_future as nextjsFuture } from 'lucia/middleware';
 import { PrismaClient } from '@prisma/client';
 
 import { cache } from 'react';
-import * as context from 'next/headers';
+import { initializeContext, clearContext } from './context-adapter';
+import * as context from './context-adapter';
 
 const client = new PrismaClient();
 
@@ -27,7 +28,12 @@ export const auth = lucia({
 
 export type Auth = typeof auth;
 
-export const getPageSession = cache(() => {
-  const authRequest = auth.handleRequest('GET', context);
-  return authRequest.validate();
+export const getPageSession = cache(async () => {
+  await initializeContext();
+  try {
+    const authRequest = auth.handleRequest('GET', context);
+    return authRequest.validate();
+  } finally {
+    clearContext();
+  }
 });

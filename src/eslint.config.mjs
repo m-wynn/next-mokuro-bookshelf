@@ -1,0 +1,57 @@
+import nextConfig from 'eslint-config-next';
+import typescriptEslint from 'typescript-eslint';
+
+export default [
+  ...nextConfig,
+  {
+    files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'],
+    plugins: {
+      '@typescript-eslint': typescriptEslint.plugin,
+    },
+    rules: {
+      'react/jsx-one-expression-per-line': 'off',
+      'react/jsx-filename-extension': [
+        'error',
+        {
+          extensions: ['.js', '.jsx', '.ts', '.tsx'],
+        },
+      ],
+      'import/extensions': [
+        'error',
+        'ignorePackages',
+        {
+          js: 'never',
+          jsx: 'never',
+          ts: 'never',
+          tsx: 'never',
+        },
+      ],
+      'react/no-unescaped-entities': [
+        'error',
+        {
+          forbid: ['>', '}'],
+        },
+      ],
+      'no-underscore-dangle': [
+        'error',
+        {
+          allow: ['_count'],
+        },
+      ],
+      'react/self-closing-comp': 'off',
+      'no-shadow': 'off',
+      '@typescript-eslint/no-shadow': 'error',
+      'no-unused-vars': 'off',
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        {
+          argsIgnorePattern: '^_',
+        },
+      ],
+      'react/require-default-props': 'off',
+      'react/jsx-props-no-spreading': 'off',
+      'react/function-component-definition': 'off',
+      'import/prefer-default-export': 'off',
+    },
+  },
+];
