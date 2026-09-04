@@ -1,6 +1,6 @@
 services:
   traefik:
-    image: "traefik:v3.1@sha256:7b927f0ab22c85a636cde667aa6a3c90f1967bb5079899ce960ec51454fc96e9"
+    image: "traefik:v3.1@sha256:74d72c7a1345984f186bddbabcc462b2128d0d8054177dc84afaeac4db1f0f56"
     container_name: "traefik"
     command:
       # - "--api.insecure=true"
